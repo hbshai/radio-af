@@ -42,10 +42,11 @@ var app = {
     // deviceready Event Handler
     onDeviceReady: function() {
         app.bootTime = (Date.now() - app.time);
-        app.scroller = new TWIS('#wrapper');
+        //app.scroller = new TWIS('#wrapper');
 
         document.removeEventListener('deviceready', app.onDeviceReady, false);
 
         app.log('deviceReady')
+        console.log(window.plugins.nativepagetransitions)
     },
 };

@@ -1,0 +1,118 @@
+@light-blue: #52bef6;
+@dark-blue: #1e577d;
+@raf-red: #e05a5a;
+@raf-white: #f2f2f2;
+@raf-black: #1c1c1c;
+@off-off-white: #eeeeee;
+@header-height: 90px;
+
+
+html, body {
+	height:100%;
+}
+
+body,ul,li,h1,h2,p {
+	padding:0;
+	margin:0;
+	border:0;
+}
+
+@font-face {
+    font-family: OpenSans;
+    src: url("OpenSans-Regular.ttf");
+}
+
+@font-face {
+    font-family: NexaLight;
+    src: url("Nexa Light.otf");
+}
+
+/* spotlight stuff */
+#spotlight-img {
+    width: 100%;
+    margin: 0;
+}
+
+@spot-container: 110px;
+.spotlight-container {
+    margin-top: -@spot-container;
+    height:  (@spot-container - 6px);
+    position: absolute;
+    width: 100%;
+    opacity: 0.85;
+    background-color: @raf-black;
+    color: @raf-white;
+}
+
+body {
+	font-size:12px;
+/*	-webkit-user-select:none;*/
+    -webkit-text-size-adjust:none;
+	font-family: OpenSans;
+	background:#a00;
+}
+
+.nav {
+    position: absolute;
+    text-align: left;
+    padding-left: 20px;
+}
+
+#header-text {
+    position: absolute;
+    text-align: center;
+    font-size: 24pt;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+#header {
+    padding-top: 35px;
+    height: @header-height;
+	font-family: NexaLight;
+	display:block;
+	background: @light-blue;
+    color: @raf-white;
+	font-size:2em; font-weight:bold;
+	// text-align:center;
+}
+
+#wrapper {
+	position:absolute;
+	z-index:1;
+	top: @header-height; bottom:0;
+	width: 100%;
+
+	background:#aaa;
+	overflow:hidden;
+}
+
+#slider {
+	position:relative;
+	z-index:1;
+	float:left;
+	width: 400%;
+
+	font-size:2em;
+	-webkit-transform:translate3d(0,0,0);
+}
+
+.page {
+	-webkit-box-sizing:border-box;
+	position:relative;
+	z-index:2;
+	display:block;
+	float:left;
+
+	width: 25%;
+	background:#fff;
+	-webkit-transform:translate3d(0,0,0);
+}
+
+.scroller {
+/*	display:block; float:left;
+	width:100%;*/
+}
+
+p { margin-bottom:1.2em; }
+

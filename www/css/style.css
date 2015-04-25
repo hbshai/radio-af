@@ -24,22 +24,101 @@ p {
 #spotlight-img {
   width: 100%;
   margin: 0;
+  padding: 0;
+  margin-bottom: -7px;
+}
+#spotlight-ep {
+  font-size: 1em;
+}
+#spotlight-time {
+  font-size: 0.75em;
+  font-weight: bold;
 }
 .spotlight-container {
-  margin-top: -110px;
-  height: 104px;
   position: absolute;
+  margin-top: -110px;
+  height: 110px;
   width: 100%;
-  opacity: 0.85;
+  opacity: 0.95;
   background-color: #1c1c1c;
   color: #f2f2f2;
+}
+#spotlight-play {
+  position: absolute;
+  display: inline-block;
+  height: 110px;
+  width: 110px;
+  background-color: #e05a5a;
+  background-image: url("/img/play.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.spotlight-text-container {
+  position: absolute;
+  display: inline-block;
+  margin-top: 4px;
+  margin-left: 120px;
+}
+#spotlight-dl {
+  display: inline-block;
+  float: right;
+  margin-top: -5px;
+  margin-right: 10px;
+  height: 110px;
+  width: 110px;
+  background-image: url("/img/dl-box.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+/* PODD STUFF */
+#podd {
+  height: 100px;
+  width: 100%;
+}
+#podd-img {
+  position: absolute;
+  height: 100px;
+  display: inline-block;
+}
+.podd-text {
+  position: absolute;
+  display: inline-block;
+  font-size: 0.85em;
+  width: 100%;
+  margin-left: 150px;
+}
+#podd-play {
+  float: right;
+  display: inline-block;
+  margin-top: 20px;
+  margin-right: 20px;
+  height: 60px;
+  width: 80px;
+  background-color: #e05a5a;
+  background-image: url("/img/play-small.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+#podd-dl {
+  float: right;
+  display: inline-block;
+  margin-top: 15px;
+  margin-left: 40px;
+  height: 60px;
+  width: 100px;
+  background-image: url("/img/dl-box-blue.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.alternating {
+  background-color: #eeeeee;
 }
 body {
   font-size: 12px;
   /*	-webkit-user-select:none;*/
   -webkit-text-size-adjust: none;
   font-family: OpenSans;
-  background: #a00;
+  background: #0a0;
 }
 .nav {
   position: absolute;
@@ -53,12 +132,23 @@ body {
   text-transform: uppercase;
   width: 100%;
 }
-#header {
-  padding-top: 35px;
-  height: 90px;
-  font-family: NexaLight;
+#title-bar {
   display: block;
+  width: 100%;
+  text-transform: uppercase;
+  text-align: center;
+  padding-top: 25px;
+  height: 50px;
+  font-family: NexaLight;
   background: #52bef6;
+  color: #f2f2f2;
+  font-size: 1.5em;
+}
+#menu-btn {
+  background-color: #00f;
+  position: fixed;
+  z-index: 2;
+  margin-top: 35px;
   color: #f2f2f2;
   font-size: 2em;
   font-weight: bold;
@@ -66,7 +156,7 @@ body {
 #wrapper {
   position: absolute;
   z-index: 1;
-  top: 90px;
+  top: 0;
   bottom: 0;
   width: 100%;
   background: #aaa;
@@ -87,7 +177,7 @@ body {
   display: block;
   float: left;
   width: 25%;
-  background: #fff;
+  background: #f2f2f2;
   -webkit-transform: translate3d(0, 0, 0);
 }
 .scroller {

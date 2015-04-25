@@ -79,7 +79,7 @@ body,ul,li,h1,h2,p {
     display: inline-block;
     float: right;
     margin-top: -5px;
-    margin-right: 10px;
+    margin-right: 3px;
     height: @spot-container;
     width: @spot-container;
     background-image: url("/img/dl-box.png");
@@ -176,16 +176,44 @@ body {
 }
 
 #menu-btn {
-    background-color: #00f;
     position: fixed;
     z-index: 2;
     margin-top: 35px;
-    // height: @header-height;
-    color: @raf-white;
-	font-size:2em; font-weight:bold;
-	// text-align:center;
 }
 
+/* FOOTER STUFF */
+@footer-height: 120px;
+#footer {
+    position: fixed;
+    z-index: 2;
+    width: 100%;
+    bottom: 0;
+    height: @footer-height;
+    background-color: @dark-blue;
+    color: @raf-white;
+}
+#footer-img {
+    position: absolute;
+    height: @footer-height;
+    display: inline-block;
+}
+#footer-title {
+}
+.footer-text-container {
+    display: inline-block;
+    margin-top: 12px;
+    margin-left: @footer-height + 65px; // spacing for footer img btn
+	font-size:1.75em; font-weight:bold;
+}
+#footer-btn {
+    float: right;
+    display: inline-block;
+    height: @footer-height;
+    width: @footer-height;
+    background-image: url("/img/pause.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
 #wrapper {
 	position:absolute;
 	z-index:1;

@@ -63,7 +63,7 @@ p {
   display: inline-block;
   float: right;
   margin-top: -5px;
-  margin-right: 10px;
+  margin-right: 3px;
   height: 110px;
   width: 110px;
   background-image: url("/img/dl-box.png");
@@ -145,13 +145,40 @@ body {
   font-size: 1.5em;
 }
 #menu-btn {
-  background-color: #00f;
   position: fixed;
   z-index: 2;
   margin-top: 35px;
+}
+/* FOOTER STUFF */
+#footer {
+  position: fixed;
+  z-index: 2;
+  width: 100%;
+  bottom: 0;
+  height: 120px;
+  background-color: #1e577d;
   color: #f2f2f2;
-  font-size: 2em;
+}
+#footer-img {
+  position: absolute;
+  height: 120px;
+  display: inline-block;
+}
+.footer-text-container {
+  display: inline-block;
+  margin-top: 12px;
+  margin-left: 185px;
+  font-size: 1.75em;
   font-weight: bold;
+}
+#footer-btn {
+  float: right;
+  display: inline-block;
+  height: 120px;
+  width: 120px;
+  background-image: url("/img/pause.png");
+  background-repeat: no-repeat;
+  background-position: center;
 }
 #wrapper {
   position: absolute;

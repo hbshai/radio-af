@@ -310,7 +310,7 @@ body {
         margin-top: -@spotlight-height;
         height:  (@spotlight-height);
         width: 100%;
-        opacity: 0.8;
+        opacity: 0.95;
         background-color: @raf-black;
         color: @raf-white;
     }
@@ -402,6 +402,37 @@ body {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 31.5px 38.5px;
+    }
+
+
+    /* FAV STUFF */
+    @fav-width: 140px;
+    .fav {
+        display: inline-block; 
+        width: @fav-width;
+        margin-top: 15px;
+        margin-left: 7.5px;
+        margin-right: 7.5px
+    }
+    .fav-container {
+        width: 100%;
+        text-align: center;
+    }
+
+    .fav-img {
+        display: inline-block; 
+        width: @fav-width;
+    }
+
+    .fav-title {
+        width: @fav-width;
+        background-color: @raf-red;
+        margin-top: -5px;
+        color: @raf-white;
+        text-align: center;
+        font-size: 1.3em;
+        padding-top: 5px;
+        padding-bottom: 5px;
     }
 
 

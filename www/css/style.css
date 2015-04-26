@@ -252,7 +252,7 @@ body {
     margin-top: -60px;
     height: 60px;
     width: 100%;
-    opacity: 0.8;
+    opacity: 0.95;
     background-color: #1c1c1c;
     color: #f2f2f2;
   }
@@ -333,6 +333,32 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 31.5px 38.5px;
+  }
+  /* FAV STUFF */
+  .fav {
+    display: inline-block;
+    width: 140px;
+    margin-top: 15px;
+    margin-left: 7.5px;
+    margin-right: 7.5px;
+  }
+  .fav-container {
+    width: 100%;
+    text-align: center;
+  }
+  .fav-img {
+    display: inline-block;
+    width: 140px;
+  }
+  .fav-title {
+    width: 140px;
+    background-color: #e05a5a;
+    margin-top: -5px;
+    color: #f2f2f2;
+    text-align: center;
+    font-size: 1.3em;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
   .alternating {
     background-color: #eeeeee;

@@ -1,3 +1,5 @@
+npm install gulp
+
 cd ..
 
 phonegap create -n "Radio AF" -i "se.designbyshai.radioaf" radio-af-app

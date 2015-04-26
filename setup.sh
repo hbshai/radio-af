@@ -1,4 +1,8 @@
 npm install gulp
+npm intall gulp-less
+npm intall gulp-concat
+npm intall gulp-jade
+npm install del
 
 cd ..
 

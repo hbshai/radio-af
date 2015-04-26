@@ -171,22 +171,22 @@ html
                     occaecat cupidatat non proident, sunt in culpa qui officia
                     deserunt mollit anim id est laborum.
   
-        script(src="cordova.js")
-        script(src="js/vendor/jquery-2.1.3.min.js")
-        script(src="js/vendor/fastclick.js")
-        script(src="js/rss.js")
-        script(src="js/scroller.js")
-        script(src="js/audiop.js")
-        script(src="js/index.js")
-        script.
-           app.initialize();
-           app.onStart = function () {
-               console.log('onstart')
-               app.audiop.loadMedia('http://pod.radioaf.se/2015vt/20150413_7680222491.mp3');
-               //app.audiop.play();
+      script(src="cordova.js")
+      script(src="js/vendor/jquery-2.1.3.min.js")
+      script(src="js/vendor/fastclick.js")
+      script(src="js/rss.js")
+      script(src="js/scroller.js")
+      script(src="js/audiop.js")
+      script(src="js/index.js")
+      script.
+         app.initialize();
+         app.onStart = function () {
+             console.log('onstart')
+             app.audiop.loadMedia('http://pod.radioaf.se/2015vt/20150413_7680222491.mp3');
+             //app.audiop.play();
 
-               FastClick.attach(document.body);
-               //app.scroller = new Scroll('#wrapper');
+             FastClick.attach(document.body);
+             //app.scroller = new Scroll('#wrapper');
 
-               rss.load('http://www.radioaf.se/program/correcto/feed/', 25, rss.parse)
-           }
+             rss.load('http://www.radioaf.se/program/correcto/feed/', 25, rss.parse)
+         }

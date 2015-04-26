@@ -107,6 +107,7 @@ body,ul,li,h1,h2,p {
     font-size: 0.85em;
     width: 100%;
     margin-left: 150px;
+
 }
 
 @play-margin: 40px;
@@ -129,7 +130,7 @@ body,ul,li,h1,h2,p {
     margin-left: @play-margin;
     height: @podd-height - @play-margin;
     width: @podd-height;
-    background-image: url("/img/dl-box-blue.png");
+    background-image: url("/img/dl-boxx.png");
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -370,18 +371,20 @@ body {
         display: inline-block;
         font-size: 0.9em;
         width: 130px;
+        height: @podd-height - 6px;
         margin-left: @podd-height + 32px;
         margin-top: 3px;
+        background-image: url("/img/chevron-down.png");
+        background-repeat: no-repeat;
+        background-position: 70% bottom;
     }
 
     @play-margin: 30px;
     #podd-play {
         float: right;
         display: inline-block;
-        // margin-top: @play-margin / 2;
-        // margin-right: @play-margin / 2; 
         margin-left: -10px;
-        margin-right: 5px;
+        margin-right: 10px;
         height: @podd-height - 35px;
         width: @podd-height - 30px;
         background-color: @raf-red;
@@ -398,7 +401,7 @@ body {
         margin-left: @play-margin;
         height: @podd-height - @play-margin;
         width: @podd-height;
-        background-image: url("/img/dl-box-blue.png");
+        background-image: url("/img/dl-boxx.png");
         background-repeat: no-repeat;
         background-position: center;
         background-size: 31.5px 38.5px;
@@ -412,11 +415,12 @@ body {
         width: @fav-width;
         margin-top: 15px;
         margin-left: 7.5px;
-        margin-right: 7.5px
+        margin-right: 7.5px;
     }
     .fav-container {
         width: 100%;
         text-align: center;
+        font-family: NexaLight;
     }
 
     .fav-img {
@@ -427,12 +431,12 @@ body {
     .fav-title {
         width: @fav-width;
         background-color: @raf-red;
-        margin-top: -5px;
+        margin-top: -4px;
         color: @raf-white;
         text-align: center;
-        font-size: 1.3em;
-        padding-top: 5px;
-        padding-bottom: 5px;
+        font-size: 1.5em;
+        padding-top: 10px;
+        padding-bottom: 7px;
     }
 
 

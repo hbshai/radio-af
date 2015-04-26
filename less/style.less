@@ -439,6 +439,56 @@ body {
         padding-bottom: 7px;
     }
 
+    /* ALLA PROGRAM STUFF */
+    @program-height: 70px;
+    .program-tabs {
+        width: 100%;
+        color: @raf-white;
+        font-size: 1.5em;
+    }
+
+    .program-img {
+        height: @program-height;
+    }
+    .program {
+        height: @program-height;
+        background-image: url("/img/chevron-right.png");
+        background-repeat: no-repeat;
+        background-position: 95% center;
+    }
+    .program-text-container {
+        position: absolute;
+        margin-top: 5px;
+        margin-left: 5px;
+        height: @program-height - 5px;
+        display: inline-block;
+    }
+    .program-title {
+        font-size: 1.5em;
+    }
+
+    .program-base {
+        display: inline-block;
+        width: 50%;
+        text-align: center;
+    }
+
+    .program-active {
+        .program-base();
+        background-color: @raf-red;
+    }
+
+    .program-inactive {
+        .program-base();
+        background-color: @dark-blue;
+    }
+
+    .program-letter {
+        width: 100%;
+        font-size: 3em;
+        text-transform: uppercase;
+        margin-left: 10px;
+    }
 
     .alternating {
         background-color: @off-white;
@@ -450,14 +500,6 @@ body {
         -webkit-text-size-adjust:none;
         font-family: OpenSans;
         background: #0a0; // bg displays green, helps with debugging v0v
-    }
-
-    #header-text {
-        position: absolute;
-        text-align: center;
-        font-size: 24pt;
-        text-transform: uppercase;
-        width: 100%;
     }
 
     #title-bar {

@@ -4,10 +4,10 @@
  */
 
 (function(){
-var m = Math,
-	vendor = (/webkit/i).test(navigator.appVersion) ? 'webkit' :
-		(/firefox/i).test(navigator.userAgent) ? 'Moz' :
-		'opera' in window ? 'O' : '',
+	var m = Math,
+		vendor = (/webkit/i).test(navigator.appVersion) ? 'webkit' :
+				(/firefox/i).test(navigator.userAgent) ? 'Moz' :
+				'opera' in window ? 'O' : '',
 
 	// Browser capabilities
 	has3d = 'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix(),
@@ -106,8 +106,8 @@ var m = Math,
 		that.changeTarget(that.pages[that.currentPage]);
 
 		that._bind(RESIZE_EV, window);
-		that._bind(START_EV);
-//		if (!hasTouch) that._bind('mouseout', that.wrapper);
+		that.d(START_EV);
+//		if (!hasTouch) that.d('mouseout', that.wrapper);
 	};
 
 // Prototype
@@ -116,28 +116,41 @@ TWIS.prototype = {
 	x: 0,
 	y: 0,
 	steps: [],
+	justCalledEnd : false,
 	
 	handleEvent: function (e) {
 		var that = this;
 		
+		console.log(e.touches.length + ' ' + e.type + ' ' + e.targetTouches.length + ' ' + e.changedTouches.length)
+		//if (e.touches.length > 1)
+		//	return;
+		
+		///if (e.touches.length === 1 && e.type === "touchend")
+		///	return;
+
 		// ignore events while transitioning between pages
 		if (that.animating && that.dirX === 0 && that.dirY === 0) {
 			//alert("ignored event")
 			return
 		}
 
+		console.log('i am live')
+
 		switch(e.type) {
 			case START_EV:
 				if (!hasTouch && e.button !== 0) {
 					return;
 				}
+				console.log('start')
+				justCalledEnd = false;
 				that._start(e);
 				break;
 			case MOVE_EV:
-				if (e.movementY && that.absDistX > that.absDistY)
+				console.log(Object.keys(e.touches[0]) + " " + that.absDistX + " " + that.absDistY)
+				if (that.absDistX > that.absDistY)
 					return;
 				that._move(e); break;
-			case END_EV:
+			case END_EV: console.log('end')
 			case CANCEL_EV: that._end(e); break;
 			case RESIZE_EV: that._resize(); break;
 			case 'mouseout': that._mouseout(e); break;
@@ -219,9 +232,9 @@ TWIS.prototype = {
 
 		if (that.options.onScrollStart) that.options.onScrollStart.call(that, e);
 
-		that._bind(MOVE_EV);
-		that._bind(END_EV);
-		that._bind(CANCEL_EV);
+		that.d(MOVE_EV);
+		that.d(END_EV);
+		that.d(CANCEL_EV);
 	},
 	
 	_move: function (e) {
@@ -272,6 +285,7 @@ TWIS.prototype = {
 		that.dirX = deltaX > 0 ? -1 : deltaX < 0 ? 1 : 0;
 		that.dirY = deltaY > 0 ? -1 : deltaY < 0 ? 1 : 0;
 
+		
 		if (timestamp - that.startTime > 300) {
 			that.startTime = timestamp;
 			that.startX = that.x;
@@ -432,7 +446,7 @@ TWIS.prototype = {
 			that._transitionTime(step.time);
 			that._pos(step.x, step.y);
 			that.animating = false;
-			if (step.time) that._bind('webkitTransitionEnd', that.scroller);
+			if (step.time) that.d('webkitTransitionEnd', that.scroller);
 			else that._resetPos(0);
 			return;
 		}

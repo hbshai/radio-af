@@ -193,7 +193,8 @@ body {
   float: left;
   width: 400%;
   font-size: 2em;
-  -webkit-transform: translate3d(0, 0, 0);
+  -webkit-transform:translate3d(0,0,0);
+  transform: translate3d(0,0,0);
 }
 .page {
   -webkit-box-sizing: border-box;
@@ -201,9 +202,9 @@ body {
   z-index: 2;
   display: block;
   float: left;
-  width: 25%;
   background: #f2f2f2;
-  -webkit-transform: translate3d(0, 0, 0);
+  -webkit-transform:translate3d(0,0,0);
+  transform: translate3d(0,0,0);
 }
 @media (max-width: 414px) {
   /* DEFINES */

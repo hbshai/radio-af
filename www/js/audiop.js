@@ -1,6 +1,5 @@
-// AudioPlayer : play, pause, next, seek, currentPos, duration
-// This just operates on the audio queue class
-var audiop = function(queue) {
+// AudioPlayer : play, pause, loadMedia, seek, currentPos, duration
+var audiop = function() {
   var self = this;
 
   var _media = null,
@@ -13,8 +12,8 @@ var audiop = function(queue) {
   }
 
   this.play = function (onUpdate) {
-    if (!_media) return new Error('No media');
-    if (!_paused) return new Error('Already playing');
+    if (!_media) return console.err('No media.');
+    if (!_paused) return console.err('Already playing.');
 
     _media.play({ /* super secret options here */ });
     _id = setInterval(trackProgress, 100);
@@ -22,26 +21,23 @@ var audiop = function(queue) {
     _callb = onUpdate;
   }
 
-  // Load next track, will try to release the old one unless prohibited.
-  this.next = function (noRelease) {
+  // liveplayer
+  // http://live.radioaf.se:8000/;stream/1
+
+  // Load  track, will try to release the old one.
+  this.loadMedia = function (src, autoPlay) {
     // We cannot know if media is playing, so stop it b/c safety's first!
     // (No one knows what happens when releasing a playing media...)
-    if (_media && !noRelease) {
+    if (_media) {
       _media.stop();
       _media.release();
     }
 
-    // Bail before or after release clause?
-    if (queue.length === 0) return new Error('Empty play queue')
-
-    // The queue returns Media objects, da real mvp.
-    _media = queue.shift();
+    _media = new Media(src, self.onSuccess, self.onError)
+    console.log(_media)
   }
 
   this.pause = function () {
-    if (!_media) return new Error('No media');
-    if (_paused) return new Error('Already paused');
-
     _paused = true;
 
     // Only do the pause if we have something to pause.
@@ -57,7 +53,7 @@ var audiop = function(queue) {
     }
   }
 
-  this.paused = function () {
+  this.isPaused = function () {
     return _paused;
   }
 
@@ -65,4 +61,7 @@ var audiop = function(queue) {
   this.playImmediate = function (src) {
 
   }
+
+  function onSuccess(){ console.log('Loaded media.'); }
+  function onError(){ console.err('Did not load media.'); }
 }

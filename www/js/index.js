@@ -22,7 +22,7 @@ var app = {
         this.bindEvents();
 
         //app.audioq = new audioq();
-        //app.audiop = new audiop();
+        app.audiop = new audiop();
 
         app.time = Date.now();
     },
@@ -41,11 +41,14 @@ var app = {
 
     // deviceready Event Handler
     onDeviceReady: function() {
+        if (app.bootTime) return;
+        
         app.bootTime = (Date.now() - app.time);
-        app.scroller = new TWIS('#wrapper');
+        app.scroller = new Scroll('#wrapper');
 
         document.removeEventListener('deviceready', app.onDeviceReady, false);
 
         app.log('deviceReady')
+        app.onStart();
     },
 };

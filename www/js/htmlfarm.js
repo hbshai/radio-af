@@ -103,6 +103,65 @@
 
     }() );
 
+    // This creates the view for a particular program; i.e the one that pops up
+    // when you click on a favourite pod, or on a program listed in the "Alla program"
+    // view
+    function createProgramView(podcasts) {
+        var firstPod = podcasts[0];
+        var counter = 0;
+        var $page = $(document.createElement("div"));
+        $page.addClass("page");
+        $page.attr("id", "program");
+
+        // create the following structure:
+        // div.spotlight-container
+              // div#spotlight-play 
+              // div.spotlight-text-container
+              //     div#spotlight-title Studentaftonpodden
+              //     div#spotlight-ep Anna Kinberg Batra
+              //     div#spotlight-time 77 min
+              // div#spotlight-dl
+
+              // create the spotlight div
+        var $spotlight = $(document.createElement("div")).addClass("spotlight");
+        $spotlight.append($(document.createElement("img")).attr("id", "spotlight-img").attr("src", firstPod.programImage));
+
+
+        // create the text component of the spotlight
+        var $spotlightText = $(document.createElement("div")).addClass("spotlight-text-container");
+        $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-title").text(firstPod.program));
+        $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-ep").text(firstPod.title));
+        $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-time").text(firstPod.duration + " min"));
+
+        var $spotlightContainer = $(document.createElement("div")).addClass("spotlight-container");
+        $spotlightContainer.append($(document.createElement("div")).attr("id", "spotlight-play"));
+        $spotlightContainer.append($spotlightText);
+        $spotlightContainer.append($(document.createElement("div")).attr("id", "spotlight-dl"));
+        $spotlight.append($spotlightContainer);
+
+        // create the title-bar div
+        var $titleBar = $(document.createElement("div"));
+        $titleBar.addClass("title-bar");
+        $titleBar.text(firstPod.author);
+
+        var $poddContainer = $(document.createElement("div")).addClass("podd-container");
+
+        podcasts.forEach(function(podcast){
+            // we already used the first pod for the spotlight!
+            if (podcast === firstPod) {
+                return;
+            }
+            counter = (counter + 1) % 2;
+            $poddContainer.append(createPodcastDiv(podcast, false, counter === 0));
+        });
+        // append all the children to the parent div page
+        $page.append($spotlight);
+        $page.append($titleBar);
+        $page.append($poddContainer);
+        // return the complete DOM tree
+        return $page[0];
+    }
+
     // podcast : podcast to generate
     // doTitle : generate a podd-title div?
     // alternate : append .alternating class?
@@ -118,10 +177,10 @@
             el('div.podd-text', [
                 // Add podcast author if requested, otherwise leave it out.
                 doTitle ? el('div#podd-title', [ podcast.author ]) : undefined,
-                el('div#pod-ep', [ podcast.title ]),
+                el('div#podd-ep', [ podcast.title ]),
                 el('div#podd-time', [ podcast.duration + ' min' ])
             ]),
-            el('div#podd-play'),
+            el('div.podd-control.play'),
             el('div#podd-dl')
         ])
         /**
@@ -153,9 +212,9 @@
         miniPod : function (podcast, alternate) { 
             return createPodcastDiv(podcast, true, alternate)
         },
-        // huehuehuehue
         feedPod : function (podcast, alternate) {
             return createPodcastDiv(podcast, false, alternate)
-        }
+        },
+        programView : createProgramView
     };
 })(window)

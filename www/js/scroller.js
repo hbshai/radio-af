@@ -156,7 +156,7 @@
                 targetIndex++
 
             this.pages.splice(targetIndex, 0, el);
-
+            console.log(targetIndex, targetEl, el);
             if (after)
                 this.slider.insertBefore(el, targetEl.nextSibling)
             else
@@ -219,6 +219,12 @@
 
             if (this.y !== y || force)
                 this.scroller.style[VENDOR_TRANSFORM] = 'translate3d(0,' + y + 'px,0)';
+            // set header fixed
+            if (this.y <= -220) {
+                $("#title-bar-fixed").show();
+            } else {
+                $("#title-bar-fixed").hide();
+            }
 
             this.x = x;
             this.y = y;
@@ -248,7 +254,7 @@
             // record time when finger first makes contact with surface
             this.startTime = this.lastTouchTime = Date.now() 
             this.momentumY = this.screenY;
-
+            console.log(e.target.id);
             console.log('==========================================')
         },
 
@@ -341,12 +347,12 @@
                 outsideY = this.height - this.y;
 
             // Fix pos if scrolled outside
-            if (outsideX != 0 || outsideY != 0)
-                this.resetXY(outsideX || (-(this.currentPage) * window.innerWidth - this.x), outsideY)
-            else if (totalX <= -0.2 * window.innerWidth)
+            if (totalX <= -0.2 * window.innerWidth)
                 this.nextPage(); // this will animate to correct pos
             else if (totalX >= 0.2 * window.innerWidth)
                 this.prevPage(); // this will animate to correct pos
+            else if (outsideX != 0 || outsideY != 0)
+                this.resetXY(outsideX || (-(this.currentPage) * window.innerWidth - this.x), outsideY)
             else {
                 // User scrolled some, but not outside and not enough to
                 // change page. Do the x-reset. Otherwise scroll on!

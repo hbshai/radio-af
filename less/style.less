@@ -6,6 +6,11 @@
 @off-white: #eeeeee;
 @title-bar-height: 50px;
 
+// remove android highlighting on click/focus
+* {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
+    -webkit-tap-highlight-color: transparent;  // i.e. Nexus5/Chrome and Kindle Fire HD 7''
+}
 
 html, body {
 	height:100%;
@@ -87,8 +92,94 @@ body,ul,li,h1,h2,p {
     background-position: center;
 }
 
-@podd-height: 100px;
+/* ALLA PROGRAM STUFF */
+@program-height: 100px;
+.program-tabs {
+    width: 100%;
+    color: @raf-white;
+    font-size: 1.5em;
+}
 
+.program-img {
+    height: @program-height;
+}
+.program {
+    height: @program-height;
+    background-image: url("/img/chevron-right.png");
+    background-repeat: no-repeat;
+    background-position: 95% center;
+}
+.program-text-container {
+    position: absolute;
+    margin-top: 5px;
+    margin-left: 5px;
+    height: @program-height - 5px;
+    display: inline-block;
+}
+.program-title {
+    font-size: 1.3em;
+}
+
+.program-base {
+    display: inline-block;
+    width: 50%;
+    text-align: center;
+}
+
+.program-active {
+    .program-base();
+    background-color: @raf-red;
+}
+
+.program-inactive {
+    .program-base();
+    background-color: @dark-blue;
+}
+
+.program-letter {
+    width: 100%;
+    font-size: 3em;
+    text-transform: uppercase;
+    margin-left: 10px;
+}
+
+.alternating {
+    background-color: @off-white;
+}
+
+/* FAV STUFF */
+@fav-width: 325px;
+.fav {
+    display: inline-block; 
+    width: @fav-width;
+    margin-top: 15px;
+    margin-left: 7.5px;
+    margin-right: 7.5px;
+}
+.fav-container {
+    margin-top: 15px;
+    width: 100%;
+    text-align: center;
+    font-family: NexaLight;
+}
+
+.fav-img {
+    display: inline-block; 
+    width: @fav-width;
+}
+
+.fav-title {
+    width: @fav-width;
+    background-color: @raf-red;
+    margin-top: -6px;
+    color: @raf-white;
+    text-align: center;
+    font-size: 1.5em;
+    padding-top: 12px;
+    padding-bottom: 7px;
+}
+
+@podd-height: 100px;
 /* PODD STUFF */
 .podd {
     height: 100px;
@@ -108,10 +199,16 @@ body,ul,li,h1,h2,p {
     width: 100%;
     margin-left: 150px;
 
+    height: @podd-height - 6px;
+    margin-top: 3px;
+    background-image: url("/img/chevron-down.png");
+    background-repeat: no-repeat;
+    background-position: 35% bottom;
 }
 
 @play-margin: 40px;
-#podd-play {
+
+.podd-control {
     float: right;
     display: inline-block;
     margin-top: @play-margin / 2;
@@ -122,8 +219,22 @@ body,ul,li,h1,h2,p {
     background-image: url("/img/play-small.png");
     background-repeat: no-repeat;
     background-position: center;
+
 }
-#podd-dl {
+.play {
+    background-image: url("/img/play-small.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.pause {
+    background-image: url("/img/pause-small.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+.podd-dl {
     float: right;
     display: inline-block;
     margin-top: 15px;
@@ -158,8 +269,15 @@ body {
     text-transform: uppercase;
     width: 100%;
 }
+#title-bar-fixed {
+    .title-bar();
+    display: none;
+    position: fixed;
+    top: 0;
+    z-index: 2;
+}
 
-#title-bar {
+.title-bar {
 	display:block;
     width: 100%;
     text-transform: uppercase;
@@ -170,16 +288,21 @@ body {
 	font-family: NexaLight;
 	background: @light-blue;
     color: @raf-white;
-	font-size:1.5em; 
+	font-size: 32pt; 
+    // font-size: 1.5em;
 }
 
 #menu-btn {
     position: fixed;
-    z-index: 2;
-    margin-top: 35px;
-    position: absolute;
+    z-index: 3;
+    margin-top: 25px;
+    margin-left: 20px;
     text-align: left;
-    padding-left: 20px;
+    height: @spotlight-height;
+    width: @spotlight-height;
+    background-image: url("/img/navicon.png");
+    background-repeat: no-repeat;
+    // background-size: 28px 19.6px;
 }
 
 /* FOOTER STUFF */
@@ -211,7 +334,16 @@ body {
     display: inline-block;
     height: @footer-height;
     width: @footer-height;
-    background-image: url("/img/pause.png");
+}
+
+.footer-play {
+    background-image: url("/img/footer-pause.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.footer-pause {
+    background-image: url("/img/footer-play.png");
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -246,11 +378,19 @@ body {
 	width: 25%;
 	background: @raf-white;
 	-webkit-transform:translate3d(0,0,0);
+    // adjust page height: add height of footer
+    padding-bottom: @footer-height + 25px;
 }
 
 
 // iphone 6+ reported width (double pixel count in reality)
 @media (max-width: 414px) {
+
+    // remove android highlighting on click/focus
+    * {
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
+        -webkit-tap-highlight-color: transparent;  // i.e. Nexus5/Chrome and Kindle Fire HD 7''
+    }
     /* DEFINES */
     @light-blue: #52bef6;
     @dark-blue: #1e577d;
@@ -337,7 +477,7 @@ body {
     #spotlight-dl {
         display: inline-block;
         float: right;
-        margin-top: -5px;
+        margin-top: -3px;
         margin-right: 3px;
         height: @spotlight-height;
         width: @spotlight-height;
@@ -349,7 +489,7 @@ body {
 
 
     /* PODD STUFF */
-    #podd {
+    .podd {
         height: @podd-height;
         width: 100%;
     }
@@ -379,8 +519,7 @@ body {
         background-position: 70% bottom;
     }
 
-    @play-margin: 30px;
-    #podd-play {
+    .podd-control {
         float: right;
         display: inline-block;
         margin-left: -10px;
@@ -388,13 +527,23 @@ body {
         height: @podd-height - 35px;
         width: @podd-height - 30px;
         background-color: @raf-red;
+    }
+    @play-margin: 30px;
+    .play {
         background-image: url("/img/play-small.png");
         background-repeat: no-repeat;
         background-position: center;
         background-size: 14.5px 18px;
     }
 
-    #podd-dl {
+    .pause {
+        background-image: url("/img/pause-small.png");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 14.5px 18px;
+    }
+
+    .podd-dl {
         float: right;
         display: inline-block;
         margin-top: 14px;
@@ -502,7 +651,8 @@ body {
         background: #0a0; // bg displays green, helps with debugging v0v
     }
 
-    #title-bar {
+    .title-bar {
+        position: -webkit-sticky;
         display:block;
         width: 100%;
         text-transform: uppercase;
@@ -559,7 +709,16 @@ body {
         // display: inline-block;
         height: @footer-height;
         width: @footer-height - 5px;
-        background-image: url("/img/pause.png");
+    }
+    .footer-play {
+        background-image: url("/img/footer-pause.png");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 37.5px 37.5px;
+    }
+
+    .footer-pause {
+        background-image: url("/img/footer-play.png");
         background-repeat: no-repeat;
         background-position: center;
         background-size: 37.5px 37.5px;
@@ -594,5 +753,7 @@ body {
         width: 25%;
         background: @raf-white;
         -webkit-transform:translate3d(0,0,0);
+        // adjust page height: add height of footer
+        padding-bottom: @footer-height + 25px;
     }
 }

@@ -57,14 +57,16 @@
     trnClose = has3d ? ',0)' : ')',
 
     // Constructor
-    Scroll = function (wrapper) {
-        var that = this,
-            doc = document,
-            i;
+    Scroll = function (wrapper, miniPlayerHeight, headerOffset) {
+        var that = this;
 
-        console.log('INIT')
+        // The mini player eats some space
+        that.offsetHeight = miniPlayerHeight || 0;
+        that.headerOffset = headerOffset || 0;
 
-        that.wrapper = doc.querySelector(wrapper);
+        console.log('SCROLLER INIT')
+
+        that.wrapper = document.querySelector(wrapper);
         that.wrapper.style.overflow = 'hidden';
 
         // Default options
@@ -73,41 +75,8 @@
             pages: wrapper + ' > div > div',
         };
 
-        that.slider = doc.querySelector(that.options.slider);
-        var pages = doc.querySelectorAll(that.options.pages);
-
-        // copy NodeList to Array
-        that.pages = new Array(pages.length)
-        for(var i = -1, l = pages.length; ++i !== l; that.pages[i] = pages[i]);
-
-        var windowWidth = window.innerWidth,
-            pageWidth = windowWidth + 'px';
-
-        that.slider.style.width = that.pages.length * windowWidth + 'px';
-        for (var i = 0; i < that.pages.length; i++)
-            that.pages[i].style.width = pageWidth;
-
-        $('#superButtonPush').on('click', function(e){
-            var node = that.pages[3].cloneNode(true),
-                index = that.insertPage(node, that.pages[that.currentPage], true)
-                that.pages[index].offsetHeight; // reflow page
-            setTimeout(function (){
-                that.gotoPage(index)
-            }, 0)
-        })
-
-        $('#superButtonNew').on('click', function(e){
-            var node = that.pages[3].cloneNode(true),
-                index = that.insertPage(node, that.pages[that.currentPage], true)
-        })
-
-        window.removePageHandler = function(e){
-            var node = e.target.parentNode;
-            that.removePage(node)
-        }
-
-        that.currentPage = 0;
-        that.changeTarget(that.pages[that.currentPage]);
+        that.slider = document.querySelector(that.options.slider);
+        that.refreshPages();
 
         that.wrapper.addEventListener(START_EV, this.touchStart.bind(this), false)
         that.wrapper.addEventListener(MOVE_EV, this.touchMove.bind(this), false)
@@ -143,6 +112,25 @@
         // bound versions of the functions for extra nice ice cream
         MOMENTUM_RENDER : undefined, ANIMATION_RENDER : undefined,
 
+        refreshPages : function (){
+            var that = this;
+
+            var pages = document.querySelectorAll(that.options.pages);
+
+            // copy NodeList to Array
+            that.pages = new Array(pages.length)
+            for(var i = -1, l = pages.length; ++i !== l; that.pages[i] = pages[i]);
+            var windowWidth = window.innerWidth,
+                pageWidth = windowWidth + 'px';
+
+            that.slider.style.width = that.pages.length * windowWidth + 'px';
+            for (var i = 0; i < that.pages.length; i++)
+                that.pages[i].style.width = pageWidth;
+
+            that.currentPage = that.currentPage || 0;
+            that.changeTarget(that.pages[that.currentPage]);
+        },
+
         // insert a new page into the dom, returns the page index of it
         // insert el before or after targetEl
         insertPage : function (el, targetEl, after) {
@@ -156,7 +144,6 @@
                 targetIndex++
 
             this.pages.splice(targetIndex, 0, el);
-            console.log(targetIndex, targetEl, el);
             if (after)
                 this.slider.insertBefore(el, targetEl.nextSibling)
             else
@@ -347,12 +334,12 @@
                 outsideY = this.height - this.y;
 
             // Fix pos if scrolled outside
-            if (totalX <= -0.2 * window.innerWidth)
+            if (outsideX != 0 || outsideY != 0)
+                this.resetXY(outsideX || (-(this.currentPage) * window.innerWidth - this.x), outsideY)
+            else if (totalX <= -0.2 * window.innerWidth)
                 this.nextPage(); // this will animate to correct pos
             else if (totalX >= 0.2 * window.innerWidth)
                 this.prevPage(); // this will animate to correct pos
-            else if (outsideX != 0 || outsideY != 0)
-                this.resetXY(outsideX || (-(this.currentPage) * window.innerWidth - this.x), outsideY)
             else {
                 // User scrolled some, but not outside and not enough to
                 // change page. Do the x-reset. Otherwise scroll on!
@@ -471,6 +458,10 @@
 
             // Figure out new height because each page can be of different height
             this.height = this.wrapper.clientHeight - this.scroller.offsetHeight;
+            this.height -= this.offsetHeight;
+
+            if (this.height > 0)
+                this.height = 0;
         }
     }
 

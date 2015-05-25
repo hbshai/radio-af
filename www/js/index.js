@@ -41,13 +41,7 @@ var app = {
 
     // deviceready Event Handler
     onDeviceReady: function() {
-        if (app.bootTime) return;
-        
-        app.bootTime = (Date.now() - app.time);
-        app.scroller = new Scroll('#wrapper');
-
         document.removeEventListener('deviceready', app.onDeviceReady, false);
-
         app.log('deviceReady')
         app.onStart();
     },

@@ -32,13 +32,16 @@
         
         if (titleBar) {
             mount(titleBar)
+        } else {
+            // Somehow the page we moved to hasn't a title bar - so hackily disable ourselves
+            thresholdY = 999999
+        }
 
-            // If we go from a page where we previously didn't show the bar
-            // to a page where we already are scrolled past the threshold,
-            // make sure to show title bar. Also check for the opposite.
-            // This is actually what the scroll listener does, so reuse it.
-            pageMovementHandler(0, window.app.scroller.y)
-        } 
+        // If we go from a page where we previously didn't show the bar
+        // to a page where we already are scrolled past the threshold,
+        // make sure to show title bar. Also check for the opposite.
+        // This is actually what the scroll listener does, so reuse it.
+        pageMovementHandler(0, window.app.scroller.y)
     }
 
     function pageMovementHandler(x, y) {

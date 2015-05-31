@@ -180,7 +180,7 @@
                 el('div#podd-ep', [ podcast.title ]),
                 el('div#podd-time', [ podcast.duration + ' min' ])
             ]),
-            el('div.podd-control.play', { 'onclick' : 'window.app.handlers.onPoddPlay' }),
+            el('div.podd-control.play', { 'onclick' : 'window.handlers.playPodcastHandler(event)' }),
             el('div#podd-dl')
         ])
         /**

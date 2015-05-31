@@ -1,5 +1,5 @@
 // window.titlebar.onPageChange(newPageEl)
-// window.titlebar.onScroll()
+// window.titlebar.onScroll(x, y)
 // window.titlebar.init(staticTitleBar)
 (function(GLOBAL){
 

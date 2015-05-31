@@ -96,10 +96,11 @@
         // touch move updates these to previous touch point
         prevX : 0, prevY : 0, 
 
-        // touc move locks in either X or Y axis after some distance
+        // touch move locks in either X or Y axis after some distance
         locked : undefined,
         
         // use this to calculate nice momentum distance
+        // TODO: Replace with actual velocity instead...
         momentumY : 0, lastTouchTime : 0,
 
         // NOT momentum
@@ -107,11 +108,18 @@
 
         // REAL momentum
         momentum : { vy : 0, startTime : 0 },
+
+        // The handle for timer updated movement (animation/momentum)
         frame : undefined,
 
         // bound versions of the functions for extra nice ice cream
         MOMENTUM_RENDER : undefined, ANIMATION_RENDER : undefined,
 
+        // event listeners, use sparingly, especially onScroll
+        onScrollListener : undefined,       // called on move()
+        onPageChangeListener : undefined,   // called on changeTarget()
+
+        // This is probably perferrable to using insertPage/removePage
         refreshPages : function (){
             var that = this;
 
@@ -201,17 +209,13 @@
         },
 
         move : function (x, y, force) {
-            if (this.x !== x || force)
-                this.slider.style[VENDOR_TRANSFORM] = 'translate3d(' + x + 'px,0,0)';
+            // TODO: Optimize and only use webkitTransform instead of VENDOR_TRANSFORM
+            this.slider.style[VENDOR_TRANSFORM] = 'translate3d(' + x + 'px,0,0)';
+            this.scroller.style[VENDOR_TRANSFORM] = 'translate3d(0,' + y + 'px,0)';
 
-            if (this.y !== y || force)
-                this.scroller.style[VENDOR_TRANSFORM] = 'translate3d(0,' + y + 'px,0)';
-            // set header fixed
-            if (this.y <= -220) {
-                $("#title-bar-fixed").show();
-            } else {
-                $("#title-bar-fixed").hide();
-            }
+            // TODO: Remove if by initializing scroller after titlebar.js and call it directly
+            if (this.onScrollListener)
+                this.onScrollListener(x, y);
 
             this.x = x;
             this.y = y;
@@ -241,12 +245,13 @@
             // record time when finger first makes contact with surface
             this.startTime = this.lastTouchTime = Date.now() 
             this.momentumY = this.screenY;
+
+            // TODO: Remove
             console.log(e.target.id);
-            console.log('==========================================')
         },
 
         touchMove : function(e){
-            // Always stop retard browser 
+            // Always stop browser from doing its thing 
             e.preventDefault() 
 
             if (e.touches.length > 1)
@@ -334,7 +339,7 @@
                 outsideY = this.height - this.y;
 
             // Fix pos if scrolled outside
-            if (outsideX != 0 || outsideY != 0)
+            if (outsideX !== 0 || outsideY !== 0)
                 this.resetXY(outsideX || (-(this.currentPage) * window.innerWidth - this.x), outsideY)
             else if (totalX <= -0.2 * window.innerWidth)
                 this.nextPage(); // this will animate to correct pos
@@ -345,7 +350,7 @@
                 // change page. Do the x-reset. Otherwise scroll on!
                 var fix = -(this.currentPage) * window.innerWidth - this.x
 
-                if (fix != 0)
+                if (fix !== 0)
                     this.resetXY(fix, 0);
                 else
                     this.scrollMomentum(e);
@@ -462,6 +467,9 @@
 
             if (this.height > 0)
                 this.height = 0;
+
+            if (this.onPageChangeListener)
+                this.onPageChangeListener(target)
         }
     }
 

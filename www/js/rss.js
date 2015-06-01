@@ -56,7 +56,7 @@
         var gurl="http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&output=json_xml&callback=?&q="+url+"&num=" + postCount;
 
         $.getJSON(gurl, function(data) {
-            console.log(data.responseData.feed)
+            //console.log(data.responseData.feed)
             if (data.responseData.feed) {
                 callback(data.responseData.feed, data.responseData.xmlString)
             } else {
@@ -97,13 +97,10 @@
 
 
      String.prototype.capitalize = function(string) {
-         console.log(string);
          return string.charAt(0).toUpperCase() + string.slice(1);
     }
     function parseRSS(data, xml) {
         var program = {}, podcasts = [], entry
-        console.log('parsing', data)
-
 
         // TODO: how do we extract podcast.author (#podd-title) a.k.a. program name
 
@@ -114,7 +111,7 @@
             // parse out the path
             imgUrl = imgUrl.split("radioaf.se")[1];
 
-            console.log(timthumbBase + imgUrl + sizeParams);
+            //console.log(timthumbBase + imgUrl + sizeParams);
             var author = programs[entry.author].name || entry.author;
             podcasts.push({
                 title : entry.title,

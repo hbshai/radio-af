@@ -152,7 +152,7 @@
                 return;
             }
             counter = (counter + 1) % 2;
-            $poddContainer.append(createPodcastDiv(podcast, false, counter === 0));
+            //$poddContainer.append(createPodcastDiv(podcast, false, counter === 0));
         });
         // append all the children to the parent div page
         $page.append($spotlight);
@@ -371,6 +371,9 @@
         feedPod : function (podcast, alternate) {
             return createPodcastDiv(podcast, false, alternate)
         },
+
+        staticTitleBar : function (){ return el('div#title-bar-fixed') },
+        menuButton : function (){ return el('div#menu-btn') },
 
         flowPage : makeFlowPage,
         wrapper : makeWrapper,

@@ -11,25 +11,28 @@
     function mount(titleEl){
         thresholdY = 0
 
+        // Setting textContent will obliterate any data in the element; so
+        // make sure that staticTitleBar only contains text. The menu icon
+        // is overlapped using a higher z-index.
+        staticTitleBar.textContent = titleEl.textContent
+        //staticTitleBar.style.height = Math.max(titleEl.scrollHeight, titleEl.offsetHeight, titleEl.clientHeight)
+
+        console.log(Math.max( staticTitleBar.scrollHeight, staticTitleBar.offsetHeight, staticTitleBar.clientHeight ) + ' vs ' + Math.max( titleEl.scrollHeight, titleEl.offsetHeight, titleEl.clientHeight ))
+
         // Walk the chain upwards. Each iteration gets distance to top
-        // of the parent node. Typically 2-3 iterations.
+        // of the parent node. Typically 2-3 iterations. Will probably lag anyway.
         if (titleEl.offsetParent) {
             do {
                 thresholdY += titleEl.offsetTop
                 titleEl = titleEl.offsetParent
             } while (titleEl)
         }
-
-        // Setting textContent will obliterate any data in the element; so
-        // make sure that staticTitleBar only contains text. The menu icon
-        // is overlapped using a higher z-index.
-        staticTitleBar.textContent = titleEl.textContent
     }
 
     function pageChangeHandler(pageEl){
         // Search for a child element that has the child
         var titleBar = pageEl.querySelector('.title-bar')
-        
+
         if (titleBar) {
             mount(titleBar)
         } else {
@@ -54,9 +57,10 @@
             hackTitleVisible = !hackTitleVisible
 
             // TODO: Instead of showing/hiding element via 'display', use 'top'.
-            // staticTitleBar.style.top = showHackTitle ? '0px' : '-1000px';
-            staticTitleBar.style.display = showHackTitle ? 'block' : 'none'
+            staticTitleBar.style.top = hackTitleVisible ? '0px' : '-1000px';
+            //staticTitleBar.style.display = hackTitleVisible ? 'block' : 'none'
         }
+
     }
     
     GLOBAL.titlebar = {

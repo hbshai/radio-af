@@ -216,7 +216,7 @@
             // TODO: Remove if by initializing scroller after titlebar.js and call it directly
             if (this.onScrollListener)
                 this.onScrollListener(x, y);
-
+            
             this.x = x;
             this.y = y;
         },
@@ -468,8 +468,10 @@
             if (this.height > 0)
                 this.height = 0;
 
+            // Defer the function call so the DOM read stuff doesn't crash animation
+            var that = this
             if (this.onPageChangeListener)
-                this.onPageChangeListener(target)
+                setTimeout(function(){ that.onPageChangeListener(target) }, 0)
         }
     }
 

@@ -6,12 +6,10 @@
     }
 
     function playPodcast(event) {
-        console.log(event.target.parentNode.dataset)
-
         var dataset = event.target.parentNode.dataset,
-            // These might be podcastProgram and podcastIndex, browser doing its thing again...
-            program = dataset['podcast-program'],
-            index = dataset['podcast-index'],
+            // These might be podcast-program --> podcastProgram
+            program = dataset['podcastProgram'],
+            index = dataset['podcastIndex'],
             trackHash = program + index // program names and podcast indexes are both unique
 
         console.log('playPodcast: ' + program + ' - ' + index)

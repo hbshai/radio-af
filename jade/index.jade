@@ -61,10 +61,17 @@ html
             app.scroller.onPageChangeListener = window.titlebar.onPageChange;
 
             console.log('yolo')
+            app.programs = {}
           
              var counter = 0;
              rss.load("http://www.radioaf.se/program/bastforeigar/feed/?post_type=podcasts", 1, function(data, xml) {
                 var podcasts = rss.parse(data, xml);
+                
+                // Setup links
+                app.programs[podcasts[0].program] = {
+                    podcasts : podcasts
+                }
+
                 podcasts.forEach(function(podcast){
                     counter = (counter + 1) % 2;
                     flowPage.childNodes[1].appendChild(window.htmlFarm.miniPod(podcast, counter === 0));
@@ -75,6 +82,11 @@ html
              //rss.load('http://www.radioaf.se/program/correcto/feed/', 2, rss.parse);
              rss.load('http://www.radioaf.se/program/studentaftonpodden/feed/?post_type=podcasts', 7, function(data, xml) {
                 var podcasts = rss.parse(data, xml);
+                
+                app.programs[podcasts[0].program] = {
+                    podcasts : podcasts
+                }
+
                 var programPage = window.htmlFarm.programView(podcasts);
                 slider.appendChild(programPage)
                 app.scroller.refreshPages();
@@ -82,6 +94,11 @@ html
 
             rss.load('http://www.radioaf.se/program/correcto/feed/?post_type=podcasts', 7, function(data, xml) {
                  var podcasts = rss.parse(data, xml);
+                 
+                 app.programs[podcasts[0].program] = {
+                     podcasts : podcasts
+                 }
+
                  var programPage = window.htmlFarm.programView(podcasts);
                  slider.appendChild(programPage)
                  app.scroller.refreshPages();

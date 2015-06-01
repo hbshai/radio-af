@@ -118,7 +118,7 @@
                 author: author,
                 program: author,
                 programImage: programs[entry.author].image,
-                index: -1337,
+                index: i,
                 content : removeTags(entry.content),
                 duration: 0,
                 date: entry.publishedDate, // so that we can order correctly in ~the flow~

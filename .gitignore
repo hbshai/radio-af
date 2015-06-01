@@ -1,12 +1,8 @@
-#################
-## Pirate ignore
-#################
 node_modules/
-*.css
 *.vim
 *.swp
-*.otf
-*.ttf
+www/index.html
+www/css/style.css
 
 #################
 ## Eclipse

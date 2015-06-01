@@ -152,7 +152,7 @@
                 return;
             }
             counter = (counter + 1) % 2;
-            //$poddContainer.append(createPodcastDiv(podcast, false, counter === 0));
+            $poddContainer.append(createPodcastDiv(podcast, false, counter === 0));
         });
         // append all the children to the parent div page
         $page.append($spotlight);
@@ -220,6 +220,18 @@
               div#footer-time 32:26 / 76:00
           div#footer-btn.footer-play
     */
+
+    function makeFooter(){
+        return el('div#footer', [
+            el('img', { src : 'www' }),
+            el('div.footer-text-container', [
+                el('div#footer-title', ['Studentaftonpodden']),
+                el('div#footer-ep', ['Antje Jackélen']),
+                el('div#footer-time', ['32:26 / 76:00'])
+            ]),
+            el('div#footer-btn.footer-play')
+        ])
+    }
 
     /*
         ??????
@@ -377,6 +389,8 @@
 
         flowPage : makeFlowPage,
         wrapper : makeWrapper,
+
+        player : makeFooter,
         
         programView : createProgramView
     };

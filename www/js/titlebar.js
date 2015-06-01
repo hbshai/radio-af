@@ -15,9 +15,6 @@
         // make sure that staticTitleBar only contains text. The menu icon
         // is overlapped using a higher z-index.
         staticTitleBar.textContent = titleEl.textContent
-        //staticTitleBar.style.height = Math.max(titleEl.scrollHeight, titleEl.offsetHeight, titleEl.clientHeight)
-
-        console.log(Math.max( staticTitleBar.scrollHeight, staticTitleBar.offsetHeight, staticTitleBar.clientHeight ) + ' vs ' + Math.max( titleEl.scrollHeight, titleEl.offsetHeight, titleEl.clientHeight ))
 
         // Walk the chain upwards. Each iteration gets distance to top
         // of the parent node. Typically 2-3 iterations. Will probably lag anyway.
@@ -55,8 +52,8 @@
         if ((!hackTitleVisible && y >= thresholdY) 
             || (hackTitleVisible && y < thresholdY)) {
             hackTitleVisible = !hackTitleVisible
-
-            // TODO: Instead of showing/hiding element via 'display', use 'top'.
+            
+            // Moving off screen is faster than toggling visibility
             staticTitleBar.style.top = hackTitleVisible ? '0px' : '-1000px';
             //staticTitleBar.style.display = hackTitleVisible ? 'block' : 'none'
         }

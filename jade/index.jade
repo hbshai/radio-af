@@ -35,7 +35,8 @@ html
                 slider = wrapper.slider,
                 flowPage = htmlFarm.flowPage(),
                 titleBar = htmlFarm.staticTitleBar(),
-                menuButton = htmlFarm.menuButton()
+                menuButton = htmlFarm.menuButton(),
+                player = htmlFarm.player()
 
             wrapper = wrapper.wrapper;
 
@@ -46,6 +47,8 @@ html
 
             document.body.appendChild(menuButton)
             document.body.appendChild(titleBar)
+            document.body.appendChild(player)
+
             document.body.appendChild(wrapper)
 
             app.bootTime = (Date.now() - app.time);
@@ -64,9 +67,9 @@ html
                 var podcasts = rss.parse(data, xml);
                 podcasts.forEach(function(podcast){
                     counter = (counter + 1) % 2;
-                    //flowPage.childNodes[1].appendChild(window.htmlFarm.miniPod(podcast, counter === 0));
+                    flowPage.childNodes[1].appendChild(window.htmlFarm.miniPod(podcast, counter === 0));
                 });
-                //app.scroller.refreshPages();
+                app.scroller.refreshPages();
              });
             
              //rss.load('http://www.radioaf.se/program/correcto/feed/', 2, rss.parse);

@@ -2,5 +2,6 @@ node_modules/
 *.vim
 *.swp
 www/index.html
+www/testindex.html
 www/css/style.css
 .DS_Store

@@ -4,6 +4,14 @@ requirements
  - cordova: `npm install -g cordova`
  - phonegap: `npm install -g phonegap`
 
+cordova plugins
+---------------
+ org.apache.cordova.file  
+ org.apache.cordova.file-transfer  
+ org.apache.cordova.media  
+
+Use `phonegap plugins add <plugin>`
+
 how to get started
 ------------------
 

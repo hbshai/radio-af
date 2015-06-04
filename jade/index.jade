@@ -14,12 +14,16 @@ html
       script(src="cordova.js")
       script(src="js/vendor/jquery-2.1.3.min.js")
       script(src="js/vendor/fastclick.js")
+
       script(src="js/rss.js")
       script(src="js/htmlfarm.js")
       script(src="js/handlers.js")
       script(src="js/titlebar.js")
       script(src="js/scroller.js")
       script(src="js/audiop.js")
+      script(src="js/cache.js")
+      script(src="js/downloaded.js")
+
       script(src="js/index.js")
       script.
          app.initialize();
@@ -27,22 +31,21 @@ html
          app.onStart = function () {
              app.log('onstart')
 
+            var wrapper = htmlFarm.wrapper(),
+                slider = wrapper.slider;
+
+            // TODO: Do DOM shit while we are loading RSS
+
             // Remove the loading div
             document.body.removeChild(document.getElementById('loading'))
 
-            // Add the wrapper
-            var wrapper = htmlFarm.wrapper(),
-                slider = wrapper.slider,
-                flowPage = htmlFarm.flowPage(),
-                titleBar = htmlFarm.staticTitleBar(),
+            // Wrapper+slider loaded earlier
+            var titleBar = htmlFarm.staticTitleBar(),
                 menuButton = htmlFarm.menuButton(),
                 player = htmlFarm.player()
 
             wrapper = wrapper.wrapper;
 
-            // Add pages here
-            slider.appendChild(flowPage)
-            
             wrapper.appendChild(slider)
 
             document.body.appendChild(menuButton)
@@ -51,7 +54,6 @@ html
 
             document.body.appendChild(wrapper)
 
-            app.bootTime = (Date.now() - app.time);
             FastClick.attach(document.body);
 
             window.titlebar.init(titleBar);
@@ -60,49 +62,104 @@ html
             app.scroller.onScrollListener = window.titlebar.onScroll;
             app.scroller.onPageChangeListener = window.titlebar.onPageChange;
 
-            console.log('yolo')
-            app.programs = {}
-          
-             var counter = 0;
-             rss.load("http://www.radioaf.se/program/bastforeigar/feed/?post_type=podcasts", 1, function(data, xml) {
-                var podcasts = rss.parse(data, xml);
-                
-                // Setup links
-                app.programs[podcasts[0].program] = {
-                    podcasts : podcasts
-                }
-
-                podcasts.forEach(function(podcast){
-                    counter = (counter + 1) % 2;
-                    flowPage.childNodes[1].appendChild(window.htmlFarm.miniPod(podcast, counter === 0));
-                });
-                app.scroller.refreshPages();
-             });
+            console.log('Begin cache control')
+            window.localStorage.clear()
             
-             //rss.load('http://www.radioaf.se/program/correcto/feed/', 2, rss.parse);
-             rss.load('http://www.radioaf.se/program/studentaftonpodden/feed/?post_type=podcasts', 7, function(data, xml) {
-                var podcasts = rss.parse(data, xml);
+            var cachedPrograms = window.cache.getCachedPrograms(),
+                serverProgramList, done = false
+
+            app.programs = {}
+            window.dlman.init()
+
+            function doneWithRSS(programKey){
+                // flow page maintains special local storage
+                //window.flow.checkProgram(programKey)
+                console.log('Done with program: ' + programKey)
+
+                if (!serverProgramList) 
+                  return;
+
+                if (Object.keys(app.programs).length === serverProgramList.length && !done) {
+                    // Okay we've resolved all programs, let's start generating stuff
+                    done = true
+
+                    slider.appendChild(htmlFarm.flowPage())
+                    
+                    //slider.appendChild(htmlFarm.favouritesPage())
+                    slider.appendChild(htmlFarm.allProgramPage())
+                    //slider.appendChild(htmlFarm.downloadedPage())
+
+                    app.scroller.refreshPages()
+                    console.log('Done with all!')
+                }
+            }
+
+            // Load cached programs
+            cachedPrograms.forEach(function (programKey){
+              console.log('Loading ' + programKey + ' from cache!')
+                // Load program object (except podcasts)
+                app.programs[programKey] = window.cache.getObject(programKey)
+
+                // Load podcasts array
+                app.programs[programKey].podcasts = window.cache.getObject(app.programs[programKey].podcasts)
                 
-                app.programs[podcasts[0].program] = {
-                    podcasts : podcasts
+                // Notify the world
+                doneWithRSS(programKey)
+            })
+            console.log('apa')
+
+            function rssDoneLoading(data, xml) {
+                console.log('Loaded ' + this.program + ', parsing...')
+                // parse returns pre-emptively without durations
+                var podcasts = rss.parse(data, xml, withDuration),
+                    programKey = this.program
+
+                // Setup links
+                app.programs[programKey].podcasts = podcasts
+
+                // Copy duration when done, store in cache
+                function withDuration(podcastsWithDur){
+                    for (var i = 0, l = podcastsWithDur.length; i < l; i++)
+                      podcasts[i].duration = podcastsWithDur[i].duration
+
+                    console.log('Updated all podcast durations (' + programKey + ')')
+                    
+                    // Cache this json!
+                    window.cache.putProgram(app.programs[programKey])
+                    doneWithRSS(programKey)
                 }
 
-                var programPage = window.htmlFarm.programView(podcasts);
-                slider.appendChild(programPage)
-                app.scroller.refreshPages();
-            });
+                console.log('Parsed, waiting for duration (' + this.program + ')')
+            }
 
-            rss.load('http://www.radioaf.se/program/correcto/feed/?post_type=podcasts', 7, function(data, xml) {
-                 var podcasts = rss.parse(data, xml);
-                 
-                 app.programs[podcasts[0].program] = {
-                     podcasts : podcasts
-                 }
+            function mergeRSS(data, xml){
+                // TODO: Actually compare fetched vs cached data
+                console.log('Merge RSS: ' + this.program)
+                // TODO: Should call another method, really
+                doneWithRSS(this.program)
+            }
 
-                 var programPage = window.htmlFarm.programView(podcasts);
-                 slider.appendChild(programPage)
-                 app.scroller.refreshPages();
-             });
+            // Fetch the server-side list of program names, images and rss
+            // TODO: Use server side instead of local side
+            $.getJSON('programs.json', function(data) {
+                // data = { 'bestforeigar' : { name : 'walla', image : 'www', rss : 'www' }, ... }
+                if (data) {
+                    serverProgramList = Object.keys(data)
+                    serverProgramList.forEach(function(programKey){
+                        data[programKey].key = programKey
+                        if (!app.programs[programKey]) {
+                            app.programs[programKey] = data[programKey]
+                            rss.load(data[programKey].rss, 100, rssDoneLoading.bind({ program : programKey }))
+                        } else {
+                            rss.load(data[programKey].rss, 100, mergeRSS.bind({ program : programKey }))                        
+                        }
+                    })
+                } else {
+                    console.error('no data received')
+                }
+            })
+
+
 
             // a program in the favourite screen was clicked upon: 
             // THOU SHALT HANDLE IT

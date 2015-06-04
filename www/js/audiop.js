@@ -3,12 +3,12 @@ var audiop = function() {
 	var self = this;
 
 	var _media = null,
-			_paused = true,
-			_id = 0, _callb;
+		_paused = true,
+		_id = 0, _callb;
 
 	function trackProgress() {
 		if (_callb)
-			_callb();
+			_media.getCurrentPosition(_callb)
 	}
 
 	this.play = function (onUpdate) {
@@ -16,7 +16,7 @@ var audiop = function() {
 		if (!_paused) return console.err('Already playing.');
 
 		_media.play({ /* super secret options here */ });
-		_id = setInterval(trackProgress, 100);
+		_id = setInterval(trackProgress, 1000);
 		_paused = false;
 		_callb = onUpdate;
 	}
@@ -32,11 +32,17 @@ var audiop = function() {
 			_media.stop();
 			_media.release();
 		}
+
+		if (_id) {
+			// _id == 0 is false :>
+			clearInterval(_id);
+			_callb = null;
+			_id = 0;
+		}
 		
 		// No track playing. Update _paused otherwise play() will malfunction...
 		_paused = true;
 		_media = new Media(src, self.onSuccess, self.onError)
-		console.log(_media)
 	}
 
 	this.pause = function () {

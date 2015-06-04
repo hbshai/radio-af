@@ -53,7 +53,7 @@
             || (hackTitleVisible && y < thresholdY)) {
             hackTitleVisible = !hackTitleVisible
             
-            // Moving off screen is faster than toggling visibility
+            // Moving off screen is faster than toggling visibility (no reflow needed)
             staticTitleBar.style.top = hackTitleVisible ? '0px' : '-1000px';
             //staticTitleBar.style.display = hackTitleVisible ? 'block' : 'none'
         }

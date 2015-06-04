@@ -99,7 +99,7 @@
      String.prototype.capitalize = function(string) {
          return string.charAt(0).toUpperCase() + string.slice(1);
     }
-    function parseRSS(data, xml) {
+    function parseRSS(data, xml, callb) {
         var program = {}, podcasts = [], entry
 
         // TODO: how do we extract podcast.author (#podd-title) a.k.a. program name
@@ -133,11 +133,31 @@
         while ((match = mediaFinder.exec(xml)))
             podcasts[current++].podcastUrl = match[1]
 
-        return podcasts;
+        var current = 0
+        podcasts.forEach(function (podd, index){
+            var tmpMedia = new Media(podd.podcastUrl),
+                timeout = 2000
 
-        // podcasts.forEach(function (pod) {
-        //     console.log(pod.content.replace('\n', ''))
-        // })
+            tmpMedia.setVolume(0)
+            tmpMedia.play()
+            
+            var interval = setInterval(function (){
+                podd.duration = tmpMedia.getDuration()
+                timeout -= 100
+
+                if (podd.duration > 0 || timeout <= 0) {
+                    clearInterval(interval)
+                    tmpMedia.stop()
+                    tmpMedia.release()
+
+                    current++
+                    if (current === podcasts.length && callb)
+                        callb(podcasts)
+                }
+            }, 100)
+        })        
+    
+        return podcasts;
     }
 
     function findRSS(programName, cb) {

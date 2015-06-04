@@ -136,7 +136,8 @@
                 that.pages[i].style.width = pageWidth;
 
             that.currentPage = that.currentPage || 0;
-            that.changeTarget(that.pages[that.currentPage]);
+            if (pages.length > 0)
+                that.changeTarget(that.pages[that.currentPage]);
         },
 
         // insert a new page into the dom, returns the page index of it
@@ -472,6 +473,10 @@
             var that = this
             if (this.onPageChangeListener)
                 setTimeout(function(){ that.onPageChangeListener(target) }, 0)
+        },
+
+        recalcHeight : function(){
+            this.changeTarget(this.scroller)
         }
     }
 

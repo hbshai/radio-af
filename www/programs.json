@@ -1,0 +1,57 @@
+{
+    "bastforeigar" : {
+        "name": "Bäst Före Igår", 
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/Programbild.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/bastforeigar/feed/?post_type=podcasts",
+        "category": "lite nice, lite bajs"
+    },
+
+    "Studentaftonpodden" : {
+        "name": "Studentaftonpodden", 
+        "image":"http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/10/Officiell_Poddlogo_final_black.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/studentaftonpodden/feed/?post_type=podcasts",
+        "category": "vi gillar allt"
+    },
+
+    "correcto" : {
+        "name": "Correcto", 
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/correctobarcelona.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/correcto/feed/?post_type=podcasts",
+        "category": "som det ska vara"
+    },
+
+    "klagomuren" : {
+        "name": "Klagomuren",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/klagomuren.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/klagomuren/feed/?post_type=podcasts",
+        "category": "music no more"
+    },
+
+    "ordgasm" : {
+        "name": "Ordgasm",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/ordgasmbild2.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/ordgasm/feed/?post_type=podcasts",
+        "category": "samfund"
+    },
+
+    "etikpubspodden" : {
+        "name": "Etikpubspodden",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/lse-logga2.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/etikpubspodden/feed/?post_type=podcasts",
+        "category": "nyttigt-o-bra"
+    },
+
+    "gronkult" : {
+        "name": "Grönkult",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/02/gk2.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/gronkult/feed/?post_type=podcasts",
+        "category": "permakult"
+    },
+
+    "iluven" : {
+        "name": "I Luvén",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/I-Luv%C3%A9n-programbild.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/iluven/feed/?post_type=podcasts",
+        "category": "polle"
+    }
+}

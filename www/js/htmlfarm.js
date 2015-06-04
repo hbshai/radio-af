@@ -131,7 +131,7 @@
         var $spotlightText = $(document.createElement("div")).addClass("spotlight-text-container");
         $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-title").text(firstPod.program));
         $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-ep").text(firstPod.title));
-        $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-time").text(firstPod.duration + " min"));
+        $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-time").text(Math.floor(firstPod.duration/60) + " min"));
 
         var $spotlightContainer = $(document.createElement("div")).addClass("spotlight-container");
         $spotlightContainer.append($(document.createElement("div")).attr("id", "spotlight-play"));
@@ -178,10 +178,10 @@
                 // Add podcast author if requested, otherwise leave it out.
                 doTitle ? el('div#podd-title', [ podcast.author ]) : undefined,
                 el('div#podd-ep', [ podcast.title ]),
-                el('div#podd-time', [ podcast.duration + ' min' ])
+                el('div#podd-time', [ Math.floor(podcast.duration/60) + ' min' ])
             ]),
             el('div.podd-control.play', { 'onclick' : 'window.handlers.playPodcastHandler(event)' }),
-            el('div#podd-dl')
+            window.dlman.has(podcast.program + podcast.index) ? el('div#podd-dl') : el('div#podd-dl')
         ])
         /**
          * When podd-play has been clicked, fetch parent to retrieve dataset.
@@ -223,45 +223,105 @@
 
     function makeFooter(){
         return el('div#footer', [
-            el('img', { src : 'www' }),
+            el('img#footer-img', { src : 'www' }),
             el('div.footer-text-container', [
-                el('div#footer-title', ['Studentaftonpodden']),
-                el('div#footer-ep', ['Antje Jackélen']),
-                el('div#footer-time', ['32:26 / 76:00'])
+                el('div#footer-title', ['']),
+                el('div#footer-ep', ['']),
+                el('div#footer-time', [''])
             ]),
-            el('div#footer-btn.footer-play')
+            el('div#footer-btn.footer-pause', { 'onclick' : 'window.handlers.playerControlHandler(event)'})
+        ])
+    }
+
+    function makeProgramDiv(program, alternate){
+        return el('div.program' + (alternate ? '.alternating' : ''), [
+            el('img.program-img', { src : program.image }),
+            el('div.program-text-container', [
+                el('div.program-title', [program.name]),
+                el('div.program-category', [program.category || 'Unkown']),
+                //el('div.program-text', [program.description])
+            ])
+        ])
+    }
+
+    function makeAllProgramPage(){
+        var currentSymbol = '', alternate = false
+        // This makes the A-to-O setup, should probably be stored somehow
+        var listByName = Object.keys(app.programs).sort(function (a, b) {
+            // Normalize casing and use special comparison for strange chars (ö)
+            a = a.toLowerCase()
+            b = b.toLowerCase()
+            return a.localeCompare(b);
+        }).map(function (program){
+            var programDiv = makeProgramDiv(app.programs[program], alternate)
+
+            alternate = !alternate
+
+            // If we need new symbol, return array
+            if (currentSymbol !== program.charAt(0).toUpperCase()){
+                currentSymbol = program.charAt(0).toUpperCase()
+                alternate = !alternate
+
+                return [el('div.program-letter' + (alternate ? '.alternating' : ''), [currentSymbol]), 
+                        programDiv
+                ]
+            }
+
+            // Otherwise just return the program
+            return programDiv
+        })
+
+        var categories = {}
+
+        // First populate the categories object with lists of programs per category
+        Object.keys(app.programs).forEach(function (progkey){
+            var cat = app.programs[progkey].category
+            
+            if (!categories[cat])
+                categories[cat] = []
+
+            categories[cat].push(progkey)
+        })
+        
+        // Then sort the categories and generate lists of programs (sorted) for each category
+        alternate = false
+        var listByCategories = Object.keys(categories).sort().map(function (category){
+            return [el('div.program-category', [category]), categories[category].sort(function (a, b) {
+            // Normalize casing and use special comparison for strange chars (ö)
+            a = a.toLowerCase()
+            b = b.toLowerCase()
+            return a.localeCompare(b);
+        }).map(function(program){
+                alternate = !alternate
+                return makeProgramDiv(app.programs[program], alternate)
+            })]
+        })
+
+        // Super shitty, but works for now...
+        window.lists = {
+            byName : listByName,
+            byCategory : listByCategories
+        }
+
+        return el('div.page', [
+            el('div.spotlight', [
+                el('img#spotlight-img', { src : 'img/raf-bg2.png' }),
+                el('div.title-bar', ['alla program'])
+            ]),
+            el('div.program-container', [
+                el('div.program-tabs', [
+                    el('div#toggleName.program-active', { 'onclick' : 'window.handlers.toggleProgramPane(event)' }, ['A-Ö']),
+                    el('div#toggleCategory.program-inactive', { 'onclick' : 'window.handlers.toggleProgramPane(event)' }, ['Kategorier'])
+                ]),
+                listByName
+            ])
         ])
     }
 
     /*
-        ??????
-        ======
-
-
+    
     div#wrapper
         div#slider
-            div.page
-                div.spotlight
-                    img(src="/img/raf-bg2.png")#spotlight-img
-                    div.title-bar alla program
-                div.program-container
-                    div.program-tabs
-                        div.program-active A-Ö
-                        div.program-inactive Kategorier
-                    div.program-letter B
-                    div.program.alternating
-                        img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/Programbild.jpg&w=950&h=670&q=100&zc=1").program-img
-                        div.program-text-container
-                          div.program-title Bäst Före Igår
-                          div.program-category nöje & kultur
-                          div.program-text 
-                    div.program-letter C
-                    div.program.alternating
-                        img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/correctobarcelona.png&w=950&h=670&q=100&zc=1").program-img
-                        div.program-text-container
-                          div.program-title Correcto
-                          div.program-category samhälle
-                          div.program-text 
             div.page
                 div.spotlight
                     img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1")#spotlight-img
@@ -303,61 +363,6 @@
                     div.title-bar mitt flöde
 
                 div.podd-container
-                    // HERE BE PODDS
-                    div.podd
-                        img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/10981862_589948141139562_1758483936875843389_n.jpg&w=950&h=670&q=100&zc=1")#podd-img
-                        div.podd-text
-                            div#podd-title Etikpodden
-                            div#podd-ep
-                                |Den framtida människan
-
-                            div#podd-time 77 min
-                        div.podd-control.play
-                        div.podd-dl
-
-                    div.podd.alternating
-                        img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/12/Antje-Jack%C3%A9len.jpg&w=950&h=670&q=100&zc=1")#podd-img
-                        div.podd-text
-                            div#podd-title Studentaftonpodden
-                            div#podd-ep Studentafton med Antje Jackélen
-                            div#podd-time 74 min
-                        div.podd-control.play
-                        div.podd-dl
-
-                    div.podd
-                        img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/k%C3%A4rnkraft.jpg&w=950&h=670&q=100&zc=1")#podd-img
-                        div.podd-text
-                            div#podd-title Etikpodden
-                            div#podd-ep Kärnkraft
-                            div#podd-time 77 min
-                        div.podd-control.play
-                        div.podd-dl
-
-                    div.podd.alternating
-                        img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/02/Flugan_2.jpg&w=950&h=670&q=100&zc=1")#podd-img
-                        div.podd-text
-                            div#podd-title Flugan
-                            div#podd-ep FASHION
-                            div#podd-time 12 min
-                        div.podd-control.play
-                        div.podd-dl
-                    div.podd
-                        img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/10981862_589948141139562_1758483936875843389_n.jpg&w=950&h=670&q=100&zc=1")#podd-img
-                        div.podd-text
-                            div#podd-title Etikpodden
-                            div#podd-ep Den framtida människan
-                            div#podd-time 77 min
-                        div.podd-control.play
-                        div.podd-dl
-
-                    div.podd.alternating
-                        img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/02/Flugan_2.jpg&w=950&h=670&q=100&zc=1")#podd-img
-                        div.podd-text
-                            div#podd-title Flugan
-                            div#podd-ep FASHION
-                            div#podd-time 12 min
-                        div.podd-control.play
-                        div.podd-dl
         */
 
     // Return an object b/c we need to append to slider, but append wrapper to
@@ -371,8 +376,11 @@
 
     function makeFlowPage(){
         return el('div#flow.page', [
-            el('div.spotlight'),
+            el('div.spotlight', [
+                el('div.title-bar', ['mitt floe'])
+            ]),
             el('div.podd-container')
+            // use window.flow.podcasts to fill it or something...
         ])
     }
     
@@ -392,6 +400,7 @@
 
         player : makeFooter,
         
-        programView : createProgramView
+        programView : createProgramView,
+        allProgramPage : makeAllProgramPage
     };
 })(window)

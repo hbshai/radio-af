@@ -139,7 +139,8 @@
                 timeout = 2000
 
             tmpMedia.setVolume(0)
-            tmpMedia.play()
+            // disable noise & duration getting during dev lest i go insane
+            // tmpMedia.play() 
             
             var interval = setInterval(function (){
                 podd.duration = tmpMedia.getDuration()

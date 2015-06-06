@@ -48,6 +48,7 @@ html
 
             wrapper.appendChild(slider)
 
+            // Add the permanent elements, i.e. header + footer
             document.body.appendChild(menuButton)
             document.body.appendChild(titleBar)
             document.body.appendChild(player)
@@ -83,9 +84,10 @@ html
                     // Okay we've resolved all programs, let's start generating stuff
                     done = true
 
+                    // Add the permanent views to the slider
                     slider.appendChild(htmlFarm.flowPage())
+                    slider.appendChild(htmlFarm.favouritesPage())
                     
-                    //slider.appendChild(htmlFarm.favouritesPage())
                     slider.appendChild(htmlFarm.allProgramPage())
                     //slider.appendChild(htmlFarm.downloadedPage())
 
@@ -106,7 +108,6 @@ html
                 // Notify the world
                 doneWithRSS(programKey)
             })
-            console.log('apa')
 
             function rssDoneLoading(data, xml) {
                 console.log('Loaded ' + this.program + ', parsing...')

@@ -223,7 +223,7 @@
 
     function makeFooter(){
         return el('div#footer', [
-            el('img#footer-img', { src : 'www' }),
+            el('img#footer-img', { src : '../img/raf-bg.png' }),
             el('div.footer-text-container', [
                 el('div#footer-title', ['']),
                 el('div#footer-ep', ['']),
@@ -253,9 +253,8 @@
             b = b.toLowerCase()
             return a.localeCompare(b);
         }).map(function (program){
+            alternate = !alternate;
             var programDiv = makeProgramDiv(app.programs[program], alternate)
-
-            alternate = !alternate
 
             // If we need new symbol, return array
             if (currentSymbol !== program.charAt(0).toUpperCase()){
@@ -377,11 +376,57 @@
     function makeFlowPage(){
         return el('div#flow.page', [
             el('div.spotlight', [
-                el('div.title-bar', ['mitt floe'])
+                el('div.title-bar', ['mitt flöde'])
             ]),
             el('div.podd-container')
             // use window.flow.podcasts to fill it or something...
         ])
+    }
+
+    function makeFavPage() {
+       function createFavourites(favs) {
+           var favList = [];
+           favs.forEach(function(fav) {
+               console.log("**********************************");
+               console.log(fav.title);
+               favList.push(el("div.fav", [
+                       el("img.fav-img", {src: fav.programImage}),
+                       el("div.fav-title", [fav.title])
+                   ])
+                )
+           });
+           return el('div.fav-container', favList);
+       }
+
+       var pod = {
+                title : "spotlight title text",
+                program: "spotlight program",
+                image: "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1",
+                programImage: "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1",
+                duration: "0 min"
+       };
+
+       var podcasts = [pod, pod, pod, pod, pod];
+       return el('div.page', [
+                createSpotlight("mina favoriter", pod),
+                createFavourites(podcasts)
+              ])
+    }
+
+    function createSpotlight(title, podcast) {
+       return   el('div.spotlight', [
+                        el("img#spotlight-img", {src: podcast.image}),
+                        el("div.spotlight-container", [
+                            el("div#spotlight-play"),
+                            el("div.spotlight-text-container", [
+                                el("div#spotlight-title", [podcast.program]),
+                                el("div#spotlight-ep", [podcast.title]),
+                                el("div#spotlight-time", [podcast.duration])
+                            ]),
+                            el("div#spotlight-dl"),
+                        ]),
+                        el('div.title-bar', [title])
+                ])
     }
     
     GLOBAL.htmlFarm = {
@@ -396,8 +441,11 @@
         menuButton : function (){ return el('div#menu-btn') },
 
         flowPage : makeFlowPage,
-        wrapper : makeWrapper,
+        // TODO: fav + dl don't exist
+        favouritesPage: makeFavPage,
+        // downloadedPage: makeDownloadPage,
 
+        wrapper : makeWrapper,
         player : makeFooter,
         
         programView : createProgramView,

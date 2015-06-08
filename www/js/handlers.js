@@ -102,7 +102,6 @@
     function createProgramView(evt) {
         var target = evt.target.parentNode;
         var programName = target.dataset["podcastProgram"];
-        console.log("got the program name: " + programName);
         // Find the info for the program and open a new view
         window.rss.find(programName, function(podcasts) {
             var programPage = window.htmlFarm.programView(podcasts);
@@ -114,7 +113,6 @@
 
     // Switches between the alphabetic and category views in Alla Program
     function switchAllProgramPane(evt) {
-        console.log("8) woah");
         var target = evt.target.getAttribute('id'),
             parent = document.querySelector('.program-container')
             removeNode = function(node){ parent.removeChild(node) },

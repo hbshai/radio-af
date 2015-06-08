@@ -411,9 +411,35 @@
         ])
     }
 
+    function makeDownloadPage() {
+        function populateDownloads(downloads) {
+            var elementList = [];
+            var alternate = false;
+            downloads.forEach(function(pod) {
+                alternate = !alternate;
+                elementList.push(createPodcastDiv(pod, true, alternate));
+            });
+            return el("div.podd-container", elementList);
+        }
+
+       var pod = {
+                title : 'spotlight title text',
+                program: 'Studentaftonpodden',
+                author: 'Studentaftonpodden',
+                image: 'http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1',
+                programImage: 'http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1',
+                duration: '0 min'
+       };
+       var podcasts = [pod, pod, pod, pod, pod];
+
+       return el("div.page", [
+                createSpotlight("nedladdade poddar", pod),
+                populateDownloads(podcasts)
+              ]);
+    }
+
     function makeFavPage() {
         // TODO: 
-        // * add handlers for each div.fav
         // * populate with favs from device, otherwise display "oops no favs" view instead
        function createFavourites(favs) {
            var favList = [];
@@ -477,7 +503,7 @@
         flowPage : makeFlowPage,
         // TODO: create dl don't exist
         favouritesPage: makeFavPage,
-        // downloadedPage: makeDownloadPage,
+        downloadedPage: makeDownloadPage,
 
         wrapper : makeWrapper,
         player : makeFooter,

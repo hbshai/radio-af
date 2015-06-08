@@ -167,37 +167,37 @@
     // doTitle : generate a podd-title div?
     // alternate : append .alternating class?
     function createPodcastDiv(podcast, doTitle, alternate) {
-        return el('div.podd' + (alternate ? '.alternating' : ''), { 
+        return el("div.podd" + (alternate ? ".alternating" : ""), { 
             // Allow each div to carry its own pointer(s) to the podcast.
             // See comment further down how they (could) work.
             "data-podcast-program" : podcast.program,
             "data-podcast-index" : podcast.index
         }, [
             // TODO: Optimize image dimensions and give dimensions to browser.
-            el('img#podd-img', { src : podcast.image, }),
-            el('div.podd-text', [
+            el("img#podd-img", { src : podcast.image, }),
+            el("div.podd-text", [
                 // Add podcast author if requested, otherwise leave it out.
-                doTitle ? el('div#podd-title', [ podcast.author ]) : undefined,
-                el('div#podd-ep', [ podcast.title ]),
-                el('div#podd-time', [ Math.floor(podcast.duration/60) + ' min' ])
+                doTitle ? el("div#podd-title", [ podcast.author ]) : undefined,
+                el("div#podd-ep", [ podcast.title ]),
+                el("div#podd-time", [ Math.floor(podcast.duration/60) + " min" ])
             ]),
-            el('div.podd-control.play', { 'onclick' : 'window.handlers.playPodcastHandler(event)' }),
-            window.dlman.has(podcast.program + podcast.index) ? el('div#podd-dl') : el('div#podd-dl')
+            el("div.podd-control.play", { 'onclick' : 'window.handlers.playPodcastHandler(event)' }),
+            window.dlman.has(podcast.program + podcast.index) ? el("div#podd-dl") : el("div#podd-dl")
         ])
         /**
          * When podd-play has been clicked, fetch parent to retrieve dataset.
          *
          *   function onPoddPlay(event) {
          *      var dataset = event.parent.dataset,
-         *          program = dataset['podcast-program'],
-         *          index = dataset['podcast-index']
+         *          program = dataset["podcast-program"],
+         *          index = dataset["podcast-index"]
          *      
          *      // app.programs is a map of fetched programs
          *      // program.podcasts is a list of available podcasts
          *
          *      // Something along the following lines:
          *          app.programs = {
-         *              'kul med james' : {
+         *              "kul med james" : {
          *                  ....,
          *                  podcasts : []
          *              }
@@ -224,30 +224,30 @@
 
     // TODO: select first available podd and fill player with?
     function makeFooter(){
-        return el('div#footer', [
-            el('img#footer-img', { src : '../img/player-placeholder-img.png' }),
-            el('div.footer-text-container', [
-                el('div#footer-title', ['inget program valt']),
-                el('div#footer-ep', ['inget avsnitt valt']),
-                el('div#footer-time', ['--/--'])
+        return el("div#footer", [
+            el("img#footer-img", { src : '../img/player-placeholder-img.png' }),
+            el("div.footer-text-container", [
+                el("div#footer-title", ["inget program valt"]),
+                el("div#footer-ep", ["inget avsnitt valt"]),
+                el("div#footer-time", ["--/--"])
             ]),
-            el('div#footer-btn.footer-pause', { 'onclick' : 'window.handlers.playerControlHandler(event)'})
+            el("div#footer-btn.footer-pause", { 'onclick' : 'window.handlers.playerControlHandler(event)'})
         ])
     }
 
     function makeProgramDiv(program, alternate){
         console.log("farm program: " + Object.keys(program));
         console.log("farm program name: " + program.key);
-        return el('div.program' + (alternate ? '.alternating' : ''), {
+        return el("div.program" + (alternate ? ".alternating" : ""), {
                 "data-podcast-program" : program.key,
                 }, [
                     el("div.program-expand-container",  
                         [
-                        el('img.program-img', { src : program.image }),
-                        el('div.program-text-container', [
-                            el('div.program-title', [program.name]),
-                            el('div.program-category', [program.category || 'Unkown']),
-                            //el('div.program-text', [program.description])
+                        el("img.program-img", { src : program.image }),
+                        el("div.program-text-container", [
+                            el("div.program-title", [program.name]),
+                            el("div.program-category", [program.category || "Unkown"]),
+                            //el("div.program-text", [program.description])
                             ])
                         ]),
                     el("div.program-chevron", {
@@ -264,7 +264,7 @@
         return a.concat(b)
     }
     function makeAllProgramPage(){
-        var currentSymbol = '', alternate = false
+        var currentSymbol = "", alternate = false
         // This makes the A-to-O setup, should probably be stored somehow
 
         var listByName = Object.keys(app.programs).sort(sortByName)
@@ -275,7 +275,7 @@
                 // If we need new symbol, return array
                 if (currentSymbol !== program.charAt(0).toUpperCase()){
                     currentSymbol = program.charAt(0).toUpperCase()
-                    var symbolEl = el('div.program-letter' + (alternate ? '.alternating' : ''), [currentSymbol])
+                    var symbolEl = el("div.program-letter" + (alternate ? ".alternating" : ""), [currentSymbol])
                     alternate = !alternate
                     return [symbolEl, programDiv]
                 }
@@ -302,7 +302,7 @@
         var listByCategories = Object.keys(categories).sort(sortByName)
             .map(function (category){
                 alternate = !alternate
-                var categoryEl = el('div.program-category-title' + (alternate ? '.alternating' : ''), [category]),
+                var categoryEl = el("div.program-category-title" + (alternate ? ".alternating" : ""), [category]),
                     programList = categories[category].sort(sortByName)
                         .map(function(program){
                             alternate = !alternate
@@ -330,15 +330,15 @@
             */
         }
 
-        return el('div.page', [
-            el('div.spotlight', [
-                el('img#spotlight-img', { src : 'img/raf-bg2.png' }),
-                el('div.title-bar', ['alla program'])
+        return el("div.page", [
+            el("div.spotlight", [
+                el("img#spotlight-img", { src : 'img/raf-bg2.png' }),
+                el("div.title-bar", ["alla program"])
             ]),
-            el('div.program-container', [
-                el('div.program-tabs', [
-                    el('div#toggleName.program-active', { 'onclick' : 'window.handlers.toggleProgramPane(event)' }, ['A-Ö']),
-                    el('div#toggleCategory.program-inactive', { 'onclick' : 'window.handlers.toggleProgramPane(event)' }, ['Kategorier'])
+            el("div.program-container", [
+                el("div.program-tabs", [
+                    el("div#toggleName.program-active", { 'onclick' : 'window.handlers.toggleProgramPane(event)' }, ["A-Ö"]),
+                    el("div#toggleCategory.program-inactive", { 'onclick' : 'window.handlers.toggleProgramPane(event)' }, ["Kategorier"])
                 ]),
                 listByName
             ])
@@ -396,17 +396,17 @@
     // document.body
     function makeWrapper(){
         return { 
-            wrapper : el('div#wrapper'),
-            slider : el('div#slider')
+            wrapper : el("div#wrapper"),
+            slider : el("div#slider")
         }
     }
 
     function makeFlowPage(){
-        return el('div#flow.page', [
-            el('div.spotlight', [
-                el('div.title-bar', ['mitt flöde'])
+        return el("div#flow.page", [
+            el("div.spotlight", [
+                el("div.title-bar", ["mitt flöde"])
             ]),
-            el('div.podd-container')
+            el("div.podd-container")
             // use window.flow.podcasts to fill it or something...
         ])
     }
@@ -420,7 +420,7 @@
            var counter = 0;
            favs.forEach(function(fav) {
                favList.push(el("div.fav", { 
-                   "data-podcast-program" : fav.program,
+                   'data-podcast-program' : fav.program,
                    'onclick' : 'window.handlers.openProgramView(event)'
                }, [
                        el("img.fav-img", {src: fav.programImage}),
@@ -429,26 +429,26 @@
                 )
            counter = counter + 1;
            });
-           return el('div.fav-container', favList);
+           return el("div.fav-container", favList);
        }
 
        var pod = {
-                title : "spotlight title text",
-                program: "Studentaftonpodden",
-                image: "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1",
-                programImage: "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1",
-                duration: "0 min"
+                title : 'spotlight title text',
+                program: 'Studentaftonpodden',
+                image: 'http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1',
+                programImage: 'http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1',
+                duration: '0 min'
        };
 
        var podcasts = [pod, pod, pod, pod, pod];
-       return el('div.page', [
+       return el("div.page", [
                 createSpotlight("mina favoriter", pod),
                 createFavourites(podcasts)
               ])
     }
 
     function createSpotlight(title, podcast) {
-       return   el('div.spotlight', [
+       return   el("div.spotlight", [
                         el("img#spotlight-img", {src: podcast.image}),
                         el("div.spotlight-container", [
                             el("div#spotlight-play"),
@@ -459,7 +459,7 @@
                             ]),
                             el("div#spotlight-dl"),
                         ]),
-                        el('div.title-bar', [title])
+                        el("div.title-bar", [title])
                 ])
     }
     
@@ -471,8 +471,8 @@
             return createPodcastDiv(podcast, false, alternate)
         },
 
-        staticTitleBar : function (){ return el('div#title-bar-fixed') },
-        menuButton : function (){ return el('div#menu-btn') },
+        staticTitleBar : function (){ return el("div#title-bar-fixed") },
+        menuButton : function (){ return el("div#menu-btn") },
 
         flowPage : makeFlowPage,
         // TODO: create dl don't exist

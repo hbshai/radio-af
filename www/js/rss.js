@@ -135,26 +135,24 @@
 
         var current = 0
         podcasts.forEach(function (podd, index){
-            var tmpMedia = new Media(podd.podcastUrl),
-                timeout = 2000
-
-            tmpMedia.setVolume(0)
-            tmpMedia.play()
-            
-            var interval = setInterval(function (){
-                podd.duration = tmpMedia.getDuration()
-                timeout -= 100
-
-                if (podd.duration > 0 || timeout <= 0) {
-                    clearInterval(interval)
-                    tmpMedia.stop()
-                    tmpMedia.release()
-
-                    current++
-                    if (current === podcasts.length && callb)
-                        callb(podcasts)
-                }
-            }, 100)
+            /**
+             * Make a HEAD request for the resource (podcast) to find the
+             * actual size, in bytes. Assuming that all programs use 128kbps
+             * we can calculate the duration.
+             */ 
+            $.ajax({
+                type: "HEAD",
+                async: true,
+                url: podd.podcastUrl,
+            }).done(function (message, text, jqXHR){
+                var poddSize = jqXHR.getResponseHeader('Content-Length') * 8 // bits
+                podd.duration = Math.floor(poddSize / (128 * 1024)) // bits/128kbps = s
+            }).always(function (){
+                // When all podcasts have been failed/done, proceed.
+                current++
+                if (current === podcasts.length && callb)
+                    callb(podcasts)
+            })
         })        
     
         return podcasts;

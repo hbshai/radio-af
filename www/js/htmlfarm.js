@@ -244,31 +244,35 @@
         ])
     }
 
+    function sortByName(a, b){
+        // Use localeCompare which supports Swedish chars
+        return a.toLowerCase().localeCompare(b.toLowerCase())
+    }
+    function flatten(a, b){
+        return a.concat(b)
+    }
     function makeAllProgramPage(){
         var currentSymbol = '', alternate = false
         // This makes the A-to-O setup, should probably be stored somehow
-        var listByName = Object.keys(app.programs).sort(function (a, b) {
-            // Normalize casing and use special comparison for strange chars (ö)
-            a = a.toLowerCase()
-            b = b.toLowerCase()
-            return a.localeCompare(b);
-        }).map(function (program){
-            alternate = !alternate;
-            var programDiv = makeProgramDiv(app.programs[program], alternate)
 
-            // If we need new symbol, return array
-            if (currentSymbol !== program.charAt(0).toUpperCase()){
-                currentSymbol = program.charAt(0).toUpperCase()
+        var listByName = Object.keys(app.programs).sort(sortByName)
+            .map(function (program){
+                var programDiv = makeProgramDiv(app.programs[program], alternate)
                 alternate = !alternate
 
-                return [el('div.program-letter' + (alternate ? '.alternating' : ''), [currentSymbol]), 
-                        programDiv
-                ]
-            }
+                // If we need new symbol, return array
+                if (currentSymbol !== program.charAt(0).toUpperCase()){
+                    currentSymbol = program.charAt(0).toUpperCase()
+                    alternate = !alternate
 
-            // Otherwise just return the program
-            return programDiv
-        })
+                    var symbolEl = el('div.program-letter' + (alternate ? '.alternating' : ''), [currentSymbol])
+                    return [symbolEl, programDiv]
+                }
+
+                // Otherwise just return the program
+                return [programDiv]
+            })
+            .reduce(flatten)
 
         var categories = {}
 
@@ -283,23 +287,36 @@
         })
         
         // Then sort the categories and generate lists of programs (sorted) for each category
-        alternate = false
-        var listByCategories = Object.keys(categories).sort().map(function (category){
-            return [el('div.program-category', [category]), categories[category].sort(function (a, b) {
-            // Normalize casing and use special comparison for strange chars (ö)
-            a = a.toLowerCase()
-            b = b.toLowerCase()
-            return a.localeCompare(b);
-        }).map(function(program){
+        alternate = true
+        var listByCategories = Object.keys(categories).sort(sortByName)
+            .map(function (category){
                 alternate = !alternate
-                return makeProgramDiv(app.programs[program], alternate)
-            })]
-        })
+                var categoryEl = el('div.program-category' + (alternate ? '.alternating' : ''), [category]),
+                    programList = categories[category].sort(sortByName)
+                        .map(function(program){
+                            alternate = !alternate
+                            return makeProgramDiv(app.programs[program], alternate)
+                        })
+                // Insert category element at index 0
+                programList.splice(0, 0, categoryEl)
+                return programList
+            })
+            .reduce(flatten)
 
         // Super shitty, but works for now...
         window.lists = {
             byName : listByName,
+            
+            /* byNameHTML : listByName
+                .map(function (el){ return el.outerHTML })
+                .reduce(function (a, b){ return a + b }),
+            */
+            
             byCategory : listByCategories
+            /* ,byCategoryHTML : listByCategories
+                .map(function (el){ return el.outerHTML })
+                .reduce(function (a, b){ return a + b })
+            */
         }
 
         return el('div.page', [

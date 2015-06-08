@@ -98,52 +98,41 @@
         // Should probably send notification and notify DOM
         console.log('FT Error: ' + download.hash + ' == ' + error.name + ': ' + error.message)
     }
-
+    
     function switchAllProgramPane(evt) {
         var target = evt.target.getAttribute('id'),
             parent = document.querySelector('.program-container')
+            removeNode = function(node){ parent.removeChild(node) },
+            addNode = function(node){ parent.appendChild(node) }
+
+        // window.lists.byName contains program and symbol elements
+        // window.lists.byCategory contains program and category elements
+
+        // Bail if user clicked on active tab
+        if (evt.target.className.indexOf('program-active') >= 0)
+            return
+
+        var els = document.querySelectorAll('.program-tabs > div')
+
+        //$('.program-tabs > div').toggleClass('program-active').toggleClass('program-inactive')
 
         if (target === 'toggleCategory') {
-            window.lists.byName.forEach(function (node){
-                if (node.length) {
-                    // Order doesn't matter when removing nodes
-                    for (var i = node.length - 1; i >= 0; i--) {
-                        parent.removeChild(node[i])
-                    }
-                } else {
-                    parent.removeChild(node)   
-                }
-            })
-            window.lists.byCategory.forEach(function (node){
-                // See below for info about the indices 
-                parent.appendChild(node[0])
-                node[1].forEach(function(el){
-                    parent.appendChild(el)
-                })
-            })
+            els[0].className = 'program-inactive'
+            els[1].className = 'program-active'
+            
+            //parent.innerHTML = window.lists.byCategoryHTML
+            window.lists.byName.forEach(removeNode)
+            window.lists.byCategory.forEach(addNode)
         } else {
-            window.lists.byName.forEach(function (node){
-                if (node.length) {
-                    // But matters when appending :D
-                    for (var i = 0; i < node.length; i++) {
-                        parent.appendChild(node[i])
-                    }
-                } else {
-                    parent.appendChild(node)   
-                }
-            })
-            window.lists.byCategory.forEach(function (node){
-                // In category the first index is the category, the second is the
-                // array of programs of that category.
-                parent.removeChild(node[0])
-                node[1].forEach(function(el){
-                    parent.removeChild(el)
-                })
-            })
+            els[0].className = 'program-active'
+            els[1].className = 'program-inactive'
+            
+            //parent.innerHTML = window.lists.byNameHTML
+            window.lists.byCategory.forEach(removeNode)
+            window.lists.byName.forEach(addNode)
         }
         
         window.app.scroller.recalcHeight()
-        $('.program-tabs > div').toggleClass('program-active').toggleClass('program-inactive')
     }
 
     GLOBAL.handlers = {

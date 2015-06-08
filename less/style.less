@@ -113,9 +113,6 @@ body,ul,li,h1,h2,p {
 }
 .program {
     height: @program-height;
-    background-image: url("../img/chevron-right.png");
-    background-repeat: no-repeat;
-    background-position: 95% center;
 }
 .program-text-container {
     position: absolute;
@@ -132,6 +129,14 @@ body,ul,li,h1,h2,p {
     display: inline-block;
     width: 50%;
     text-align: center;
+}
+
+.program-chevron {
+    height: @program-height;
+    display: inline-block;
+    background-image: url("../img/chevron-right.png");
+    background-repeat: no-repeat;
+    background-position: 95% center;
 }
 
 .program-active {
@@ -613,9 +618,6 @@ body {
     }
     .program {
         height: @program-height;
-        background-image: url("../img/chevron-right.png");
-        background-repeat: no-repeat;
-        background-position: 95% center;
     }
     .program-text-container {
         position: absolute;
@@ -651,6 +653,29 @@ body {
         font-size: 3em;
         text-transform: uppercase;
         margin-left: 10px;
+    }
+
+    .program-category-title {
+        padding-top: @program-height / 3;
+        padding-bottom: @program-height / 3;
+        width: 100%;
+        font-family: NexaLight;
+        font-size: 2.7em;
+        margin-left: 10px;
+    }
+
+    .program-expand-container {
+        display: inline-block;
+    }
+
+    .program-chevron {
+        height: @program-height;
+        background-image: url("../img/chevron-right.png");
+        background-repeat: no-repeat;
+        background-position: center center;
+        display: inlineblock;
+        float: right;
+        width: 50px;
     }
 
     .alternating {

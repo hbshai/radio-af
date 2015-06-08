@@ -106,6 +106,7 @@
     // This creates the view for a particular program; i.e the one that pops up
     // when you click on a favourite pod, or on a program listed in the "Alla program"
     // view
+    // TODO: convert this to sugared DOM
     function createProgramView(podcasts) {
         var firstPod = podcasts[0];
         var counter = 0;
@@ -221,27 +222,38 @@
           div#footer-btn.footer-play
     */
 
+    // TODO: select first available podd and fill player with?
     function makeFooter(){
         return el('div#footer', [
-            el('img#footer-img', { src : '../img/raf-bg.png' }),
+            el('img#footer-img', { src : '../img/player-placeholder-img.png' }),
             el('div.footer-text-container', [
-                el('div#footer-title', ['']),
-                el('div#footer-ep', ['']),
-                el('div#footer-time', [''])
+                el('div#footer-title', ['inget program valt']),
+                el('div#footer-ep', ['inget avsnitt valt']),
+                el('div#footer-time', ['--/--'])
             ]),
             el('div#footer-btn.footer-pause', { 'onclick' : 'window.handlers.playerControlHandler(event)'})
         ])
     }
 
     function makeProgramDiv(program, alternate){
-        return el('div.program' + (alternate ? '.alternating' : ''), [
-            el('img.program-img', { src : program.image }),
-            el('div.program-text-container', [
-                el('div.program-title', [program.name]),
-                el('div.program-category', [program.category || 'Unkown']),
-                //el('div.program-text', [program.description])
-            ])
-        ])
+        console.log("farm program: " + Object.keys(program));
+        console.log("farm program name: " + program.key);
+        return el('div.program' + (alternate ? '.alternating' : ''), {
+                "data-podcast-program" : program.key,
+                }, [
+                    el("div.program-expand-container",  
+                        [
+                        el('img.program-img', { src : program.image }),
+                        el('div.program-text-container', [
+                            el('div.program-title', [program.name]),
+                            el('div.program-category', [program.category || 'Unkown']),
+                            //el('div.program-text', [program.description])
+                            ])
+                        ]),
+                    el("div.program-chevron", {
+                        'onclick' : 'window.handlers.openProgramView(event)'
+                    })
+                ])
     }
 
     function sortByName(a, b){
@@ -263,9 +275,8 @@
                 // If we need new symbol, return array
                 if (currentSymbol !== program.charAt(0).toUpperCase()){
                     currentSymbol = program.charAt(0).toUpperCase()
-                    alternate = !alternate
-
                     var symbolEl = el('div.program-letter' + (alternate ? '.alternating' : ''), [currentSymbol])
+                    alternate = !alternate
                     return [symbolEl, programDiv]
                 }
 
@@ -287,11 +298,11 @@
         })
         
         // Then sort the categories and generate lists of programs (sorted) for each category
-        alternate = true
+        alternate = false;
         var listByCategories = Object.keys(categories).sort(sortByName)
             .map(function (category){
                 alternate = !alternate
-                var categoryEl = el('div.program-category' + (alternate ? '.alternating' : ''), [category]),
+                var categoryEl = el('div.program-category-title' + (alternate ? '.alternating' : ''), [category]),
                     programList = categories[category].sort(sortByName)
                         .map(function(program){
                             alternate = !alternate
@@ -401,23 +412,29 @@
     }
 
     function makeFavPage() {
+        // TODO: 
+        // * add handlers for each div.fav
+        // * populate with favs from device, otherwise display "oops no favs" view instead
        function createFavourites(favs) {
            var favList = [];
+           var counter = 0;
            favs.forEach(function(fav) {
-               console.log("**********************************");
-               console.log(fav.title);
-               favList.push(el("div.fav", [
+               favList.push(el("div.fav", { 
+                   "data-podcast-program" : fav.program,
+                   'onclick' : 'window.handlers.openProgramView(event)'
+               }, [
                        el("img.fav-img", {src: fav.programImage}),
                        el("div.fav-title", [fav.title])
                    ])
                 )
+           counter = counter + 1;
            });
            return el('div.fav-container', favList);
        }
 
        var pod = {
                 title : "spotlight title text",
-                program: "spotlight program",
+                program: "Studentaftonpodden",
                 image: "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1",
                 programImage: "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1",
                 duration: "0 min"
@@ -458,7 +475,7 @@
         menuButton : function (){ return el('div#menu-btn') },
 
         flowPage : makeFlowPage,
-        // TODO: fav + dl don't exist
+        // TODO: create dl don't exist
         favouritesPage: makeFavPage,
         // downloadedPage: makeDownloadPage,
 

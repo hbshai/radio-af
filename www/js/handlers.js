@@ -98,8 +98,23 @@
         // Should probably send notification and notify DOM
         console.log('FT Error: ' + download.hash + ' == ' + error.name + ': ' + error.message)
     }
-    
+    // Create a program view for the tapped on program, insert it into the DOM and focus it
+    function createProgramView(evt) {
+        var target = evt.target.parentNode;
+        var programName = target.dataset["podcastProgram"];
+        console.log("got the program name: " + programName);
+        // Find the info for the program and open a new view
+        window.rss.find(programName, function(podcasts) {
+            var programPage = window.htmlFarm.programView(podcasts);
+            // insert the page into the dom
+            var newPage = window.app.scroller.insertPage(programPage, window.app.scroller.pages[window.app.scroller.currentPage], true);
+            window.app.scroller.gotoPage(newPage);
+        });
+    }
+
+    // Switches between the alphabetic and category views in Alla Program
     function switchAllProgramPane(evt) {
+        console.log("8) woah");
         var target = evt.target.getAttribute('id'),
             parent = document.querySelector('.program-container')
             removeNode = function(node){ parent.removeChild(node) },
@@ -144,6 +159,7 @@
         fileRemoveFail : console.log,
 
         loadedProgramRSS : onProgramLoad,
+        openProgramView : createProgramView,
 
         toggleProgramPane : switchAllProgramPane
     }

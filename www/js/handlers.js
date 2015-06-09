@@ -23,6 +23,7 @@
             program = dataset['podcastProgram'],
             index = dataset['podcastIndex'],
             podcast = window.app.programs[program].podcasts[index]
+
             // Very low chance of collision: 'Correcto' + '10' vs 'Correcto1' + '0'
             trackHash = program + index, 
             // Selector for all elements that have this specifc podcast data
@@ -111,6 +112,64 @@
         });
     }
 
+    function expandProgramText(evt) {
+        // TODO: don't react to the program chevron in a much nicer fashion
+        // than this pls
+        if (evt.target.classList.contains("program-chevron")) {
+            return;
+        }
+        // Locate the program div
+        var target = evt.target;
+        var counter = 0;
+        // counter's probably overkill
+        while (!target.classList.contains("program") && counter < 100) {
+            counter++;
+            target = target.parentNode;
+        }
+
+        // Determine if we are expanding or contracting the div
+        if (target.classList.contains("program-expanded")) {
+            target.classList.remove("program-expanded");
+        } else {
+            // add a marker, so that we know to contract it upon next tap
+            target.classList.add("program-expanded");
+        }
+        //TODO: remove this; check bounds instead
+        setTimeout(function() {
+            window.app.scroller.recalcHeight();
+        }, 150);
+    }
+
+    function expandPodcastText(evt) {
+        // // TODO: don't react to the program chevron in a much nicer fashion
+        // // than this pls
+        if (evt.target.classList.contains("podd-control") || evt.target.classList.contains("podd-dl")) {
+            return;
+        }
+
+        // Locate the program div
+        var target = evt.target;
+        var counter = 0;
+        // counter's probably overkill
+        while (!target.classList.contains("podd") && counter < 100) {
+            counter++;
+            target = target.parentNode;
+        }
+
+        // Determine if we are expanding or contracting the div
+        if (target.classList.contains("podd-expanded")) {
+            target.classList.remove("podd-expanded");
+        } else {
+            // add a marker, so that we know to contract it upon next tap
+            target.classList.add("podd-expanded");
+        }
+        //TODO: remove this; check bounds instead
+        setTimeout(function() {
+            window.app.scroller.recalcHeight();
+        }, 150);
+    }
+
+
     // Switches between the alphabetic and category views in Alla Program
     function switchAllProgramPane(evt) {
         var target = evt.target.getAttribute('id'),
@@ -158,6 +217,8 @@
 
         loadedProgramRSS : onProgramLoad,
         openProgramView : createProgramView,
+        expandText : expandProgramText,
+        expandPodcast : expandPodcastText,
 
         toggleProgramPane : switchAllProgramPane
     }

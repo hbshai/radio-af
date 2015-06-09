@@ -113,6 +113,9 @@ body,ul,li,h1,h2,p {
 }
 .program {
     height: @program-height;
+    -webkit-transition: height 0.2s;
+    transition: height 0.2s;
+    overflow: hidden;
 }
 .program-text-container {
     position: absolute;
@@ -138,7 +141,22 @@ body,ul,li,h1,h2,p {
     background-repeat: no-repeat;
     background-position: 95% center;
 }
+.program-disclaimer {
+    color: @raf-black + #888;
+    position: absolute;
+    bottom: 0px;
+    font-size: 0.8em;
+    width: 200px;
+}
 
+.program-expanded {
+    height: 100% !important;
+}
+
+.program-text {
+    margin: 15px;
+    margin-top: 10px;
+}
 .program-active {
     .program-base();
     background-color: @raf-red;
@@ -156,7 +174,7 @@ body,ul,li,h1,h2,p {
     font-size: 3em;
     font-family: NexaLight;
     text-transform: uppercase;
-    margin-left: 10px;
+    padding-left: 10px;
 }
 
 .alternating {
@@ -200,6 +218,21 @@ body,ul,li,h1,h2,p {
 .podd {
     height: 100px;
     width: 100%;
+    overflow: hidden;
+    -webkit-transition: height 0.2s;
+    transition: height 0.2s;
+}
+
+.podd-expanded {
+    height: 100% !important;
+}
+
+
+.podd-ep-text {
+    display: block;
+    margin: 15px;
+    margin-top: 85px;
+	font-family: OpenSans;
 }
 
 #podd-img {
@@ -210,6 +243,7 @@ body,ul,li,h1,h2,p {
 
 .podd-text {
     position: absolute;
+    overflow: hidden;
     display: inline-block;
     font-size: 0.85em;
     width: 100%;
@@ -219,7 +253,7 @@ body,ul,li,h1,h2,p {
     margin-top: 3px;
     background-image: url("../img/chevron-down.png");
     background-repeat: no-repeat;
-    background-position: 35% bottom;
+    background-position: 29% bottom;
 }
 
 @play-margin: 40px;
@@ -516,7 +550,8 @@ body {
 
     #podd-img {
         position: absolute;
-        height: @podd-height;
+        // magic +1: ensures there isn't a 1 px white border under images
+        height: @podd-height+1;
         display: inline-block;
     }
     #podd-title {
@@ -530,7 +565,7 @@ body {
         position: absolute;
         display: inline-block;
         font-size: 0.9em;
-        width: 130px;
+        width: 125px;
         height: @podd-height - 6px;
         margin-left: @podd-height + 32px;
         margin-top: 3px;
@@ -564,13 +599,13 @@ body {
     }
 
     .podd-dl {
-        float: right;
+        // float: right;
         display: inline-block;
         margin-top: 14px;
         margin-left: @play-margin;
         height: @podd-height - @play-margin;
         width: @podd-height;
-        background-image: url("../img/dl-boxx.png");
+        background-image: url("../img/dl-box-blue.png");
         background-repeat: no-repeat;
         background-position: center;
         background-size: 31.5px 38.5px;
@@ -622,8 +657,8 @@ body {
     .program {
         height: @program-height;
     }
+
     .program-text-container {
-        position: absolute;
         margin-top: 5px;
         margin-left: 5px;
         height: @program-height - 5px;
@@ -653,10 +688,10 @@ body {
         padding-top: 15px;
         padding-bottom: 10px;
         font-family: NexaLight;
-        width: 100%;
         font-size: 3em;
         text-transform: uppercase;
-        margin-left: 10px;
+        padding-left: 10px;
+        width: 100%;
     }
 
     .program-category-title {
@@ -712,7 +747,7 @@ body {
 
         background: @light-blue;
         color: @off-white;
-        font-size: 20pt; 
+        font-size: 19pt; 
     }
 
     #title-bar-fixed {

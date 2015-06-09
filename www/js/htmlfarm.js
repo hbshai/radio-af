@@ -170,8 +170,9 @@
         return el("div.podd" + (alternate ? ".alternating" : ""), { 
             // Allow each div to carry its own pointer(s) to the podcast.
             // See comment further down how they (could) work.
-            "data-podcast-program" : podcast.program,
-            "data-podcast-index" : podcast.index
+            'data-podcast-program' : podcast.program,
+            'data-podcast-index' : podcast.index,
+            'onclick': 'window.handlers.expandPodcast(event)'
         }, [
             // TODO: Optimize image dimensions and give dimensions to browser.
             el("img#podd-img", { src : podcast.image, }),
@@ -182,7 +183,8 @@
                 el("div#podd-time", [ Math.floor(podcast.duration/60) + " min" ])
             ]),
             el("div.podd-control.play", { 'onclick' : 'window.handlers.playPodcastHandler(event)' }),
-            window.dlman.has(podcast.program + podcast.index) ? el("div#podd-dl") : el("div#podd-dl")
+            window.dlman.has(podcast.program + podcast.index) ? el("div.podd-dl") : el("div.podd-dl"),
+            el("div.podd-ep-text", ["bblalalalal lots of pod description right here yaaaablalalalal lots of pod description right here yaaaablalalalal lots of pod description right here yaaaalalalalal lots of pod description right here yaaaa"])
         ])
         /**
          * When podd-play has been clicked, fetch parent to retrieve dataset.
@@ -236,23 +238,18 @@
     }
 
     function makeProgramDiv(program, alternate){
-        console.log("farm program: " + Object.keys(program));
-        console.log("farm program name: " + program.key);
         return el("div.program" + (alternate ? ".alternating" : ""), {
-                "data-podcast-program" : program.key,
+                'data-podcast-program' : program.key, 
+                'onclick': 'window.handlers.expandText(event)'
                 }, [
-                    el("div.program-expand-container",  
-                        [
-                        el("img.program-img", { src : program.image }),
-                        el("div.program-text-container", [
-                            el("div.program-title", [program.name]),
-                            el("div.program-category", [program.category || "Unkown"]),
-                            //el("div.program-text", [program.description])
-                            ])
+                    el("img.program-img", { src : program.image }),
+                    el("div.program-text-container", [
+                        el("div.program-title", [program.name]),
+                        el("div.program-category", [program.category || "Unknown"]),
+                        el("div.program-disclaimer", ["läs om programmet"])
                         ]),
-                    el("div.program-chevron", {
-                        'onclick' : 'window.handlers.openProgramView(event)'
-                    })
+                    el("div.program-chevron", { onclick: 'window.handlers.openProgramView(event)'}),
+                    el("div.program-text", ["xx files music all day every day. ba ba ba ba b ab ba ba baaaaa - ba ba ba ba bá báaa - babababaababa - ba ba ba bá bà báaaax files music all day every day. ba ba ba ba b ab ba ba baaaaa - ba ba ba ba bá báaa - babababaababa - ba ba ba bá bà báaaa files music all day every day. ba ba ba ba b ab ba ba baaaaa - ba ba ba ba bá báaa - babababaababa - ba ba ba bá bà báaaa"])
                 ])
     }
 
@@ -474,18 +471,21 @@
     }
 
     function createSpotlight(title, podcast) {
-       return   el("div.spotlight", [
-                        el("img#spotlight-img", {src: podcast.image}),
-                        el("div.spotlight-container", [
-                            el("div#spotlight-play"),
-                            el("div.spotlight-text-container", [
-                                el("div#spotlight-title", [podcast.program]),
-                                el("div#spotlight-ep", [podcast.title]),
-                                el("div#spotlight-time", [podcast.duration])
-                            ]),
-                            el("div#spotlight-dl"),
+       return   el("div.spotlight", {
+                "data-podcast-program" : podcast.program,
+                "data-podcast-index" : podcast.index
+               }, [
+                    el("img#spotlight-img", {src: podcast.image}),
+                    el("div.spotlight-container", [
+                        el("div#spotlight-play", {'onclick' : 'window.handlers.playPodcastHandler(event)'}),
+                        el("div.spotlight-text-container", [
+                            el("div#spotlight-title", [podcast.program]),
+                            el("div#spotlight-ep", [podcast.title]),
+                            el("div#spotlight-time", [podcast.duration])
                         ]),
-                        el("div.title-bar", [title])
+                        el("div#spotlight-dl"),
+                    ]),
+                    el("div.title-bar", [title])
                 ])
     }
     
@@ -501,7 +501,6 @@
         menuButton : function (){ return el("div#menu-btn") },
 
         flowPage : makeFlowPage,
-        // TODO: create dl don't exist
         favouritesPage: makeFavPage,
         downloadedPage: makeDownloadPage,
 

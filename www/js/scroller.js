@@ -123,16 +123,15 @@
         },
 
         // insert a new page into the dom, returns the page index of it
-        // insert el before or after targetEl
-        insertPage : function (el, targetEl, after) {
-            var targetIndex;
-
-            for (targetIndex = 0; targetIndex < this.pages.length; targetIndex++)
-                if (this.pages[targetIndex] === targetEl)
-                    break;
+        // insert el before or after page pointed by targetIndex
+        insertPage : function (el, targetIndex, after) {
+            try { this.pages[targetIndex]; }
+            catch (e) { console.log('Scroller::insertPage -- targetEl is now targetIndex. Specify page number instead of element.');}
+            
+            var targetEl = this.pages[targetIndex];
 
             if (after)
-                targetIndex++
+                targetIndex++;
 
             this.pages.splice(targetIndex, 0, el);
             if (after)
@@ -191,8 +190,7 @@
             }
         },
 
-        move : function (x, y, force) {
-            // TODO: Optimize and only use webkitTransform instead of VENDOR_TRANSFORM
+        move : function (x, y) {
             this.slider.style['webkitTransform'] = 'translate3d(' + x + 'px,0,0)';
             this.scroller.style['webkitTransform'] = 'translate3d(0,' + y + 'px,0)';
 
@@ -357,7 +355,7 @@
                 cancelFrame(this.frame);
 
             // Don't scroll if user moved very slow towards the end,
-            // like a sweep-then-stop.
+            // like a sweep-then-stop (pan motion).
             if (dy < 8)
                 return;
             
@@ -416,19 +414,19 @@
         render : function () {
             var t = (Date.now() - this.animation.startTime) / 200.0;
         
-            // Clamp t to 1 for good behaviour
-            if (t > 1)
+            // Clamp t to 1 for 0 over-shoot, also request next frame if possible
+            if (t > 1) {
                 t = 1;
+                this.frame = undefined;
+            } else {
+                this.frame = nextFrame(this.ANIMATION_RENDER);
+            }
 
             var ease = easing(t),
                 dx = this.animation.dx * ease,
                 dy = this.animation.dy * ease;
 
             this.move(this.animation.ox + dx, this.animation.oy + dy);
-            if (t < 1)
-                this.frame = nextFrame(this.ANIMATION_RENDER);
-            else
-                this.frame = undefined;
         },
         
         // change target of Y-scrolling, necessary when changing to a new page
@@ -445,15 +443,13 @@
 
             if (this.height > 0)
                 this.height = 0;
-
-            // Defer the function call so the DOM read stuff doesn't crash animation
-            var that = this;
-            if (this.onPageChangeListener)
-                that.onPageChangeListener(target);
+            
+            this.onPageChangeListener(target);
         },
 
         recalcHeight : function(){
             this.changeTarget(this.scroller);
+            // TODO: Check y-axis after height has been updated
         }
     }
 

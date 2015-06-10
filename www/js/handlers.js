@@ -51,7 +51,7 @@
               + ' > .podd-control').toggleClass('play').toggleClass('pause')
 
         // TODO: Store currently playing podcast info in local storage
-
+        // TODO: Refactor audiop so we only do audiop.play(podcast) and it does everything
         window.app.audiop.trackHash = trackHash
         window.app.audiop.loadMedia(podcast.podcastUrl)
         window.app.audiop.play(onPlayProgress)
@@ -61,6 +61,7 @@
 
         currentDurationString = formatDate(new Date(podcast.duration * 1000))
 
+        // TODO: Move these into audiop
         $("#footer-btn").attr('class', 'footer-play');
         $("#footer-img").attr('src', podcast.image);
         $("#footer-title").text(podcast.author);
@@ -102,14 +103,15 @@
     // Create a program view for the tapped on program, insert it into the DOM and focus it
     function createProgramView(evt) {
         var target = evt.target.parentNode;
-        var programName = target.dataset["podcastProgram"];
+        var programKey = target.dataset["podcastProgram"];
+
         // Find the info for the program and open a new view
-        window.rss.find(programName, function(podcasts) {
-            var programPage = window.htmlFarm.programView(podcasts);
-            // insert the page into the dom
-            var newPage = window.app.scroller.insertPage(programPage, window.app.scroller.pages[window.app.scroller.currentPage], true);
-            window.app.scroller.gotoPage(newPage);
-        });
+        var podcasts = window.rss.find(programKey)
+        var programPage = window.htmlFarm.programView(podcasts);
+
+        // insert the page into the dom
+        var newPage = window.app.scroller.insertPage(programPage, window.app.scroller.currentPage, true);
+        window.app.scroller.gotoPage(newPage);
     }
 
     function expandProgramText(evt) {

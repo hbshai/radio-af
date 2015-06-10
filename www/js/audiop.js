@@ -12,13 +12,16 @@ var audiop = function() {
 	}
 
 	this.play = function (onUpdate) {
-		if (!_media) return console.err('No media.');
-		if (!_paused) return console.err('Already playing.');
+		if (!_media) return console.err("No media.");
+		if (!_paused) return console.err("Already playing.");
 
 		_media.play({ /* super secret options here */ });
-		_id = setInterval(trackProgress, 1000);
+
 		_paused = false;
 		_callb = onUpdate;
+
+		_id = setInterval(trackProgress, 500);
+		trackProgress();
 	}
 
 	// liveplayer
@@ -65,6 +68,6 @@ var audiop = function() {
 		return _paused;
 	}
 
-	function onSuccess(){ console.log('Loaded media.'); }
-	function onError(){ console.err('Did not load media.'); }
+	function onSuccess(){ console.log("Loaded media."); }
+	function onError(){ console.err("Did not load media."); }
 }

@@ -9,7 +9,6 @@ html
     link(rel='stylesheet', href='css/style.css')
     body
       div#loading
-        p Loading...
   
       script(src="cordova.js")
       script(src="js/vendor/jquery-2.1.3.min.js")
@@ -109,20 +108,20 @@ html
             })
 
             function rssDoneLoading(data, xml) {
-                console.log('Loaded ' + this.program + ', parsing...')
+                console.log("Loaded " + this.program + ", parsing...");
                 // parse returns pre-emptively without durations
-                var podcasts = rss.parse(data, xml, withDuration),
-                    programKey = this.program
+                var programKey = this.program,
+                    podcasts = rss.parse(data, xml, app.programs[programKey], withDuration);
 
                 // Setup links
-                app.programs[programKey].podcasts = podcasts
+                app.programs[programKey].podcasts = podcasts;
 
                 // Copy duration when done, store in cache
                 function withDuration(podcastsWithDur){
                     for (var i = 0, l = podcastsWithDur.length; i < l; i++)
                       podcasts[i].duration = podcastsWithDur[i].duration
 
-                    console.log('Updated all podcast durations (' + programKey + ')')
+                    console.log("Updated all podcast durations (" + programKey + ")")
                     
                     // Cache this json!
                     window.cache.putProgram(app.programs[programKey])
@@ -169,7 +168,7 @@ html
                 rss.find(programName, function(podcasts) {
                     var programPage = window.htmlFarm.programView(podcasts);
                     // insert the page into the dom
-                    var newPage = app.scroller.insertPage(programPage, app.scroller.pages[app.scroller.currentPage], false);
+                    var newPage = app.scroller.insertPage(programPage, app.scroller.currentPage, false);
                     app.scroller.gotoPage(newPage);
                 });
 

@@ -283,6 +283,17 @@ body,ul,li,h1,h2,p {
     background-position: center;
 }
 
+.fav-heart {
+    background-image: url("../img/heart.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 40px;
+    height: 40px;
+    top: 10px;
+    opacity: 0.55;
+    right: 10px;
+    position: absolute;
+}
 
 .podd-dl {
     float: right;
@@ -433,7 +444,7 @@ body {
 	background: @raf-white;
 	-webkit-transform:translate3d(0,0,0);
     // adjust page height: add height of footer
-    padding-bottom: @footer-height + 25px;
+    padding-bottom: @footer-height;
 }
 
 
@@ -494,6 +505,9 @@ body {
     #spotlight-ep {
         font-size: 1.1em; 
         margin-top: -2px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space:nowrap;
     }
 
     #spotlight-time {
@@ -526,6 +540,9 @@ body {
         position: absolute;
         display: inline-block;
         margin-top: 3px;
+        // background-color: magenta;
+        // TODO: dynamically size text-container width
+        width: 200px;
         margin-left: @spotlight-height + 6px; // spacing for the play btn
     }
     #spotlight-dl {

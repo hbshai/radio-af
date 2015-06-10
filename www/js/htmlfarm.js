@@ -106,61 +106,15 @@
     // This creates the view for a particular program; i.e the one that pops up
     // when you click on a favourite pod, or on a program listed in the "Alla program"
     // view
-    // TODO: convert this to sugared DOM
     function createProgramView(podcasts) {
         var firstPod = podcasts[0];
         var counter = 0;
-        var $page = $(document.createElement("div"));
-        $page.addClass("page");
-        $page.attr("id", "program");
 
-        // create the following structure:
-        // div.spotlight-container
-              // div#spotlight-play 
-              // div.spotlight-text-container
-              //     div#spotlight-title Studentaftonpodden
-              //     div#spotlight-ep Anna Kinberg Batra
-              //     div#spotlight-time 77 min
-              // div#spotlight-dl
-
-              // create the spotlight div
-        var $spotlight = $(document.createElement("div")).addClass("spotlight");
-        $spotlight.append($(document.createElement("img")).attr("id", "spotlight-img").attr("src", firstPod.programImage));
-
-
-        // create the text component of the spotlight
-        var $spotlightText = $(document.createElement("div")).addClass("spotlight-text-container");
-        $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-title").text(firstPod.program));
-        $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-ep").text(firstPod.title));
-        $spotlightText.append($(document.createElement("div")).attr("id", "spotlight-time").text(Math.floor(firstPod.duration/60) + " min"));
-
-        var $spotlightContainer = $(document.createElement("div")).addClass("spotlight-container");
-        $spotlightContainer.append($(document.createElement("div")).attr("id", "spotlight-play"));
-        $spotlightContainer.append($spotlightText);
-        $spotlightContainer.append($(document.createElement("div")).attr("id", "spotlight-dl"));
-        $spotlight.append($spotlightContainer);
-
-        // create the title-bar div
-        var $titleBar = $(document.createElement("div"));
-        $titleBar.addClass("title-bar");
-        $titleBar.text(firstPod.author);
-
-        var $poddContainer = $(document.createElement("div")).addClass("podd-container");
-
-        podcasts.forEach(function(podcast){
-            // we already used the first pod for the spotlight!
-            if (podcast === firstPod) {
-                return;
-            }
-            counter = (counter + 1) % 2;
-            $poddContainer.append(createPodcastDiv(podcast, false, counter === 0));
-        });
-        // append all the children to the parent div page
-        $page.append($spotlight);
-        $page.append($titleBar);
-        $page.append($poddContainer);
-        // return the complete DOM tree
-        return $page[0];
+        return el("div.page", [
+                el("div.fav-heart"),
+                createSpotlight(firstPod.program, firstPod, true),
+                populatePageWithPodcasts(podcasts, true)
+              ]);
     }
 
     // podcast : podcast to generate
@@ -237,7 +191,7 @@
         ])
     }
 
-    function makeProgramDiv(program, alternate){
+    function makeProgramListingDiv(program, alternate, isAlphabeticView){
         return el("div.program" + (alternate ? ".alternating" : ""), {
                 'data-podcast-program' : program.key, 
                 'onclick': 'window.handlers.expandText(event)'
@@ -245,7 +199,8 @@
                     el("img.program-img", { src : program.image }),
                     el("div.program-text-container", [
                         el("div.program-title", [program.name]),
-                        el("div.program-category", [program.category || "Unknown"]),
+                        // only include category div when sorting programs alphabetically
+                        isAlphabeticView ?  el("div.program-category", [program.category || "Unknown"]) : [""],
                         el("div.program-disclaimer", ["läs om programmet"])
                         ]),
                     el("div.program-chevron", { onclick: 'window.handlers.openProgramView(event)'}),
@@ -266,12 +221,17 @@
 
         var listByName = Object.keys(app.programs).sort(sortByName)
             .map(function (program){
-                var programDiv = makeProgramDiv(app.programs[program], alternate)
+                var programDiv = makeProgramListingDiv(app.programs[program], alternate, true)
                 alternate = !alternate
 
                 // If we need new symbol, return array
                 if (currentSymbol !== program.charAt(0).toUpperCase()){
                     currentSymbol = program.charAt(0).toUpperCase()
+                    // TODO: dunno if we wanna do this
+                    // set categories that start with numbers to "123"
+                    // if (!isNaN(currentSymbol)) {
+                    //     currentSymbol = "123";
+                    // }
                     var symbolEl = el("div.program-letter" + (alternate ? ".alternating" : ""), [currentSymbol])
                     alternate = !alternate
                     return [symbolEl, programDiv]
@@ -303,7 +263,7 @@
                     programList = categories[category].sort(sortByName)
                         .map(function(program){
                             alternate = !alternate
-                            return makeProgramDiv(app.programs[program], alternate)
+                            return makeProgramListingDiv(app.programs[program], alternate, false)
                         })
                 // Insert category element at index 0
                 programList.splice(0, 0, categoryEl)
@@ -409,16 +369,6 @@
     }
 
     function makeDownloadPage() {
-        function populateDownloads(downloads) {
-            var elementList = [];
-            var alternate = false;
-            downloads.forEach(function(pod) {
-                alternate = !alternate;
-                elementList.push(createPodcastDiv(pod, true, alternate));
-            });
-            return el("div.podd-container", elementList);
-        }
-
        var pod = {
                 title : 'spotlight title text',
                 program: 'Studentaftonpodden',
@@ -431,7 +381,7 @@
 
        return el("div.page", [
                 createSpotlight("nedladdade poddar", pod),
-                populateDownloads(podcasts)
+                populatePageWithPodcasts(podcasts, false)
               ]);
     }
 
@@ -470,18 +420,28 @@
               ])
     }
 
-    function createSpotlight(title, podcast) {
+    function populatePageWithPodcasts(podcasts, isProgramPage) {
+        var elementList = [];
+        var alternate = false;
+        podcasts.forEach(function(pod) {
+            alternate = !alternate;
+            elementList.push(createPodcastDiv(pod, !isProgramPage, alternate));
+        });
+        return el("div.podd-container", elementList);
+    }
+
+    function createSpotlight(title, podcast, isProgramView) {
        return   el("div.spotlight", {
                 "data-podcast-program" : podcast.program,
                 "data-podcast-index" : podcast.index
                }, [
-                    el("img#spotlight-img", {src: podcast.image}),
+                    el("img#spotlight-img", {src: isProgramView ? podcast.programImage : podcast.image}),
                     el("div.spotlight-container", [
                         el("div#spotlight-play", {'onclick' : 'window.handlers.playPodcastHandler(event)'}),
                         el("div.spotlight-text-container", [
                             el("div#spotlight-title", [podcast.program]),
                             el("div#spotlight-ep", [podcast.title]),
-                            el("div#spotlight-time", [podcast.duration])
+                            el("div#spotlight-time", ["0 min"])
                         ]),
                         el("div#spotlight-dl"),
                     ]),

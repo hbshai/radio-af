@@ -1,57 +1,307 @@
 {
+
+    "7hpblandat" : {
+        "name": "7HP blandat",
+        "image":
+        "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/03/Logga_nya_hemsidan.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/blandat/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
     "bastforeigar" : {
         "name": "Bäst Före Igår", 
         "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/Programbild.jpg&w=950&h=670&q=100&zc=1",
         "rss": "http://www.radioaf.se/program/bastforeigar/feed/?post_type=podcasts",
-        "category": "lite nice, lite bajs"
-    },
-
-    "Studentaftonpodden" : {
-        "name": "Studentaftonpodden", 
-        "image":"http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/10/Officiell_Poddlogo_final_black.png&w=950&h=670&q=100&zc=1",
-        "rss": "http://www.radioaf.se/program/studentaftonpodden/feed/?post_type=podcasts",
-        "category": "vi gillar allt"
+        "category": "nöje & kultur"
     },
 
     "correcto" : {
         "name": "Correcto", 
         "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/correctobarcelona.png&w=950&h=670&q=100&zc=1",
         "rss": "http://www.radioaf.se/program/correcto/feed/?post_type=podcasts",
-        "category": "som det ska vara"
+        "category": "samhälle"
     },
 
-    "klagomuren" : {
-        "name": "Klagomuren",
-        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/klagomuren.jpg&w=950&h=670&q=100&zc=1",
-        "rss": "http://www.radioaf.se/program/klagomuren/feed/?post_type=podcasts",
-        "category": "music no more"
-    },
-
-    "ordgasm" : {
-        "name": "Ordgasm",
-        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/ordgasmbild2.png&w=950&h=670&q=100&zc=1",
-        "rss": "http://www.radioaf.se/program/ordgasm/feed/?post_type=podcasts",
-        "category": "samfund"
+    "dagenssoppa" : {
+        "name": "Dagens Soppa", 
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/03/chalkboard1.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/dagenssoppa/feed/?post_type=podcasts",
+        "category": "humor"
     },
 
     "etikpubspodden" : {
         "name": "Etikpubspodden",
         "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/lse-logga2.jpg&w=950&h=670&q=100&zc=1",
         "rss": "http://www.radioaf.se/program/etikpubspodden/feed/?post_type=podcasts",
-        "category": "nyttigt-o-bra"
+        "category": "studentliv"
+    },
+
+
+    "filmtopp" : {
+        "name": "Filmtopp",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/Namnl%C3%B6s.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/filmtopp/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "flugan" : {
+        "name": "Flugan",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/02/Flugan_2.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/flugan/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "frukostpatrullen" : {
+        "name": "Frukostpatrullen",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/03/Frukostpatrullen-Utkast-Programbild-Nya-Hemsidan.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/frukostpatrullen/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "granskningsrevisionen" : {
+        "name": "Granskningsrevisionen",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/Granskningsrevisionen-fejs.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/granskning/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
     },
 
     "gronkult" : {
         "name": "Grönkult",
         "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/02/gk2.png&w=950&h=670&q=100&zc=1",
         "rss": "http://www.radioaf.se/program/gronkult/feed/?post_type=podcasts",
-        "category": "permakult"
+        "category": "nöje & kultur"
+    },
+
+    "helsingkronanation" : {
+        "name": "Helsingkrona Radio",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/03/image-1.jpeg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/helsingkronanation/feed/?post_type=podcasts",
+        "category": "studentliv"
+    },
+
+    "hartsnack" : {
+        "name": "Hårt snack",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/final.jpeg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/hartsnack/feed/?post_type=podcasts",
+        "category": "samhälle"
     },
 
     "iluven" : {
         "name": "I Luvén",
         "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/I-Luv%C3%A9n-programbild.png&w=950&h=670&q=100&zc=1",
         "rss": "http://www.radioaf.se/program/iluven/feed/?post_type=podcasts",
-        "category": "polle"
+        "category": "nöje & kultur"
+    },
+
+    "kavalleriet" : {
+        "name": "Kavalleriet",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/04/11090393_10155290309775136_231146515_o.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/kavalleriet/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "kexandthecity" : {
+        "name": "Kex and the city",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/Kex-and-the-city-text-r%C3%A4tt.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/kexandthecity/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "klagomuren" : {
+        "name": "Klagomuren",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/klagomuren.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/klagomuren/feed/?post_type=podcasts",
+        "category": "humor"
+    },
+
+    "johanochjohanna" : {
+        "name": "Klockan nio med Johan & Johanna",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/03/Johan-Johanna.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/johanochjohanna/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "knullespondent" : {
+        "name": "Knullespondenterna",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/bullfitta.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/knullespondent/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "kremlfraiche" : {
+        "name": "Kreml fraiche",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/kreml.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/kremlfraiche/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "kulturgarningen" : {
+        "name": "Kreml fraiche",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/kulturgarningen.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/kulturgarningen/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "maggan" : {
+        "name": "Magasinet",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/03/Magasinethm1.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/maggan/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "mediemyndigheten" : {
+        "name": "Mediemyndigheten",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/10559805_10152325706281089_8227444199063459409_n.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/mediemyndigheten/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "minvanberattar" : {
+        "name": "Min vän berättar",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/Bild-Min-v%C3%A4n-ber%C3%A4ttar.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/minvanberattar/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "nybryggt" : {
+        "name": "Nybryggt",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/Nybryggt-logga-med-fl%C3%A4ck-01.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/nybryggt/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "nyheter" : {
+        "name": "Nyheter med akademisk kvart",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/05/Nyheterna-logga2.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/nyheter/feed/?post_type=podcasts",
+        "category": "nyheter"
+    },
+
+    "vinnaren" : {
+        "name": "Och vinnaren är",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/03/IMG_8895.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/vinnaren/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "orakadeorakel" : {
+        "name": "Orakade orakel",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/Orakade-orakel.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/orakadeorakel/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "orakadeorakel" : {
+        "name": "Orakade orakel",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/Orakade-orakel.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/orakadeorakel/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+
+    "ordgasm" : {
+        "name": "Ordgasm",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/ordgasmbild2.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/ordgasm/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "radio-ordkonst" : {
+        "name": "Ordkonst",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/12/10413291_740608772692692_7585956979202152178_n.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/radio-ordkonst/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "p6" : {
+        "name": "P6",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/10/P6-Programbild-motljus.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/p6/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "pkot" : {
+        "name": "PKot med Jessica och Anna",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/02/PKot-header1.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/pkot/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "pilotprogram" : {
+        "name": "Pilotprogram",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/02/linaasp.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/pilotprogram/feed/?post_type=podcasts",
+        "category": "pilot"
+    },
+
+    "radio60" : {
+        "name": "Radio 60",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/Radio-60-2.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/radio60/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "blekingska" : {
+        "name": "Radio Blekingska",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/04/radio-blekingska.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/blekingska/feed/?post_type=podcasts",
+        "category": "studentliv"
+    },
+
+    "lunds" : {
+        "name": "Radio Lunds",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/04/lund.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/lunds/feed/?post_type=podcasts",
+        "category": "studentliv"
+    },
+
+    "upf" : {
+        "name": "Radio UPF",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/10/UPF80.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/upf/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "snabelo" : {
+        "name": "SNABELÖ",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/snabelo.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/snabelo/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
+    },
+
+    "Studentaftonpodden" : {
+        "name": "Studentaftonpodden", 
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/10/Officiell_Poddlogo_final_black.png&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/studentaftonpodden/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "studentombudet" : {
+        "name": "Studentombudets podd",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/04/test32.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/studentombudet/feed/?post_type=podcasts",
+        "category": "studentliv"
+    },
+
+    "ugglor" : {
+        "name": "Ugglor i mossen",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/ugglor.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/ugglor/feed/?post_type=podcasts",
+        "category": "samhälle"
+    },
+
+    "sfinxen" : {
+        "name": "Universitetsradion Sfinxen",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/03/250px-Lunds_universitetsbyggnad_sfinxer.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/sfinxen/feed/?post_type=podcasts",
+        "category": "studentliv"
+    },
+
+    "www" : {
+        "name": "www",
+        "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/03/wwwfinal.jpg&w=950&h=670&q=100&zc=1",
+        "rss": "http://www.radioaf.se/program/www/feed/?post_type=podcasts",
+        "category": "nöje & kultur"
     }
+
 }

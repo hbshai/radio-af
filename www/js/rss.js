@@ -60,7 +60,7 @@
             podcasts.push({
                 title : entry.title,
                 author: program.name || entry.author,
-                program: program.key,
+                program: program.name,
                 programImage: program.image,
                 index: i,
                 content : removeTags(entry.content),

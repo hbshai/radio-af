@@ -20,10 +20,7 @@ var app = {
     // Application Constructor
     initialize: function() {
         this.bindEvents();
-
-        //app.audioq = new audioq();
         app.audiop = new audiop();
-
         app.time = Date.now();
     },
 
@@ -42,6 +39,8 @@ var app = {
     // deviceready Event Handler
     onDeviceReady: function() {
         document.removeEventListener('deviceready', app.onDeviceReady, false);
+        //document.addEventListener('backbutton', this.onDeviceReady, false);
+
         app.log('deviceReady')
         app.onStart();
     },

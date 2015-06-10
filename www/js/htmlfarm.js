@@ -124,7 +124,7 @@
         return el("div.podd" + (alternate ? ".alternating" : ""), { 
             // Allow each div to carry its own pointer(s) to the podcast.
             // See comment further down how they (could) work.
-            'data-podcast-program' : podcast.program,
+            'data-podcast-program' : podcast.author,
             'data-podcast-index' : podcast.index,
             'onclick': 'window.handlers.expandPodcast(event)'
         }, [
@@ -132,7 +132,7 @@
             el("img#podd-img", { src : podcast.image, }),
             el("div.podd-text", [
                 // Add podcast author if requested, otherwise leave it out.
-                doTitle ? el("div#podd-title", [ podcast.author ]) : undefined,
+                doTitle ? el("div#podd-title", [ podcast.program ]) : undefined,
                 el("div#podd-ep", [ podcast.title ]),
                 el("div#podd-time", [ Math.floor(podcast.duration/60) + " min" ])
             ]),
@@ -432,13 +432,13 @@
 
     function createSpotlight(title, podcast, isProgramView) {
        return   el("div.spotlight", {
-                "data-podcast-program" : podcast.program,
+                "data-podcast-program" : podcast.author,
                 "data-podcast-index" : podcast.index
                }, [
                     el("img#spotlight-img", {src: isProgramView ? podcast.programImage : podcast.image}),
-                    el("div.spotlight-container", [
+                    el("div.spotlight-container.flexme", [
                         el("div#spotlight-play", {'onclick' : 'window.handlers.playPodcastHandler(event)'}),
-                        el("div.spotlight-text-container", [
+                        el("div.spotlight-text-container.flexme", [
                             el("div#spotlight-title", [podcast.program]),
                             el("div#spotlight-ep", [podcast.title]),
                             el("div#spotlight-time", ["0 min"])

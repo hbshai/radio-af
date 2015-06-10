@@ -59,7 +59,9 @@
             //console.log(timthumbBase + imgUrl + sizeParams);
             podcasts.push({
                 title : entry.title,
-                author: program.name || entry.author,
+                // author is the rss author / program.key, e.g. lhs
+                author: program.key,
+                // program is the name of the program, e.g. Lexikaliska Hästsällskapet
                 program: program.name,
                 programImage: program.image,
                 index: i,

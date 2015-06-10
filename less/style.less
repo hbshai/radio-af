@@ -61,44 +61,44 @@ body,ul,li,h1,h2,p {
 }
 
 @spotlight-height: 110px;
-.spotlight-container {
-    position: absolute;
-    margin-top: -@spotlight-height;
-    height:  (@spotlight-height);
-    width: 100%;
-    opacity: 0.95;
-    background-color: @raf-black;
-    color: @raf-white;
-}
-
-#spotlight-play {
-    position: absolute;
-    display: inline-block;
-    height: @spotlight-height;
-    width: @spotlight-height;
-    background-color: @raf-red;
-    background-image: url("../img/play.png");
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.spotlight-text-container {
-    position: absolute;
-    display: inline-block;
-    margin-top: 4px;
-    margin-left: 120px; // spacing for the play btn
-}
-#spotlight-dl {
-    display: inline-block;
-    float: right;
-    margin-top: -5px;
-    margin-right: 3px;
-    height: @spotlight-height;
-    width: @spotlight-height;
-    background-image: url("../img/dl-box.png");
-    background-repeat: no-repeat;
-    background-position: center;
-}
+// .spotlight-container {
+//     position: absolute;
+//     margin-top: -@spotlight-height;
+//     height:  (@spotlight-height);
+//     width: 100%;
+//     opacity: 0.95;
+//     background-color: @raf-black;
+//     color: @raf-white;
+// }
+// 
+// #spotlight-play {
+//     position: absolute;
+//     display: inline-block;
+//     height: @spotlight-height;
+//     width: @spotlight-height;
+//     background-color: @raf-red;
+//     background-image: url("../img/play.png");
+//     background-repeat: no-repeat;
+//     background-position: center;
+// }
+// 
+// .spotlight-text-container {
+//     position: absolute;
+//     display: inline-block;
+//     margin-top: 4px;
+//     margin-left: 120px; // spacing for the play btn
+// }
+// #spotlight-dl {
+//     display: inline-block;
+//     float: right;
+//     margin-top: -5px;
+//     margin-right: 3px;
+//     height: @spotlight-height;
+//     width: @spotlight-height;
+//     background-image: url("../img/dl-box.png");
+//     background-repeat: no-repeat;
+//     background-position: center;
+// }
 
 /* ALLA PROGRAM STUFF */
 @program-height: 100px;
@@ -514,21 +514,71 @@ body {
         font-size:0.75em; font-weight:bold;
     }
 
+    .flexme {
+        display: box;
+        display: flexbox;
+        display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+        display: -webkit-flex;     /* NEW - Chrome */
+        display: flex;
+    }
+
     .spotlight-container {
-        position: absolute;
+        // position: absolute;
         margin-top: -@spotlight-height;
-        height:  (@spotlight-height);
+        height:  @spotlight-height;
         width: 100%;
         opacity: 0.95;
         background-color: @raf-black;
         color: @raf-white;
     }
 
+    .spotlight-container > div {
+        -webkit-flex: 1;
+    }
+    .spotlight-text-container {
+        /* flex stuff */
+        -webkit-box-flex: 1;
+        min-width: 0px;
+        height: 100%;
+        -webkit-box-orient: vertical;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+
+        margin-top: 3px;
+        margin-left:  6px; // spacing for the play btn
+    }
+
+
+    // flex stuff 
+    .spotlight-text-container > div {
+        -webkit-flex: 0 1 auto;
+        min-width: 0px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    #spotlight-dl {
+        /* flex box stuff */
+        -webkit-box-flex: 0;
+        -webkit-flex: 1 0 auto; /*important*/
+        max-height: @spotlight-height;
+        min-height: @spotlight-height;
+        max-width: @spotlight-height;
+        min-width: @spotlight-height;
+        
+        background-image: url("../img/dl-box.png");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 31.5px 38.5px;
+    }
     #spotlight-play {
-        position: absolute;
-        display: inline-block;
-        height: @spotlight-height;
-        width: @spotlight-height;
+        /* flex box stuff */
+        -webkit-box-flex: 0;
+        max-height: @spotlight-height;
+        min-height: @spotlight-height;
+        max-width: @spotlight-height;
+        min-width: @spotlight-height;
+
         background-color: @raf-red;
         background-image: url("../img/play.png");
         background-repeat: no-repeat;
@@ -536,27 +586,6 @@ body {
         background-size: 24px 30px;
     }
 
-    .spotlight-text-container {
-        position: absolute;
-        display: inline-block;
-        margin-top: 3px;
-        // background-color: magenta;
-        // TODO: dynamically size text-container width
-        width: 200px;
-        margin-left: @spotlight-height + 6px; // spacing for the play btn
-    }
-    #spotlight-dl {
-        display: inline-block;
-        float: right;
-        margin-top: -3px;
-        margin-right: 3px;
-        height: @spotlight-height;
-        width: @spotlight-height;
-        background-image: url("../img/dl-box.png");
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 31.5px 38.5px;
-    }
 
 
     /* PODD STUFF */

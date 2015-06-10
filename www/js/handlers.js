@@ -64,7 +64,7 @@
         // TODO: Move these into audiop
         $("#footer-btn").attr('class', 'footer-play');
         $("#footer-img").attr('src', podcast.image);
-        $("#footer-title").text(podcast.author);
+        $("#footer-title").text(podcast.program);
         $("#footer-ep").text(podcast.title)
 
         if (!footerTime)

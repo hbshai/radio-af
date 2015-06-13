@@ -195,6 +195,17 @@
     }
 
     function makeProgramListingDiv(program, alternate, isAlphabeticView){
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log("HEY");
+        console.log(program.description);
         return el("div.program" + (alternate ? ".alternating" : ""), {
                 'data-podcast-program' : program.key, 
                 'onclick': 'window.handlers.expandText(event)'
@@ -207,7 +218,7 @@
                         el("div.program-disclaimer", ["läs om programmet"])
                         ]),
                     el("div.program-chevron", { onclick: 'window.handlers.openProgramView(event)'}),
-                    el("div.program-text", ["xx files music all day every day. ba ba ba ba b ab ba ba baaaaa - ba ba ba ba bá báaa - babababaababa - ba ba ba bá bà báaaax files music all day every day. ba ba ba ba b ab ba ba baaaaa - ba ba ba ba bá báaa - babababaababa - ba ba ba bá bà báaaa files music all day every day. ba ba ba ba b ab ba ba baaaaa - ba ba ba ba bá báaa - babababaababa - ba ba ba bá bà báaaa"])
+                    el("div.program-text", [program.description])
                 ])
     }
 

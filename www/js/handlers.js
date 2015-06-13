@@ -171,6 +171,21 @@
         }, 150);
     }
 
+    // Handles taps on the fav heart, located in the upper right ocrner of a
+    // particular program. Adds / removes the program from the favourites
+    function handleFavourite(evt) {
+        var target = event.target;
+        var programKey = target.dataset["podcastProgram"];
+        if (!window.favs.containsProgram(programKey)) {
+            target.classList.add("fav-heart-red");
+            window.favs.addFav(programKey);
+        } else {
+            target.classList.remove("fav-heart-red");
+            target.classList.add("fav-heart");
+            window.favs.removeFav(programKey);
+        }
+        var favs = window.favs.getFavs();
+    }
 
     // Switches between the alphabetic and category views in Alla Program
     function switchAllProgramPane(evt) {
@@ -221,7 +236,9 @@
         openProgramView : createProgramView,
         expandText : expandProgramText,
         expandPodcast : expandPodcastText,
-
+        // TODO: reflow handler - called when cache & other loading has been
+        // completed; causes rebuild of flow/fav pages
+        handleFav : handleFavourite,
         toggleProgramPane : switchAllProgramPane
     }
 })(window)

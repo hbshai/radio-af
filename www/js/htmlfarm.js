@@ -111,7 +111,10 @@
         var counter = 0;
 
         return el("div.page", [
-                el("div.fav-heart"),
+                el(window.favs.containsProgram(firstPod.author) ? "div.fav-heart-red" : "div.fav-heart", { 
+                    'data-podcast-program' : firstPod.author,
+                    'onclick' : 'window.handlers.handleFav(event)'
+                }),
                 createSpotlight(firstPod.program, firstPod, true),
                 populatePageWithPodcasts(podcasts, true)
               ]);
@@ -386,18 +389,18 @@
     }
 
     function makeFavPage() {
-        // TODO: 
-        // * populate with favs from device, otherwise display "oops no favs" view instead
        function createFavourites(favs) {
+           // the list which will contain the generated fav divs
            var favList = [];
            var counter = 0;
-           favs.forEach(function(fav) {
+           favs.forEach(function(key) {
+               var fav = window.app.programs[key];
                favList.push(el("div.fav", { 
-                   'data-podcast-program' : fav.program,
+                   'data-podcast-program' : fav.key,
                    'onclick' : 'window.handlers.openProgramView(event)'
                }, [
-                       el("img.fav-img", {src: fav.programImage}),
-                       el("div.fav-title", [fav.title])
+                       el("img.fav-img", {src: fav.image}),
+                       el("div.fav-title", [fav.name])
                    ])
                 )
            counter = counter + 1;
@@ -412,12 +415,24 @@
                 programImage: 'http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1',
                 duration: '0 min'
        };
+       var favs = window.favs.getFavs();
+       // TODO: remove placeholder favs 
+       favs = ["iluven", "ordgasm", "vinnaren"]
+       if (favs.length > 0) {
+           // randomly pick a pod from the favourited programs to spotlight
+           var spotlightProgram = favs[Math.floor(favs.length * Math.random())];
+           var spotlightPod = window.app.programs[spotlightProgram].podcasts[0];
 
-       var podcasts = [pod, pod, pod, pod, pod];
-       return el("div.page", [
-                createSpotlight("mina favoriter", pod),
-                createFavourites(podcasts)
-              ])
+           return el("div.page", [
+                    createSpotlight("mina favoriter", pod),
+                    createFavourites(favs)
+                  ])
+       } else {
+           // TODO: Display "oops no favs" view
+           return el("div.page", [
+                    createSpotlight("inga favoriter rip", pod)
+                    ])
+       }
     }
 
     function populatePageWithPodcasts(podcasts, isProgramPage) {

@@ -11,8 +11,11 @@
 
     // It should update the miniplayer progress bar.
     function onPlayProgress(pos){
+        if (pos < 0) 
+            pos = 0;
+
         var time = new Date(pos * 1000)
-        footerTime.text(formatDate(time) + ' / ' + currentDurationString);
+        footerTime.innerHTML = formatDate(time) + ' / ' + currentDurationString;
 
         // TODO: Store progress in localStorage 
     }
@@ -68,7 +71,7 @@
         $("#footer-ep").text(podcast.title)
 
         if (!footerTime)
-            footerTime = $("#footer-time")
+            footerTime = document.querySelector("#footer-time")
 
         onPlayProgress(0)
     }

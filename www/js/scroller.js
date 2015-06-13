@@ -46,8 +46,6 @@
         this.offsetHeight = miniPlayerHeight || 0;
         this.headerOffset = headerOffset || 0;
 
-        console.log('SCROLLER INIT');
-
         this.wrapper = document.querySelector(wrapper);
         this.wrapper.style.overflow = 'hidden';
 
@@ -59,11 +57,14 @@
 
         this.slider = document.querySelector(this.options.slider);
         this.refreshPages();
+        
+        // Bind all references so register/unregister works (bind returns new function)
+        this.boundStart = this.touchStart.bind(this);
+        this.boundMove = this.touchMove.bind(this);
+        this.boundEnd = this.touchEnd.bind(this);
+        this.boundCancel = this.touchCancel.bind(this);
 
-        this.wrapper.addEventListener("touchstart", this.touchStart.bind(this), false);
-        this.wrapper.addEventListener("touchmove", this.touchMove.bind(this), false);
-        this.wrapper.addEventListener("touchend", this.touchEnd.bind(this), false);
-        this.wrapper.addEventListener("touchcancel", this.touchCancel.bind(this), false);
+        this.registerEvents();
 
         this.MOMENTUM_RENDER = this.renderMomentum.bind(this);
         this.ANIMATION_RENDER = this.render.bind(this);
@@ -71,6 +72,11 @@
 
     Scroll.prototype = {
         x : 0, y : 0, // current position
+
+        boundStart : undefined, 
+        boundMove : undefined, 
+        boundEnd : undefined, 
+        boundCancel : undefined,
         
         // touch start sets these to the origin point, also records time
         screenX : 0, screenY : 0, startTime : 0,
@@ -284,7 +290,7 @@
 
         touchEnd : function (e) {
             // Always stop browser from doing its thing 
-            e.preventDefault();
+            //e.preventDefault();
 
             if (e.touches.length > 1)
                 return;
@@ -316,7 +322,7 @@
 
             // Fix pos if scrolled outside
             if (outsideX !== 0 || outsideY !== 0)
-                this.resetXY(outsideX || (-(this.currentPage) * window.innerWidth - this.x), outsideY);
+                this.scrollBy(outsideX || (-(this.currentPage) * window.innerWidth - this.x), outsideY);
             else if (totalX <= -0.5 * window.innerWidth || (vx < -200))
                 this.nextPage(); // this will animate to correct pos
             else if (totalX >= 0.5 * window.innerWidth || (vx > 200))
@@ -327,7 +333,7 @@
                 var fix = -(this.currentPage) * window.innerWidth - this.x;
 
                 if (fix !== 0)
-                    this.resetXY(fix, 0);
+                    this.scrollBy(fix, 0);
                 else
                     this.scrollMomentum(e);
             }
@@ -337,7 +343,7 @@
             this.currentPage = page;
             this.changeTarget(this.pages[this.currentPage]);
             // Reset pos to X of the new page
-            this.resetXY(-(this.currentPage) * window.innerWidth - this.x, 0);
+            this.scrollBy(-(this.currentPage) * window.innerWidth - this.x, 0);
         },
         nextPage : function (){ 
             this.gotoPage(this.currentPage + 1);
@@ -387,13 +393,13 @@
                 this.frame = undefined;
                 // Scroll to top (if upper bound was hit) or bottom
                 if (newY > 0)
-                    this.resetXY(0, -newY);
+                    this.scrollBy(0, -newY);
                 else if (newY < this.height)
-                    this.resetXY(0, this.height - this.y);
+                    this.scrollBy(0, this.height - this.y);
             }
         },
 
-        resetXY : function (dx, dy) {
+        scrollBy : function (dx, dy) {
             if (this.frame)
                 cancelFrame(this.frame);
 
@@ -450,6 +456,20 @@
         recalcHeight : function(){
             this.changeTarget(this.scroller);
             // TODO: Check y-axis after height has been updated
+        },
+
+        registerEvents : function(){
+            this.wrapper.addEventListener("touchstart", this.boundStart, false);
+            this.wrapper.addEventListener("touchmove", this.boundMove, false);
+            this.wrapper.addEventListener("touchend", this.boundEnd, false);
+            this.wrapper.addEventListener("touchcancel", this.boundCancel, false);
+        },
+
+        unregisterEvents : function(){
+            this.wrapper.removeEventListener("touchstart", this.boundStart, false);
+            this.wrapper.removeEventListener("touchmove", this.boundMove, false);
+            this.wrapper.removeEventListener("touchend", this.boundEnd, false);
+            this.wrapper.removeEventListener("touchcancel", this.boundCancel, false);
         }
     }
 

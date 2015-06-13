@@ -168,22 +168,9 @@
          */
     }
 
-    /*
-        FOOTER
-        =======
-
-      div#footer
-          img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/12/Antje-Jack%C3%A9len.jpg&w=950&h=670&q=100&zc=1")#footer-img
-          div.footer-text-container
-              div#footer-title Studentaftonpodden
-              div#footer-ep Antje Jackélen
-              div#footer-time 32:26 / 76:00
-          div#footer-btn.footer-play
-    */
-
     // TODO: select first available podd and fill player with?
     function makeFooter(){
-        return el("div#footer", [
+        return el("div#footer.lefty", [
             el("img#footer-img", { src : '../img/player-placeholder-img.png' }),
             el("div.footer-text-container", [
                 el("div#footer-title", ["inget program valt"]),
@@ -214,9 +201,9 @@
                     el("div.program-text-container", [
                         el("div.program-title", [program.name]),
                         // only include category div when sorting programs alphabetically
-                        isAlphabeticView ?  el("div.program-category", [program.category || "Unknown"]) : [""],
+                        isAlphabeticView ?  el("div.program-category" + (alternate ? ".alternating" : "", [program.category || "Unknown"]) : [""],
                         el("div.program-disclaimer", ["läs om programmet"])
-                        ]),
+                    ]),
                     el("div.program-chevron", { onclick: 'window.handlers.openProgramView(event)'}),
                     el("div.program-text", [program.description])
                 ])
@@ -238,15 +225,18 @@
                 var programDiv = makeProgramListingDiv(app.programs[program], alternate, true)
                 alternate = !alternate
 
+                // Symbol is the header: 'A' for 'Alla ska med', 'B' for 'Bara ren sprit', etc..
+                
+                // If symbol is numeric; force symbol to be '123'
+                var programSymbol = program.charAt(0).toUpperCase();
+                if (!isNaN(programSymbol))
+                    programSymbol = "123";
+
                 // If we need new symbol, return array
-                if (currentSymbol !== program.charAt(0).toUpperCase()){
-                    currentSymbol = program.charAt(0).toUpperCase()
-                    // TODO: dunno if we wanna do this
-                    // set categories that start with numbers to "123"
-                    // if (!isNaN(currentSymbol)) {
-                    //     currentSymbol = "123";
-                    // }
-                    var symbolEl = el("div.program-letter" + (alternate ? ".alternating" : ""), [currentSymbol])
+                if (currentSymbol !== programSymbol){
+                    currentSymbol = programSymbol;
+
+                    var symbolEl = el("div.program-letter" + (!alternate ? ".alternating" : ""), [currentSymbol])
                     alternate = !alternate
                     return [symbolEl, programDiv]
                 }
@@ -316,53 +306,6 @@
         ])
     }
 
-    /*
-    
-    div#wrapper
-        div#slider
-            div.page
-                div.spotlight
-                    img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1")#spotlight-img
-                    div.spotlight-container
-                        div#spotlight-play 
-                        div.spotlight-text-container
-                            div#spotlight-title Studentaftonpodden
-                            div#spotlight-ep Anna Kinberg Batra
-                            div#spotlight-time 77 min
-                        div#spotlight-dl
-                    div.title-bar mina favoriter
-
-                    div.fav-container
-                        div.fav(data-program="klagomuren")#fav-0
-                            img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/klagomuren.jpg&w=950&h=670&q=100&zc=1").fav-img
-                            div.fav-title Klagomuren
-                        div.fav(data-program="gronkult")#fav-1
-                            img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/02/gk2.png&w=950&h=670&q=100&zc=1").fav-img
-                            div.fav-title Grönkult
-                        div.fav(data-program="ordgasm")#fav-2
-                            img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/ordgasmbild2.png&w=950&h=670&q=100&zc=1").fav-img
-                            div.fav-title Ordgasm
-                        div.fav(data-program="etikpubspodden")#fav-3
-                            img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/10981862_589948141139562_1758483936875843389_n.jpg&w=950&h=670&q=100&zc=1").fav-img
-                            div.fav-title Etikpubspodden
-                        div.fav(data-program="iluven")#fav-4
-                            img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2014/09/I-Luv%C3%A9n-programbild.png&w=950&h=670&q=100&zc=1").fav-img
-                            div.fav-title I Luvén
-            div.page#flow
-                div.spotlight
-                    img(src="http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1")#spotlight-img
-                    div.spotlight-container
-                        div#spotlight-play 
-                        div.spotlight-text-container
-                            div#spotlight-title Studentaftonpodden
-                            div#spotlight-ep Anna Kinberg Batra
-                            div#spotlight-time 77 min
-                        div#spotlight-dl
-                    div.title-bar mitt flöde
-
-                div.podd-container
-        */
-
     // Return an object b/c we need to append to slider, but append wrapper to
     // document.body
     function makeWrapper(){
@@ -420,11 +363,11 @@
        }
 
        var pod = {
-                title : 'spotlight title text',
-                program: 'Studentaftonpodden',
-                image: 'http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1',
-                programImage: 'http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1',
-                duration: '0 min'
+            title : 'spotlight title text',
+            program: 'Studentaftonpodden',
+            image: 'http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1',
+            programImage: 'http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1',
+            duration: '0 min'
        };
        var favs = window.favs.getFavs();
        // TODO: remove placeholder favs 
@@ -435,29 +378,27 @@
            var spotlightPod = window.app.programs[spotlightProgram].podcasts[0];
 
            return el("div.page", [
-                    createSpotlight("mina favoriter", pod),
-                    createFavourites(favs)
-                  ])
+                createSpotlight("mina favoriter", pod),
+                createFavourites(favs)
+            ])
        } else {
            // TODO: Display "oops no favs" view
            return el("div.page", [
-                    createSpotlight("inga favoriter rip", pod)
-                    ])
+                createSpotlight("inga favoriter rip", pod)
+            ])
        }
     }
 
     function populatePageWithPodcasts(podcasts, isProgramPage) {
-        var elementList = [];
         var alternate = false;
-        podcasts.forEach(function(pod) {
+        return el("div.podd-container", podcasts.map(function (pod){
             alternate = !alternate;
-            elementList.push(createPodcastDiv(pod, !isProgramPage, alternate));
-        });
-        return el("div.podd-container", elementList);
+            return createPodcastDiv(pod, !isProgramPage, alternate);
+        }));
     }
 
     function createSpotlight(title, podcast, isProgramView) {
-       return   el("div.spotlight", {
+       return el("div.spotlight", {
                 "data-podcast-program" : podcast.author,
                 "data-podcast-index" : podcast.index
                }, [
@@ -474,17 +415,31 @@
                     el("div.title-bar", [title])
                 ])
     }
+
+    function makeMenu(){
+        return el("div.menu.lefty", [
+            el("p.menu-item", ["THE FLOW"]),
+            el("p.menu-item", ["alla program"]),
+            el("p.menu-item", ["nedladdade poddar"]),
+            el("p.menu-item", ["favoriter"]),
+            el("p.menu-item", ["direkt"]),
+
+            el("p.menu-logo"),
+            el("p.menu-footer", ["developed by cobleigh & smeets"]),
+        ]);
+    }
     
     GLOBAL.htmlFarm = {
         miniPod : function (podcast, alternate) { 
-            return createPodcastDiv(podcast, true, alternate)
+            return createPodcastDiv(podcast, true, alternate);
         },
         feedPod : function (podcast, alternate) {
-            return createPodcastDiv(podcast, false, alternate)
+            return createPodcastDiv(podcast, false, alternate);
         },
 
-        staticTitleBar : function (){ return el("div#title-bar-fixed") },
-        menuButton : function (){ return el("div#menu-btn") },
+        staticTitleBar : function (){ return el("div#title-bar-fixed.lefty"); },
+        menuButton : function (){ return el("div#menu-btn.lefty", { onclick : "window.menu.show(event)" }); },
+        menu : makeMenu,
 
         flowPage : makeFlowPage,
         favouritesPage: makeFavPage,

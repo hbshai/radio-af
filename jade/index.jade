@@ -23,6 +23,7 @@ html
       script(src="js/cache.js")
       script(src="js/favs.js")
       script(src="js/downloaded.js")
+      script(src="js/menu.js")
 
       script(src="js/index.js")
       script.
@@ -41,23 +42,28 @@ html
 
             // Wrapper+slider loaded earlier
             var titleBar = htmlFarm.staticTitleBar(),
+                player = htmlFarm.player(), // TODO: Give this to audiop
                 menuButton = htmlFarm.menuButton(),
-                player = htmlFarm.player()
+                menuDiv = htmlFarm.menu();
 
             wrapper = wrapper.wrapper;
 
             wrapper.appendChild(slider)
 
             // Add the permanent elements, i.e. header + footer
+            document.body.appendChild(menuDiv)
             document.body.appendChild(menuButton)
             document.body.appendChild(titleBar)
             document.body.appendChild(player)
-
+            
+            // Finally setup the slider wrapper
             document.body.appendChild(wrapper)
 
             FastClick.attach(document.body);
 
             window.titlebar.init(titleBar);
+            window.menu.init(menuDiv, menuButton, titleBar, player);
+
             app.scroller = new Scroll('#wrapper', 0);
 
             app.scroller.onScrollListener = window.titlebar.onScroll;

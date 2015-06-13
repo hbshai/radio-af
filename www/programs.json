@@ -136,7 +136,7 @@
     },
 
     "kulturgarningen" : {
-        "name": "Kreml fraiche",
+        "name": "Kulturgärningen",
         "image": "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/01/kulturgarningen.jpg&w=950&h=670&q=100&zc=1",
         "rss": "http://www.radioaf.se/program/kulturgarningen/feed/?post_type=podcasts",
         "category": "nöje & kultur"

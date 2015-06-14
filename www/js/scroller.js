@@ -295,11 +295,8 @@
             if (e.touches.length > 1)
                 return;
             
-            // Correction dist
-            var outsideX = 0,
-                outsideY = 0,
-                // distance from start point (screen coords), ignore x if locked to y-axis
-                totalX = (this.locked === 2) ? 0 : e.changedTouches[0].pageX - this.screenX,
+            // distance from start point (screen coords), ignore x if locked to y-axis
+            var totalX = (this.locked === 2) ? 0 : e.changedTouches[0].pageX - this.screenX,
                 dt = (Date.now() - this.startTime) / 1000.0,
                 vx = (dt !== 0) ? totalX/dt : 0;
 
@@ -308,21 +305,8 @@
                 this.momentumY = this.prevY;
             }
 
-            // outside left or right boundary
-            if (this.x > 0)
-                outsideX = 0 - this.x;
-            else if (this.x < - (this.pages.length - 1) * window.innerWidth)
-                outsideX = -(this.pages.length - 1) * window.innerWidth - this.x;
-
-            // outside top or bot boundary
-            if (this.y > 0)
-                outsideY = 0 - this.y;
-            else if (this.y < this.height)
-                outsideY = this.height - this.y;
-
             // Fix pos if scrolled outside
-            if (outsideX !== 0 || outsideY !== 0)
-                this.scrollBy(outsideX || (-(this.currentPage) * window.innerWidth - this.x), outsideY);
+            if (this.enforceBounds()) { /* Do nothing */ }
             else if (totalX <= -0.5 * window.innerWidth || (vx < -200))
                 this.nextPage(); // this will animate to correct pos
             else if (totalX >= 0.5 * window.innerWidth || (vx > 200))
@@ -455,7 +439,30 @@
 
         recalcHeight : function(){
             this.changeTarget(this.scroller);
-            // TODO: Check y-axis after height has been updated
+            this.enforceBounds();
+        },
+
+        enforceBounds : function(){
+            var outsideX = 0,
+                outsideY = 0;
+
+            // outside left or right boundary
+            if (this.x > 0)
+                outsideX = 0 - this.x;
+            else if (this.x < - (this.pages.length - 1) * window.innerWidth)
+                outsideX = -(this.pages.length - 1) * window.innerWidth - this.x;
+
+            // outside top or bot boundary
+            if (this.y > 0)
+                outsideY = 0 - this.y;
+            else if (this.y < this.height)
+                outsideY = this.height - this.y;
+
+            // Fix pos if scrolled outside
+            if (outsideX !== 0 || outsideY !== 0)
+                this.scrollBy(outsideX || (-(this.currentPage) * window.innerWidth - this.x), outsideY);
+
+            return outsideX !== 0 || outsideY !== 0;
         },
 
         registerEvents : function(){

@@ -53,7 +53,7 @@
             return;
         isVisible = true;
 
-        window.app.scroller.resetXY(menu.offsetWidth, 0);
+        window.app.scroller.scrollBy(menu.offsetWidth, 0);
         window.app.scroller.unregisterEvents();
         
         for (var i = toMove.length - 1; i >= 0; i--)
@@ -69,7 +69,7 @@
             return;
         isVisible = false;
 
-        window.app.scroller.resetXY(-menu.offsetWidth, 0);
+        window.app.scroller.scrollBy(-menu.offsetWidth, 0);
         window.app.scroller.registerEvents();
         
         for (var i = toMove.length - 1; i >= 0; i--)

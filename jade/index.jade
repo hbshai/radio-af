@@ -97,6 +97,8 @@ html
                     slider.appendChild(htmlFarm.favouritesPage())
 
                     app.scroller.refreshPages()
+                    setTimeout(window.app.scroller.recalcHeight.bind(window.app.scroller), 250);
+
                     console.log('Done with all!')
                 }
             }

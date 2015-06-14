@@ -49,7 +49,7 @@
         
         // Toggle the currently playing button
         if (window.app.audiop.currentlyPlaying && !window.app.audiop.isPaused())
-            $("[data-podcast-program='" + window.app.audiop.currentlyPlaying.program + "']"
+            $("[data-podcast-program='" + window.app.audiop.currentlyPlaying.author + "']"
               + "[data-podcast-index='" + window.app.audiop.currentlyPlaying.index + "']" 
               + ' > .podd-control').toggleClass('play').toggleClass('pause')
 
@@ -84,7 +84,7 @@
 
         $("#footer-btn").attr('class', window.app.audiop.isPaused() ? 'footer-pause' : 'footer-play')
 
-        $("[data-podcast-program='" + window.app.audiop.currentlyPlaying.program + "']"
+        $("[data-podcast-program='" + window.app.audiop.currentlyPlaying.author + "']"
           + "[data-podcast-index='" + window.app.audiop.currentlyPlaying.index + "']" 
           + ' > .podd-control').toggleClass('play').toggleClass('pause')
     }
@@ -117,6 +117,7 @@
         window.app.scroller.gotoPage(newPage);
     }
 
+    var trickHeight;
     function expandProgramText(evt) {
         // TODO: don't react to the program chevron in a much nicer fashion
         // than this pls
@@ -131,18 +132,27 @@
             counter++;
             target = target.parentNode;
         }
+        
+        // Trick height is storage for normal (collapsed) height. Assume that
+        // the first program we click on is collapsed, not expanded.
+        if (!trickHeight)
+            trickHeight = target.offsetHeight;
+
+        // 25 is from margin (10 top, 15 bot), 4 is magic number
+        var totalHeight = trickHeight + target.querySelector('.program-text').offsetHeight + 25 + 4;
+        var currentHeight = target.offsetHeight;
 
         // Determine if we are expanding or contracting the div
         if (target.classList.contains("program-expanded")) {
             target.classList.remove("program-expanded");
+            window.app.scroller.height += (totalHeight - trickHeight);
         } else {
             // add a marker, so that we know to contract it upon next tap
             target.classList.add("program-expanded");
+            window.app.scroller.height -= (totalHeight - currentHeight);
         }
-        //TODO: remove this; check bounds instead
-        setTimeout(function() {
-            window.app.scroller.recalcHeight();
-        }, 150);
+
+        window.app.scroller.enforceBounds();
     }
 
     function expandPodcastText(evt) {

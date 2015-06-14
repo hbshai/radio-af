@@ -29,10 +29,17 @@
     left: 0%;
 }
 
-.menu-item:before {
-    background: url('../img/raf-pattern-black.png') no-repeat;
-    background-size: contain;
+.menu-item-flode:before{ background: url('../img/menu-flode.png') no-repeat; }
+.menu-item-info:before{ background: url('../img/menu-info.png') no-repeat; }
+.menu-item-dl:before{ background: url('../img/dl-box.png') no-repeat; }
+.menu-item-fav:before{ background: url('../img/heart.png') no-repeat; }
+.menu-item-allap:before{ background: url('../img/menu-info.png') no-repeat; }
+.menu-item-live:before{ background: url('../img/menu-info.png') no-repeat; }
 
+
+
+.menu-item:before {
+    background-size: contain;
     content: "";
     
     display: block;
@@ -42,6 +49,13 @@
     height: 32px;
 
     margin-right: 16px;
+    margin-left: 16px;
+}
+
+.menu-footer {
+    position: fixed;
+
+    bottom: 0;
 }
 
 .menu-item:first{

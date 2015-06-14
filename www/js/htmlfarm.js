@@ -201,7 +201,7 @@
                     el("div.program-text-container", [
                         el("div.program-title", [program.name]),
                         // only include category div when sorting programs alphabetically
-                        isAlphabeticView ?  el("div.program-category" + (alternate ? ".alternating" : "", [program.category || "Unknown"]) : [""],
+                        isAlphabeticView ?  el("div.program-category" + (alternate ? ".alternating" : ""), [program.category || "Unknown"]) : [""],
                         el("div.program-disclaimer", ["läs om programmet"])
                     ]),
                     el("div.program-chevron", { onclick: 'window.handlers.openProgramView(event)'}),
@@ -418,11 +418,11 @@
 
     function makeMenu(){
         return el("div.menu.lefty", [
-            el("p.menu-item", ["THE FLOW"]),
-            el("p.menu-item", ["alla program"]),
-            el("p.menu-item", ["nedladdade poddar"]),
-            el("p.menu-item", ["favoriter"]),
-            el("p.menu-item", ["direkt"]),
+            el("p.menu-item.menu-item-flode", ["flödet"]),
+            el("p.menu-item.menu-item-allap", ["alla program"]),
+            el("p.menu-item.menu-item-dl", ["nedladdade"]),
+            el("p.menu-item.menu-item-fav", ["favoriter"]),
+            el("p.menu-item.menu-item-live", ["direkt"]),
 
             el("p.menu-logo"),
             el("p.menu-footer", ["developed by cobleigh & smeets"]),

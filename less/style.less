@@ -263,9 +263,6 @@ body,ul,li,h1,h2,p {
     background-color: @dark-blue;
 }
 
-.program-img {
-    height: @program-height;
-}
 
 .program {
     height: @program-height;
@@ -274,12 +271,40 @@ body,ul,li,h1,h2,p {
     overflow: hidden;
 }
 
+.program-container > div {
+    -webkit-flex: 1;
+}
+
 .program-text-container {
-    position: absolute;
+    -webkit-box-flex: 1;
+    min-width: 0px;
+    height: 100%;
+    -webkit-box-orient: vertical;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+
     margin-top: 5px;
     margin-left: 5px;
-    height: @program-height - 5px;
-    display: inline-block;
+}
+
+.program-text-container > div {
+    -webkit-flex: 0 1 auto;
+    min-width: 0px;
+}
+
+.program-img {
+    max-height: @program-height;
+    min-height: @program-height;
+}
+
+.program-chevron {
+    background-image: url("../img/chevron-right.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    min-width: 50px;
+    max-width: 50px;
+    max-height: @program-height;
+    min-height: @program-height;
 }
 
 .program-title {
@@ -287,9 +312,7 @@ body,ul,li,h1,h2,p {
 }
 
 .program-category {
-    width: 100%;
     // hack; see .program-disclaimer for comment
-    position: absolute;
     z-index: 2;
 }
 
@@ -316,22 +339,9 @@ body,ul,li,h1,h2,p {
     display: inline-block;
 }
 
-.program-chevron {
-    height: @program-height;
-    background-image: url("../img/chevron-right.png");
-    background-repeat: no-repeat;
-    background-position: center center;
-    display: inline-block;
-    float: right;
-    width: 50px;
-}
-
 .program-disclaimer {
     color: @raf-black + #888;
-    position: absolute;
-    bottom: 0px;
     font-size: 0.8em;
-    width: 200px;
     // hack: allows us to hide the disclaimer when a program title goes
     // multi-line, thus forcing .program-category to overlap with the
     // disclaimer.
@@ -746,12 +756,18 @@ body {
         // font-size: 1.5em;
     }
 
-    .program-img {
+    .program {
         height: @program-height;
     }
 
-    .program {
-        height: @program-height;
+    .program-img {
+        max-height: @program-height;
+        min-height: @program-height;
+    }
+
+    .program-chevron {
+        max-height: @program-height;
+        min-height: @program-height;
     }
 
     .program-text-container {
@@ -773,9 +789,6 @@ body {
         padding-bottom: @program-height / 3;
     }
 
-    .program-chevron {
-        height: @program-height;
-    }
 
     .program-disclaimer {
         // font-size: 0.8em;

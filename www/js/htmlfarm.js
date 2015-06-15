@@ -186,14 +186,16 @@
                 'data-podcast-program' : program.key, 
                 'onclick': 'window.handlers.expandText(event)'
                 }, [
-                    el("img.program-img", { src : program.image }),
-                    el("div.program-text-container", [
-                        el("div.program-title", [program.name]),
-                        // only include category div when sorting programs alphabetically
-                        isAlphabeticView ?  el("div.program-category" + (alternate ? ".alternating" : ""), [program.category || "Unknown"]) : [""],
-                        el("div.program-disclaimer", ["läs om programmet"])
+                    el("div.program-container.flexme", [
+                        el("img.program-img", { src : program.image }),
+                        el("div.program-text-container.flexme", [
+                            el("div.program-title", [program.name]),
+                            // only include category div when sorting programs alphabetically
+                            isAlphabeticView ?  el("div.program-category" + (alternate ? ".alternating" : ""), [program.category || "Unknown"]) : [""],
+                            el("div.program-disclaimer", ["läs om programmet"])
+                        ]),
+                        el("div.program-chevron", { onclick: 'window.handlers.openProgramView(event)'}),
                     ]),
-                    el("div.program-chevron", { onclick: 'window.handlers.openProgramView(event)'}),
                     el("div.program-text", [program.description || "beskrivning saknas för det här programmet"])
                 ])
     }
@@ -277,6 +279,7 @@
             */
         }
 
+        // this view's spotlight is unique in that it only shows the RAF logo
         return el("div.page", [
             el("div.spotlight", [
                 el("img#spotlight-img", { src : 'img/raf-bg2.png' }),
@@ -332,7 +335,6 @@
        function createFavourites(favs) {
            // the list which will contain the generated fav divs
            var favList = [];
-           var counter = 0;
            favs.forEach(function(key) {
                var fav = window.app.programs[key];
                favList.push(el("div.fav", { 
@@ -343,7 +345,6 @@
                        el("div.fav-title", [fav.name])
                    ])
                 )
-           counter = counter + 1;
            });
            return el("div.fav-container", favList);
        }

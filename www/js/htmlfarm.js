@@ -391,7 +391,7 @@
                }, [
                     el("img#spotlight-img", {src: isProgramView ? podcast.programImage : podcast.image}),
                     el("div.spotlight-container.flexme", [
-                        el("div#spotlight-play", {'onclick' : 'window.handlers.playPodcastHandler(event)'}),
+                        el("div#spotlight-play", {'onclick' : 'window.handlers.spotlightHandler(event)'}),
                         el("div.spotlight-text-container.flexme", [
                             el("div#spotlight-title", [podcast.program]),
                             el("div#spotlight-ep", [podcast.title]),

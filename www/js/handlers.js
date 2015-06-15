@@ -20,6 +20,9 @@
         // TODO: Store progress in localStorage 
     }
 
+    function playSpotlightPodcast(event) {
+    }
+
     function playPodcast(event) {
         var dataset = event.target.parentNode.dataset,
             // These might be podcast-program --> podcastProgram
@@ -237,6 +240,7 @@
 
     GLOBAL.handlers = {
         playPodcastHandler : playPodcast,
+        spotlightHandler : playSpotlightPodcast,
         playerControlHandler : playPauseCurrent,
         fileTransferError : downloadError,
 

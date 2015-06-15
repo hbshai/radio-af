@@ -1,23 +1,24 @@
-(function (GLOBAL){
+(function(GLOBAL) {
 
     var footerTime = undefined,
-        currentDurationString = ""
+        currentDurationString = "";
 
-    function formatDate(date){
+    function formatDate(date) {
         var m = date.getUTCMinutes() + date.getUTCHours() * 60,
-            s = date.getUTCSeconds()
-        return (m >= 10 ? m : '0' + m) + ':' + (s >= 10 ? s : '0' + s)
+            s = date.getUTCSeconds();
+        return (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s : "0" + s);
     }
 
     // It should update the miniplayer progress bar.
-    function onPlayProgress(pos){
-        if (pos < 0) 
+    function onPlayProgress(pos) {
+        if (pos < 0) {
             pos = 0;
+        }
 
-        var time = new Date(pos * 1000)
-        footerTime.innerHTML = formatDate(time) + ' / ' + currentDurationString;
+        var time = new Date(pos * 1000);
+        footerTime.innerHTML = formatDate(time) + " / " + currentDurationString;
 
-        // TODO: Store progress in localStorage 
+    // TODO: Store progress in localStorage 
     }
 
     function playSpotlightPodcast(event) {
@@ -26,85 +27,89 @@
     function playPodcast(event) {
         var dataset = event.target.parentNode.dataset,
             // These might be podcast-program --> podcastProgram
-            program = dataset['podcastProgram'],
-            index = dataset['podcastIndex'],
-            podcast = window.app.programs[program].podcasts[index]
+            program = dataset["podcastProgram"],
+            index = dataset["podcastIndex"],
+            podcast = window.app.programs[program].podcasts[index];
 
-            // Very low chance of collision: 'Correcto' + '10' vs 'Correcto1' + '0'
-            trackHash = program + index, 
-            // Selector for all elements that have this specifc podcast data
-            dataSelector = "[data-podcast-program='" + program + "']"
-                         + "[data-podcast-index='" + index + "']"
+        // Very low chance of collision: 'Correcto' + '10' vs 'Correcto1' + '0'
+        trackHash = program + index,
+        // Selector for all elements that have this specifc podcast data
+        dataSelector = "[data-podcast-program='" + program + "']"
+            + "[data-podcast-index='" + index + "']";
 
         // We are trying to toggle the current track.
         if (window.app.audiop.trackHash === trackHash) {
-            if (window.app.audiop.isPaused())
-                window.app.audiop.play(onPlayProgress)
-            else
-                window.app.audiop.pause()
-            
-            $(dataSelector + ' > .podd-control').toggleClass('play').toggleClass('pause')
+            if (window.app.audiop.isPaused()) {
+                window.app.audiop.play(onPlayProgress);
+            } else {
+                window.app.audiop.pause();
+            }
 
-            $("#footer-btn").attr('class', window.app.audiop.isPaused() ? 'footer-pause' : 'footer-play');
+            $(dataSelector + " > .podd-control").toggleClass("play").toggleClass("pause");
+
+            $("#footer-btn").attr("class", window.app.audiop.isPaused() ? "footer-pause" : "footer-play");
 
             return;
         }
-        
+
         // Toggle the currently playing button
-        if (window.app.audiop.currentlyPlaying && !window.app.audiop.isPaused())
+        if (window.app.audiop.currentlyPlaying && !window.app.audiop.isPaused()) {
             $("[data-podcast-program='" + window.app.audiop.currentlyPlaying.author + "']"
-              + "[data-podcast-index='" + window.app.audiop.currentlyPlaying.index + "']" 
-              + ' > .podd-control').toggleClass('play').toggleClass('pause')
+                + "[data-podcast-index='" + window.app.audiop.currentlyPlaying.index + "']"
+                + " > .podd-control").toggleClass("play").toggleClass("pause");
 
         // TODO: Store currently playing podcast info in local storage
         // TODO: Refactor audiop so we only do audiop.play(podcast) and it does everything
-        window.app.audiop.trackHash = trackHash
-        window.app.audiop.loadMedia(podcast.podcastUrl)
-        window.app.audiop.play(onPlayProgress)
-        window.app.audiop.currentlyPlaying = podcast
+        }
+        window.app.audiop.trackHash = trackHash;
+        window.app.audiop.loadMedia(podcast.podcastUrl);
+        window.app.audiop.play(onPlayProgress);
+        window.app.audiop.currentlyPlaying = podcast;
 
-        $(dataSelector + ' > .podd-control').toggleClass('play').toggleClass('pause')
+        $(dataSelector + " > .podd-control").toggleClass("play").toggleClass("pause");
 
-        currentDurationString = formatDate(new Date(podcast.duration * 1000))
+        currentDurationString = formatDate(new Date(podcast.duration * 1000));
 
         // TODO: Move these into audiop
-        $("#footer-btn").attr('class', 'footer-play');
-        $("#footer-img").attr('src', podcast.image);
+        $("#footer-btn").attr("class", "footer-play");
+        $("#footer-img").attr("src", podcast.image);
         $("#footer-title").text(podcast.program);
-        $("#footer-ep").text(podcast.title)
+        $("#footer-ep").text(podcast.title);
 
-        if (!footerTime)
-            footerTime = document.querySelector("#footer-time")
+        if (!footerTime) {
+            footerTime = document.querySelector("#footer-time");
+        }
 
-        onPlayProgress(0)
+        onPlayProgress(0);
     }
 
-    function playPauseCurrent(event){
-        if (window.app.audiop.isPaused())
-            window.app.audiop.play(onPlayProgress)
-        else
-            window.app.audiop.pause()
+    function playPauseCurrent(event) {
+        if (window.app.audiop.isPaused()) {
+            window.app.audiop.play(onPlayProgress);
+        } else {
+            window.app.audiop.pause();
+        }
 
-        $("#footer-btn").attr('class', window.app.audiop.isPaused() ? 'footer-pause' : 'footer-play')
+        $("#footer-btn").attr("class", window.app.audiop.isPaused() ? "footer-pause" : "footer-play");
 
         $("[data-podcast-program='" + window.app.audiop.currentlyPlaying.author + "']"
-          + "[data-podcast-index='" + window.app.audiop.currentlyPlaying.index + "']" 
-          + ' > .podd-control').toggleClass('play').toggleClass('pause')
+            + "[data-podcast-index='" + window.app.audiop.currentlyPlaying.index + "']"
+            + " > .podd-control").toggleClass("play").toggleClass("pause");
     }
 
     function onProgramLoad(programKey) {
-        var program = app.programs[programKey]
+        var program = app.programs[programKey];
 
         // Notify flow that we might have new podcasts
         //window.flow.checkForNews(program)
 
-        // Notify all program page that a program is ready
-        //window.proglist.addProgram(program)
+    // Notify all program page that a program is ready
+    //window.proglist.addProgram(program)
     }
 
-    function downloadError(download, file, ft, error){
+    function downloadError(download, file, ft, error) {
         // Should probably send notification and notify DOM
-        console.log('FT Error: ' + download.hash + ' == ' + error.name + ': ' + error.message)
+        console.log("FT Error: " + download.hash + " == " + error.name + ": " + error.message);
     }
     // Create a program view for the tapped on program, insert it into the DOM and focus it
     function createProgramView(evt) {
@@ -112,7 +117,7 @@
         var programKey = target.dataset["podcastProgram"];
 
         // Find the info for the program and open a new view
-        var podcasts = window.rss.find(programKey)
+        var podcasts = window.rss.find(programKey);
         var programPage = window.htmlFarm.programView(podcasts);
 
         // insert the page into the dom
@@ -140,14 +145,15 @@
             return;
         }
         var target = findDiv(evt.target, "program");
-        
+
         // Trick height is storage for normal (collapsed) height. Assume that
         // the first program we click on is collapsed, not expanded.
-        if (!trickHeight)
+        if (!trickHeight) {
             trickHeight = target.offsetHeight;
+        }
 
         // 25 is from margin (10 top, 15 bot), 4 is magic number
-        var totalHeight = trickHeight + target.querySelector('.program-text').offsetHeight + 25 + 4;
+        var totalHeight = trickHeight + target.querySelector(".program-text").offsetHeight + 25 + 4;
         var currentHeight = target.offsetHeight;
 
         // Determine if we are expanding or contracting the div
@@ -203,57 +209,62 @@
 
     // Switches between the alphabetic and category views in Alla Program
     function switchAllProgramPane(evt) {
-        var target = evt.target.getAttribute('id'),
-            parent = document.querySelector('.program-container')
-            removeNode = function(node){ parent.removeChild(node) },
-            addNode = function(node){ parent.appendChild(node) }
+        var target = evt.target.getAttribute("id"),
+            parent = document.querySelector(".program-container");
+        removeNode = function(node) {
+            parent.removeChild(node);
+        },
+        addNode = function(node) {
+            parent.appendChild(node);
+        };
 
         // window.lists.byName contains program and symbol elements
         // window.lists.byCategory contains program and category elements
 
         // Bail if user clicked on active tab
-        if (evt.target.className.indexOf('program-active') >= 0)
-            return
+        if (evt.target.className.indexOf("program-active") >= 0) {
+            return;
+        }
 
-        var els = document.querySelectorAll('.program-tabs > div')
+        var els = document.querySelectorAll(".program-tabs > div");
 
         //$('.program-tabs > div').toggleClass('program-active').toggleClass('program-inactive')
 
-        if (target === 'toggleCategory') {
-            els[0].className = 'program-inactive'
-            els[1].className = 'program-active'
-            
+        if (target === "toggleCategory") {
+            els[0].className = "program-inactive";
+            els[1].className = "program-active";
+
             //parent.innerHTML = window.lists.byCategoryHTML
-            window.lists.byName.forEach(removeNode)
-            window.lists.byCategory.forEach(addNode)
+            window.lists.byName.forEach(removeNode);
+            window.lists.byCategory.forEach(addNode);
         } else {
-            els[0].className = 'program-active'
-            els[1].className = 'program-inactive'
-            
+            els[0].className = "program-active";
+            els[1].className = "program-inactive";
+
             //parent.innerHTML = window.lists.byNameHTML
-            window.lists.byCategory.forEach(removeNode)
-            window.lists.byName.forEach(addNode)
+            window.lists.byCategory.forEach(removeNode);
+            window.lists.byName.forEach(addNode);
         }
-        
-        window.app.scroller.recalcHeight()
+
+        window.app.scroller.recalcHeight();
     }
 
     GLOBAL.handlers = {
-        playPodcastHandler : playPodcast,
-        spotlightHandler : playSpotlightPodcast,
-        playerControlHandler : playPauseCurrent,
-        fileTransferError : downloadError,
+        playPodcastHandler: playPodcast,
+        spotlightHandler: playSpotlightPodcast,
+        playerControlHandler: playPauseCurrent,
+        fileTransferError: downloadError,
 
-        fileRemoveSuccess : console.log,
-        fileRemoveFail : console.log,
+        fileRemoveSuccess: console.log,
+        fileRemoveFail: console.log,
 
-        loadedProgramRSS : onProgramLoad,
-        openProgramView : createProgramView,
-        expandText : expandProgramText,
-        expandPodcast : expandPodcastText,
+        loadedProgramRSS: onProgramLoad,
+        openProgramView: createProgramView,
+        expandText: expandProgramText,
+        expandPodcast: expandPodcastText,
         // TODO: reflow handler - called when cache & other loading has been
         // completed; causes rebuild of flow/fav pages
-        handleFav : handleFavourite,
-        toggleProgramPane : switchAllProgramPane
-    }
-})(window)
+        handleFav: handleFavourite,
+        toggleProgramPane: switchAllProgramPane
+    };
+})(window);

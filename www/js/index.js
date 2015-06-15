@@ -24,24 +24,26 @@ var app = {
         app.time = Date.now();
     },
 
-    log : function (msg) {
-        console.log('(+' + (Date.now() - app.time) + 'ms) ' + msg);
+    log: function(msg) {
+        console.log("(+" + (Date.now() - app.time) + "ms) " + msg);
     },
     // Bind Event Listeners
     //
     // Bind any events that are required on startup. Common events are:
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-        document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+        document.addEventListener("deviceready", this.onDeviceReady, false);
+        document.addEventListener("touchmove", function(e) {
+            e.preventDefault();
+        }, false);
     },
 
     // deviceready Event Handler
     onDeviceReady: function() {
-        document.removeEventListener('deviceready', app.onDeviceReady, false);
+        document.removeEventListener("deviceready", app.onDeviceReady, false);
         //document.addEventListener('backbutton', this.onDeviceReady, false);
 
-        app.log('deviceReady')
+        app.log("deviceReady");
         app.onStart();
     },
 };

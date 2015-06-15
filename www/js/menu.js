@@ -1,8 +1,8 @@
-(function(GLOBAL){
-    
+(function(GLOBAL) {
+
     var menu, toMove,
-        isVisible = false, 
-        stylesheet =  (function() {
+        isVisible = false,
+        stylesheet = (function() {
             var style = document.createElement("style");
 
             // Add a media (and/or media query) here if you'd like!
@@ -18,24 +18,24 @@
             return style.sheet;
         })();
 
-    function touchStart(evt){
+    function touchStart(evt) {
         if (evt.target !== menu) {
-            document.addEventListener('touchend', touchEnd, false);
+            document.addEventListener("touchend", touchEnd, false);
             evt.preventDefault();
             evt.stopPropagation();
         }
     }
-    function touchEnd(evt){
+    function touchEnd(evt) {
         evt.preventDefault();
         evt.stopPropagation();
 
         setHidden();
 
-        document.removeEventListener('touchend', touchEnd, false);
-        document.removeEventListener('touchstart', touchStart, false);
+        document.removeEventListener("touchend", touchEnd, false);
+        document.removeEventListener("touchstart", touchStart, false);
     }
 
-    function initialize(){
+    function initialize() {
         // The menu element is the first argument
         menu = arguments[0];
 
@@ -43,44 +43,48 @@
         toMove = new Array(arguments.length - 1);
         for (var i = 0; i < arguments.length - 1; i++) {
             toMove[i] = arguments[i + 1];
-        };
+        }
 
         stylesheet.insertRule(".menu-slide { left: " + menu.offsetWidth + "px !important; }", 0);
     }
 
-    function setVisible(event){
-        if (isVisible) 
+    function setVisible(event) {
+        if (isVisible) {
             return;
+        }
         isVisible = true;
 
         window.app.scroller.scrollBy(menu.offsetWidth, 0);
         window.app.scroller.unregisterEvents();
-        
-        for (var i = toMove.length - 1; i >= 0; i--)
-            toMove[i].classList.add('menu-slide');
 
-        menu.classList.add('menu-active');
-        
-        document.addEventListener('touchstart', touchStart, false);
+        for (var i = toMove.length - 1; i >= 0; i--) {
+            toMove[i].classList.add("menu-slide");
+        }
+
+        menu.classList.add("menu-active");
+
+        document.addEventListener("touchstart", touchStart, false);
     }
 
-    function setHidden(event){
-        if (!isVisible) 
+    function setHidden(event) {
+        if (!isVisible) {
             return;
+        }
         isVisible = false;
 
         window.app.scroller.scrollBy(-menu.offsetWidth, 0);
         window.app.scroller.registerEvents();
-        
-        for (var i = toMove.length - 1; i >= 0; i--)
-            toMove[i].classList.remove('menu-slide');
 
-        menu.classList.remove('menu-active');
+        for (var i = toMove.length - 1; i >= 0; i--) {
+            toMove[i].classList.remove("menu-slide");
+        }
+
+        menu.classList.remove("menu-active");
     }
-    
+
     GLOBAL.menu = {
-        init : initialize,
-        show : setVisible,
-        hide : setHidden
+        init: initialize,
+        show: setVisible,
+        hide: setHidden
     };
 })(window);

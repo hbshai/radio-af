@@ -1,4 +1,4 @@
-(function(){
+(function() {
     var storage = window.localStorage;
     // a list of the program keys for each program that is fav'd; sorted in
     // the order they were added
@@ -42,10 +42,10 @@
 
     // the favs manager
     window.favs = {
-        addFav : saveFavourite,
-        getFavs : getFavourites,
-        containsProgram : containsFav,
+        addFav: saveFavourite,
+        getFavs: getFavourites,
+        containsProgram: containsFav,
         removeFav: removeFavourite,
-        clearAllFavs : clearFavs
-     }
+        clearAllFavs: clearFavs
+    };
 })();

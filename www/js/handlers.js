@@ -105,7 +105,7 @@
     }
     // Create a program view for the tapped on program, insert it into the DOM and focus it
     function createProgramView(evt) {
-        var target = evt.target.parentNode;
+        var target = findDiv(evt.target, "program");
         var programKey = target.dataset["podcastProgram"];
 
         // Find the info for the program and open a new view
@@ -117,6 +117,18 @@
         window.app.scroller.gotoPage(newPage);
     }
 
+    function findDiv(node, className) {
+        // Locate the program div
+        var target = node;
+        var counter = 0;
+        // counter's probably overkill
+        while (!target.classList.contains(className) && counter < 100) {
+            counter++;
+            target = target.parentNode;
+        }
+        return target;
+    }
+
     var trickHeight;
     function expandProgramText(evt) {
         // TODO: don't react to the program chevron in a much nicer fashion
@@ -124,14 +136,7 @@
         if (evt.target.classList.contains("program-chevron")) {
             return;
         }
-        // Locate the program div
-        var target = evt.target;
-        var counter = 0;
-        // counter's probably overkill
-        while (!target.classList.contains("program") && counter < 100) {
-            counter++;
-            target = target.parentNode;
-        }
+        var target = findDiv(evt.target, "program");
         
         // Trick height is storage for normal (collapsed) height. Assume that
         // the first program we click on is collapsed, not expanded.
@@ -161,15 +166,8 @@
         if (evt.target.classList.contains("podd-control") || evt.target.classList.contains("podd-dl")) {
             return;
         }
-
-        // Locate the program div
-        var target = evt.target;
-        var counter = 0;
-        // counter's probably overkill
-        while (!target.classList.contains("podd") && counter < 100) {
-            counter++;
-            target = target.parentNode;
-        }
+        // Locate the podcast div
+        var target = findDiv(evt.target, "podd");
 
         // Determine if we are expanding or contracting the div
         if (target.classList.contains("podd-expanded")) {

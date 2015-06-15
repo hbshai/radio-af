@@ -1,0 +1,34 @@
+{
+  "name": "radio-af",
+  "version": "1.0.0",
+  "description": "requirements ------------",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp-concat": "^2.5.2",
+    "gulp-cat": "^0.3.3",
+    "gulp": "^3.8.11",
+    "del": "^1.1.1",
+    "gulp-jade": "^1.0.0",
+    "gulp-less": "^3.0.3"
+  },
+  "devDependencies": {
+    "esformatter": "^0.7.0",
+    "esformatter-braces": "^1.2.1",
+    "esformatter-quotes": "^1.0.2",
+    "esformatter-semicolons": "^1.0.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "esformatter --config format.json -i www/js/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hbshai/radio-af.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hbshai/radio-af/issues"
+  },
+  "homepage": "https://github.com/hbshai/radio-af"
+}

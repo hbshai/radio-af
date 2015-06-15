@@ -182,17 +182,6 @@
     }
 
     function makeProgramListingDiv(program, alternate, isAlphabeticView){
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log("HEY");
-        console.log(program.description);
         return el("div.program" + (alternate ? ".alternating" : ""), {
                 'data-podcast-program' : program.key, 
                 'onclick': 'window.handlers.expandText(event)'
@@ -205,7 +194,7 @@
                         el("div.program-disclaimer", ["läs om programmet"])
                     ]),
                     el("div.program-chevron", { onclick: 'window.handlers.openProgramView(event)'}),
-                    el("div.program-text", [program.description])
+                    el("div.program-text", [program.description || "beskrivning saknas för det här programmet"])
                 ])
     }
 
@@ -217,32 +206,29 @@
         return a.concat(b)
     }
     function makeAllProgramPage(){
-        var currentSymbol = "", alternate = false
+        var currentSymbol = "", alternate = true;
         // This makes the A-to-O setup, should probably be stored somehow
 
         var listByName = Object.keys(app.programs).sort(sortByName)
             .map(function (program){
-                var programDiv = makeProgramListingDiv(app.programs[program], alternate, true)
-                alternate = !alternate
-
                 // Symbol is the header: 'A' for 'Alla ska med', 'B' for 'Bara ren sprit', etc..
-                
-                // If symbol is numeric; force symbol to be '123'
                 var programSymbol = program.charAt(0).toUpperCase();
+                // If symbol is numeric; force symbol to be '123'
                 if (!isNaN(programSymbol))
                     programSymbol = "123";
 
                 // If we need new symbol, return array
                 if (currentSymbol !== programSymbol){
                     currentSymbol = programSymbol;
-
-                    var symbolEl = el("div.program-letter" + (!alternate ? ".alternating" : ""), [currentSymbol])
-                    alternate = !alternate
+                    var symbolEl = el("div.program-letter" + (alternate ? ".alternating" : ""), [currentSymbol])
+                    var programDiv = makeProgramListingDiv(app.programs[program], !alternate, true)
                     return [symbolEl, programDiv]
+                } else {
+                    var programDiv = makeProgramListingDiv(app.programs[program], alternate, true)
+                    alternate = !alternate
+                    // Otherwise just return the program
+                    return [programDiv]
                 }
-
-                // Otherwise just return the program
-                return [programDiv]
             })
             .reduce(flatten)
 

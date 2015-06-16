@@ -63,6 +63,7 @@ html
 
             window.titlebar.init(titleBar);
             window.menu.init(menuDiv, menuButton, titleBar, player);
+            window.app.audiop.init(document.querySelector("#footer-time"))
 
             app.scroller = new Scroll('#wrapper', 0);
 
@@ -98,6 +99,8 @@ html
 
                     app.scroller.refreshPages()
                     setTimeout(window.app.scroller.recalcHeight.bind(window.app.scroller), 250);
+
+                    window.app.audiop.load()
 
                     console.log('Done with all!')
                 }

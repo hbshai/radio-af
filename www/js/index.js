@@ -20,7 +20,7 @@ var app = {
     // Application Constructor
     initialize: function() {
         this.bindEvents();
-        app.audiop = new audiop();
+        app.audiop = new AudioPlayer();
         app.time = Date.now();
     },
 

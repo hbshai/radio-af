@@ -1,100 +1,67 @@
 (function(GLOBAL) {
 
-    var footerTime = undefined,
-        currentDurationString = "";
+    // Find and toggle play and pause buttons on buttons for a podcast
+    function togglePlayPauseButton(podcast) {
+        var mainSelector = "[data-podcast-program='" + podcast.author + "']"
+            + "[data-podcast-index='" + podcast.index + "']";
 
-    function formatDate(date) {
-        var m = date.getUTCMinutes() + date.getUTCHours() * 60,
-            s = date.getUTCSeconds();
-        return (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s : "0" + s);
+        // Toggles the minipod button
+        $(mainSelector + " > .podd-control").toggleClass("play").toggleClass("pause");
+
+        // TODO: Make this work (selector is wrong)
+        // Toggles the spotlight button
+        $(mainSelector + " > div > .podd-control").toggleClass("play").toggleClass("pause");
     }
 
-    // It should update the miniplayer progress bar.
-    function onPlayProgress(pos) {
-        if (pos < 0) {
-            pos = 0;
+    // Play or pause a podcast and 
+    function playPausePodcast(podcast) {
+        // First check if we are toggling the currently playing podcast
+        if (window.app.audiop.samePodcast(podcast)) {
+            window.app.audiop.playOrPause();
+            togglePlayPauseButton(podcast);
+            return;
         }
 
-        var time = new Date(pos * 1000);
-        footerTime.innerHTML = formatDate(time) + " / " + currentDurationString;
+        // Then proceed to toggle the buttons of the currently playing podcast
+        if (window.app.audiop.currentPodcast && !window.app.audiop.isPaused()) {
+            togglePlayPauseButton(window.app.audiop.currentPodcast);
+        }
 
-    // TODO: Store progress in localStorage 
+        // Load media of podcast to play and play it. AudioPlayer takes care
+        // of the footer (image/button/text).
+        window.app.audiop.loadPodcast(podcast);
+        window.app.audiop.play();
+
+        // Update the visualzz
+        togglePlayPauseButton(podcast);
     }
 
     function playSpotlightPodcast(event) {
+        // Two parents up
+        var dataset = event.target.parentNode.parentNode.dataset,
+            // Dataset converts podcast-program --> podcastProgram
+            program = dataset["podcastProgram"],
+            index = dataset["podcastIndex"],
+            // Use above data to find podcast
+            podcast = window.app.programs[program].podcasts[index];
+
+        playPausePodcast(podcast);
     }
 
     function playPodcast(event) {
         var dataset = event.target.parentNode.dataset,
-            // These might be podcast-program --> podcastProgram
+            // Dataset converts podcast-program --> podcastProgram
             program = dataset["podcastProgram"],
             index = dataset["podcastIndex"],
+            // Use above data to find podcast
             podcast = window.app.programs[program].podcasts[index];
 
-        // Very low chance of collision: 'Correcto' + '10' vs 'Correcto1' + '0'
-        trackHash = program + index,
-        // Selector for all elements that have this specifc podcast data
-        dataSelector = "[data-podcast-program='" + program + "']"
-            + "[data-podcast-index='" + index + "']";
-
-        // We are trying to toggle the current track.
-        if (window.app.audiop.trackHash === trackHash) {
-            if (window.app.audiop.isPaused()) {
-                window.app.audiop.play(onPlayProgress);
-            } else {
-                window.app.audiop.pause();
-            }
-
-            $(dataSelector + " > .podd-control").toggleClass("play").toggleClass("pause");
-
-            $("#footer-btn").attr("class", window.app.audiop.isPaused() ? "footer-pause" : "footer-play");
-
-            return;
-        }
-
-        // Toggle the currently playing button
-        if (window.app.audiop.currentlyPlaying && !window.app.audiop.isPaused()) {
-            $("[data-podcast-program='" + window.app.audiop.currentlyPlaying.author + "']"
-                + "[data-podcast-index='" + window.app.audiop.currentlyPlaying.index + "']"
-                + " > .podd-control").toggleClass("play").toggleClass("pause");
-
-        // TODO: Store currently playing podcast info in local storage
-        // TODO: Refactor audiop so we only do audiop.play(podcast) and it does everything
-        }
-        window.app.audiop.trackHash = trackHash;
-        window.app.audiop.loadMedia(podcast.podcastUrl);
-        window.app.audiop.play(onPlayProgress);
-        window.app.audiop.currentlyPlaying = podcast;
-
-        $(dataSelector + " > .podd-control").toggleClass("play").toggleClass("pause");
-
-        currentDurationString = formatDate(new Date(podcast.duration * 1000));
-
-        // TODO: Move these into audiop
-        $("#footer-btn").attr("class", "footer-play");
-        $("#footer-img").attr("src", podcast.image);
-        $("#footer-title").text(podcast.program);
-        $("#footer-ep").text(podcast.title);
-
-        if (!footerTime) {
-            footerTime = document.querySelector("#footer-time");
-        }
-
-        onPlayProgress(0);
+        playPausePodcast(podcast);
     }
 
     function playPauseCurrent(event) {
-        if (window.app.audiop.isPaused()) {
-            window.app.audiop.play(onPlayProgress);
-        } else {
-            window.app.audiop.pause();
-        }
-
-        $("#footer-btn").attr("class", window.app.audiop.isPaused() ? "footer-pause" : "footer-play");
-
-        $("[data-podcast-program='" + window.app.audiop.currentlyPlaying.author + "']"
-            + "[data-podcast-index='" + window.app.audiop.currentlyPlaying.index + "']"
-            + " > .podd-control").toggleClass("play").toggleClass("pause");
+        window.app.audiop.playOrPause();
+        togglePlayPauseButton(window.app.audiop.currentPodcast);
     }
 
     function onProgramLoad(programKey) {

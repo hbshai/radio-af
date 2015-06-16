@@ -298,12 +298,7 @@
 
         // this view's spotlight is unique in that it only shows the RAF logo
         return el("div.page", [
-            el("div.spotlight", [
-                el("img#spotlight-img", {
-                    src: "img/raf-bg2.png"
-                }),
-                el("div.title-bar", ["alla program"])
-            ]),
+            createSpotlight("alla program"),
             el("div.program-container", [
                 el("div.program-tabs", [
                     el("div#toggleName.program-active", {
@@ -328,13 +323,15 @@
     }
 
     function makeFlowPage() {
-        return el("div#flow.page", [
-            el("div.spotlight", [
-                el("div.title-bar", ["mitt flöde"])
-            ]),
-            el("div.podd-container")
-        // use window.flow.podcasts to fill it or something...
-        ]);
+        var favs = window.favs.getFavs();
+        if (favs.length === 0) {
+            return el("div#flow.page", [
+                createSpotlight("mitt flöde"),
+                el("div.empty-flow-top", ["Här visas de senaste poddarna från dina favoritprogram"]),
+                el("div.empty-flow-text", ["Tryck var som helst för att börja leta favoritprogram"]),
+            // use window.flow.podcasts to fill it or something...
+            ]);
+        }
     }
 
     function makeDownloadPage() {
@@ -383,7 +380,7 @@
         };
         var favs = window.favs.getFavs();
         // TODO: remove placeholder favs 
-        favs = ["iluven", "ordgasm", "vinnaren"];
+        // favs = ["iluven", "ordgasm", "vinnaren"];
         if (favs.length > 0) {
             // randomly pick a pod from the favourited programs to spotlight
             var spotlightProgram = favs[Math.floor(favs.length * Math.random())];
@@ -396,7 +393,9 @@
         } else {
             // TODO: Display "oops no favs" view
             return el("div.page", [
-                createSpotlight("inga favoriter rip", pod)
+                createSpotlight("mina favoriter"),
+                el("div.no-favs-title", ["ojsan, här var det tomt"]),
+                el("div.no-favs-text", ["Tryck var som helst för att börja leta favoritprogram"])
             ]);
         }
     }
@@ -410,6 +409,15 @@
     }
 
     function createSpotlight(title, podcast, isProgramView) {
+        // no pod => radio af logo background
+        if (arguments.length === 1) {
+            return el("div.spotlight", [
+                el("img#spotlight-img", {
+                    src: "img/raf-bg2.png"
+                }),
+                el("div.title-bar", [title])
+            ]);
+        }
         return el("div.spotlight", {
             "data-podcast-program": podcast.author,
             "data-podcast-index": podcast.index

@@ -167,6 +167,10 @@
         }
 
         window.app.scroller.enforceBounds();
+        // Force browser to reflow (using getComputedStyle in recalcHeight).
+        // This updates the DOM faster than allowing the browser to do it
+        // automatically.
+        setTimeout(window.app.scroller.recalcHeight.bind(window.app.scroller), 150);
     }
 
     function expandPodcastText(evt) {

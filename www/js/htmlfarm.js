@@ -325,7 +325,9 @@
     function makeFlowPage() {
         var favs = window.favs.getFavs();
         if (favs.length === 0) {
-            return el("div#flow.page", [
+            return el("div#flow.page", {
+                "onclick": "window.handlers.goToAllProgramsView(event)"
+            }, [
                 createSpotlight("mitt flöde"),
                 el("div.empty-flow-top", ["Här visas de senaste poddarna från dina favoritprogram"]),
                 el("div.empty-flow-text", ["Tryck var som helst för att börja leta favoritprogram"]),
@@ -392,7 +394,9 @@
             ]);
         } else {
             // TODO: Display "oops no favs" view
-            return el("div.page", [
+            return el("div.page", {
+                "onclick": "window.handlers.goToAllProgramsView(event)"
+            }, [
                 createSpotlight("mina favoriter"),
                 el("div.no-favs-title", ["ojsan, här var det tomt"]),
                 el("div.no-favs-text", ["Tryck var som helst för att börja leta favoritprogram"])

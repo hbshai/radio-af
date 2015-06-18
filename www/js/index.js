@@ -79,7 +79,7 @@ app.onStart = function() {
     app.scroller.onPageChangeListener = window.titlebar.onPageChange;
 
     console.log("Begin cache control");
-    window.localStorage.clear();
+    //window.localStorage.clear();
 
     var cachedPrograms = window.cache.getCachedPrograms(),
         serverProgramList,

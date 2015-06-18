@@ -204,7 +204,7 @@
     function makeFooter() {
         return el("div#footer.lefty", [
             el("img#footer-img", {
-                src: "../img/player-placeholder-img.png"
+                src: "img/player-placeholder-img.png"
             }),
             el("div.footer-text-container", [
                 el("div#footer-title", ["inget program valt"]),

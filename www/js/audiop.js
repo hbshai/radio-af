@@ -197,8 +197,15 @@ AudioPlayer.prototype.samePodcast = function(otherPodcast) {
 AudioPlayer.prototype.goLive = function() {
     $.getJSON("http://www.radioaf.se/nowplaying/")
         .done(function(msg, txt, xhr) {
-            //window.app.audiop.playLive(msg.data);
-            //window.app.audiop.play();
+        	if (msg.data.author.show_name === "Sändningsuppehåll") {
+        		$("#footer-img").attr("src", msg.data.author.show_image);
+        		$("#footer-title").text(msg.data.author.show_name);
+        		$("#footer-time").text('-- / --');
+        		$("#footer-ep").text("");
+				return;
+        	}
+            window.app.audiop.playLive(msg.data);
+            window.app.audiop.play();
         })
         .error(function(err) {});
 //this.play()

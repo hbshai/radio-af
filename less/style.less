@@ -273,6 +273,7 @@ body,ul,li,h1,h2,p {
     margin-top: 15px;
     margin-left: 7.5px;
     margin-right: 7.5px;
+
 }
 .fav-container {
     margin-top: 15px;
@@ -287,7 +288,9 @@ body,ul,li,h1,h2,p {
 }
 
 .fav-title {
-    width: @fav-width;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: @fav-width - 10px;
     background-color: @raf-red;
     margin-top: -6px;
     color: @raf-white;
@@ -295,6 +298,9 @@ body,ul,li,h1,h2,p {
     padding-top: 12px;
     padding-bottom: 7px;
     font-size: 1.5em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 
@@ -848,7 +854,9 @@ body {
     }
 
     .fav-title {
-        width: @fav-width;
+        padding-left: 5px;
+        padding-right: 5px;
+        width: @fav-width - 10px;
         margin-top: -4px;
         padding-top: 10px;
         padding-bottom: 7px;

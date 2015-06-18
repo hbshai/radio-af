@@ -123,7 +123,7 @@ body,ul,li,h1,h2,p {
 }
 
 #loading {
-    background-image: url('../img/raf-pattern-black.png');
+    background-image: url('../img/raf-pattern-black-100px.png');
     background-size: 100px 100px;
     background-color: @raf-white;
     width: 100%;
@@ -257,6 +257,10 @@ body,ul,li,h1,h2,p {
     // background-size: 24px 30px;
 }
 
+.spotlight-pause {
+    background-image: url("../img/pause.png") !important;
+}
+
 .alternating {
     background-color: @off-white;
 }
@@ -269,6 +273,7 @@ body,ul,li,h1,h2,p {
     margin-top: 15px;
     margin-left: 7.5px;
     margin-right: 7.5px;
+
 }
 .fav-container {
     margin-top: 15px;
@@ -283,7 +288,9 @@ body,ul,li,h1,h2,p {
 }
 
 .fav-title {
-    width: @fav-width;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: @fav-width - 10px;
     background-color: @raf-red;
     margin-top: -6px;
     color: @raf-white;
@@ -291,6 +298,9 @@ body,ul,li,h1,h2,p {
     padding-top: 12px;
     padding-bottom: 7px;
     font-size: 1.5em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 
@@ -299,7 +309,7 @@ body,ul,li,h1,h2,p {
     font-family: NexaLight;
     text-transform: uppercase;
     color: @dark-blue;
-    font-size: 16pt;
+    font-size: 1.6em;
     margin-top: 20px;
     text-align: center;
 }
@@ -479,11 +489,9 @@ body,ul,li,h1,h2,p {
 .podd-ep-text {
     display: block;
     margin: 15px;
-    margin-top: 85px;
+    margin-top: @podd-height + 15px;
 	font-family: OpenSans;
 }
-
-
 
 .podd-text {
     position: absolute;
@@ -781,7 +789,7 @@ body {
 
     .podd-ep-text {
         margin: 15px;
-        margin-top: 85px;
+        margin-top: @podd-height + 15px;
     }
 
     .podd-text {
@@ -845,7 +853,9 @@ body {
     }
 
     .fav-title {
-        width: @fav-width;
+        padding-left: 5px;
+        padding-right: 5px;
+        width: @fav-width - 10px;
         margin-top: -4px;
         padding-top: 10px;
         padding-bottom: 7px;

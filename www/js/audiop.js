@@ -46,9 +46,6 @@ var AudioPlayer = function() {
         $("#footer-btn").attr("class", "footer-play");
     };
 
-    // liveplayer
-    // http://live.radioaf.se:8000/;stream/1
-
     // Load track via podcast, will try to release the old one.
     this.loadPodcast = function(podcast) {
         // We cannot know if media is playing, so stop it b/c safety's first!
@@ -101,6 +98,36 @@ var AudioPlayer = function() {
         }
     };
 
+    this.playLive = function(msg) {
+        if (_media) {
+            _media.stop();
+            _media.release();
+        }
+
+        if (_id) {
+            clearInterval(_id);
+            _id = 0;
+        }
+
+        this.currentPodcast = undefined;
+
+        //window.localStorage.removeItem("audiop-program");
+        //window.localStorage.removeItem("audiop-index");
+        //window.localStorage.removeItem("audiop-seek"); // init to 0
+
+        // No track playing. Update _paused otherwise play() will malfunction...
+        _paused = true;
+        _media = new Media("http://live.radioaf.se:8000/;stream/1", self.onSuccess, self.onError);
+
+        // Do some UI shizzle
+        this.currentDurationString = "∞";
+        this.updatePosition(0);
+
+        $("#footer-img").attr("src", msg.author.show_image);
+        $("#footer-title").text(msg.author.show_name);
+        $("#footer-ep").text("Du lyssnar live");
+    };
+
     // Yes I am seek
     this.seekTo = function(pos) {
         _media.seekTo(pos * 1000); // seek expects ms
@@ -129,8 +156,8 @@ var AudioPlayer = function() {
     }
 };
 
-AudioPlayer.prototype.init = function(footerTime) {
-    this.footerTimeEl = footerTime;
+AudioPlayer.prototype.init = function() {
+    this.footerTimeEl = document.getElementById("footer-time");
 };
 
 AudioPlayer.prototype.load = function() {
@@ -162,4 +189,14 @@ AudioPlayer.prototype.samePodcast = function(otherPodcast) {
     var hashCurrent = this.currentPodcast ? this.currentPodcast.program + this.currentPodcast.index : "",
         hashOther = otherPodcast.program + otherPodcast.index;
     return hashCurrent === hashOther;
+};
+
+AudioPlayer.prototype.goLive = function() {
+    $.getJSON("http://www.radioaf.se/nowplaying/")
+        .done(function(msg, txt, xhr) {
+            window.app.audiop.playLive(msg.data);
+            window.app.audiop.play();
+        })
+        .error(function(err) {});
+//this.play()
 };

@@ -254,14 +254,11 @@
         } else {
             switch (targetId) {
                 case "menuLive" :
-                    console.log("live");
-                    //window.app.audiop.goLive();
+                    window.app.audiop.goLive();
                     break;
                 case "menuDev" :
-                    console.log("dev");
-                    window.app.scroller.insertPage(htmlFarm.infoPage(), app.scroller.currentPage);
+                    window.app.scroller.insertPage(htmlFarm.infoPage(), app.scroller.currentPage + 1);
                     window.app.scroller.nextPage();
-                    window.app.scroller.recalcHeight();
                     break;
                 default :
                     break;
@@ -286,8 +283,6 @@
 
         handleMenuButton: gotoPage,
 
-        // TODO: reflow handler - called when cache & other loading has been
-        // completed; causes rebuild of flow/fav pages
         handleFav: handleFavourite,
         goToAllProgramsView: function(event) {
             window.app.scroller.gotoPage(

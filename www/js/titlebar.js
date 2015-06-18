@@ -16,14 +16,7 @@
         // is overlapped using a higher z-index.
         staticTitleBar.textContent = titleEl.textContent;
 
-        // Walk the chain upwards. Each iteration gets distance to top
-        // of the parent node. Typically 2-3 iterations. Will probably lag anyway.
-        if (titleEl.offsetParent) {
-            do {
-                thresholdY += titleEl.offsetTop;
-                titleEl = titleEl.offsetParent;
-            } while (titleEl);
-        }
+        thresholdY = window.deviceStyle.maximumHeight;
     }
 
     function pageChangeHandler(pageEl) {
@@ -55,9 +48,7 @@
 
             // Moving off screen is faster than toggling visibility (no reflow needed)
             staticTitleBar.style.top = hackTitleVisible ? "0px" : "-1000px";
-        //staticTitleBar.style.display = hackTitleVisible ? 'block' : 'none'
         }
-
     }
 
     GLOBAL.titlebar = {
@@ -68,10 +59,7 @@
         // Assume that we don't need to do any title bar toggling here.
         init: function(el) {
             staticTitleBar = el; //document.body.querySelector('#title-bar-fixed')
-
-            if (!staticTitleBar) {
-                console.err("Static title bar not provided! (titlebar.js)");
-            }
+            staticTitleBar.style.top = "-1000px";
         }
     };
 })(window);

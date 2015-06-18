@@ -9,6 +9,8 @@
             } else {
                 console.error("no data received");
             }
+        }).error(function() {
+            console.log("fck you");
         });
     }
 

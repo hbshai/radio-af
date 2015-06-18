@@ -63,7 +63,7 @@ html
 
             window.titlebar.init(titleBar);
             window.menu.init(menuDiv, menuButton, titleBar, player);
-            window.app.audiop.init(document.getElementById("footer-time"))
+            window.app.audiop.init()
             window.dlman.init(function (){
                 window.dlman.initialized = true
             })
@@ -74,7 +74,7 @@ html
             app.scroller.onPageChangeListener = window.titlebar.onPageChange;
 
             console.log('Begin cache control')
-            window.localStorage.clear()
+            //window.localStorage.clear()
             
             var cachedPrograms = window.cache.getCachedPrograms(),
                 serverProgramList, done = false, cachedDone = 0, serverDone = 0
@@ -176,6 +176,17 @@ html
 
             function loadedProgramFromServer(programKey){
                 serverDone++;
+                if (!done){
+                    var progress = document.getElementById('progress-bar')
+                    if (!progress) {
+                        progress = document.createElement('h1')
+                        progress.setAttribute('id', 'progress-bar')
+                        document.body.appendChild(progress)
+                    }
+                    progress.textContent = serverDone + '/' + serverProgramList.length
+                    if (progress && serverDone === serverProgramList.length)
+                        document.body.removeChild(progress)
+                }
 
                 if (serverDone === serverProgramList.length) {
                     if (!done)
@@ -204,6 +215,15 @@ html
             })
 
             function rssDoneLoading(data, xml) {
+                if (data.entries.length === 0) {
+                    console.log('Loaded ' + this.program + ', but no podcasts: skipping...')
+                    window.app.programs[this.program] = undefined;
+                    delete window.app.programs[this.program];
+
+                    loadedProgramFromServer(programKey)
+                    return;
+                }
+
                 console.log("Loaded " + this.program + ", parsing...");
                 // parse returns pre-emptively without durations
                 var programKey = this.program,
@@ -232,6 +252,14 @@ html
                     serverLen = data.entries.length,
                     cachedPodcasts = app.programs[programKey].podcasts,
                     cacheLen = cachedPodcasts.length
+
+                if (serverLen === 0) {
+                    console.log('Loaded ' + programKey + ', but no podcasts: skipping...')
+                    window.app.programs[programKey] = undefined;
+                    delete window.app.programs[this.program];
+                    loadedProgramFromServer(programKey)
+                    return;
+                }
 
                 if (cacheLen === serverLen) {
                     // Assume nothing has happened :: incorrect but hey
@@ -296,30 +324,4 @@ html
                     console.error('no data received')
                 }
             })
-
-
-
-            // a program in the favourite screen was clicked upon: 
-            // THOU SHALT HANDLE IT
-            $(".fav").on("click", function() {
-                var $el = $(this);
-                var programName = $el.data("program");
-                rss.find(programName, function(podcasts) {
-                    var programPage = window.htmlFarm.programView(podcasts);
-                    // insert the page into the dom
-                    var newPage = app.scroller.insertPage(programPage, app.scroller.currentPage, false);
-                    app.scroller.gotoPage(newPage);
-                });
-
-                // var $title = $el.find(".fav-title");
-                // if ($title.hasClass("hax")) {
-                //     $title.removeClass("hax");
-                //     $el.find(".fav-title").css("background-color", "#e05a5a");
-                //     $el.find(".fav-title").css("color", "#f2f2f2");
-                // } else {
-                //     $title.addClass("hax");
-                //     $el.find(".fav-title").css("background-color", "#89FB98");
-                //     $el.find(".fav-title").css("color", "#DD69AF");
-                // }
-            });
          }

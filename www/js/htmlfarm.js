@@ -14,11 +14,11 @@
         standardWidth = "w=" + window.deviceStyle.standardWidth,
         standardQuality = "q=" + 98,
         maximumHeight = "h=" + (window.deviceStyle.maximumHeight),
-        maximumWidth = "w=" + window.innerWidth;
-    maximumQuality = "q=" + 95,
-    favWidth = "w=" + window.deviceStyle.favWidth,
-    favHeight = "h=" + window.deviceStyle.favHeight,
-    favQuality = "q=93";
+        maximumWidth = "w=" + window.innerWidth,
+        maximumQuality = "q=" + 95,
+        favWidth = "w=" + window.deviceStyle.favWidth,
+        favHeight = "h=" + window.deviceStyle.favHeight,
+        favQuality = "q=93";
 
     function resizeImage(src, hq) {
         src = src.replace(/w\=(\d)+/, hq ? maximumWidth : standardWidth)
@@ -528,6 +528,7 @@
             el("div#menuLive.menu-item.menu-item-live", {
                 "onclick": "window.handlers.handleMenuButton(event)"
             }, ["direkt"]),
+            el("d.menu-logo"),
             el("div#menuDev.menu-footer", {
                 "onclick": "window.handlers.handleMenuButton(event)"
             }, ["info"])

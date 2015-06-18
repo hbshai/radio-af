@@ -324,12 +324,7 @@
 
         // this view's spotlight is unique in that it only shows the RAF logo
         return el("div.page", [
-            el("div.spotlight", [
-                el("img#spotlight-img", {
-                    src: "img/raf-bg2.png"
-                }),
-                el("div.title-bar", ["alla program"])
-            ]),
+            createSpotlight("alla program"),
             el("div.program-container", [
                 el("div.program-tabs", [
                     el("div#toggleName.program-active", {
@@ -356,24 +351,34 @@
     function makeFlowPage() {
         var counter = 0, 
             alternate = true,
-            flow = window.favs.getFavs();
+            favs = window.favs.getFavs();
 
-        flow = flow.map(function (key){
-            return window.app.programs[key].podcasts
-        }).reduce(flatten).sort(function (a, b){
-            var dateA = new Date(a.date),
-                dateB = new Date(b.date);
-            return dateB - dateA
-        }).filter(function (pod){
-            return counter++ < 25; // max 25 podcasts
-        });
-        
-        return el("div#flow.page", [
-            createSpotlight('flödet', flow.shift()),
-            el("div.podd-container", flow.map(function(podcast){
-                return createPodcastDiv(podcast, true, (alternate = !alternate));
-            }))
-        ]);
+        if (favs.length === 0) {
+            return el("div#flow.page", {
+                "onclick": "window.handlers.goToAllProgramsView(event)"
+            }, [
+                createSpotlight("mitt flöde"),
+                el("div.empty-flow-top", ["Här visas de senaste poddarna från dina favoritprogram"]),
+                el("div.empty-flow-text", ["Tryck var som helst för att börja leta favoritprogram"]),
+            ]);
+        } else {
+            favs = favs.map(function (key){
+                return window.app.programs[key].podcasts
+            }).reduce(flatten).sort(function (a, b){
+                var dateA = new Date(a.date),
+                    dateB = new Date(b.date);
+                return dateB - dateA
+            }).filter(function (pod){
+                return counter++ < 25; // max 25 podcasts
+            });
+            
+            return el("div#flow.page", [
+                (favs.length > 0 ? createSpotlight('flödet', favs.shift()) : createSpotlight('flödet')),
+                el("div.podd-container", favs.map(function(podcast){
+                    return createPodcastDiv(podcast, true, (alternate = !alternate));
+                }))
+            ]);
+        }
     }
 
     function makeDownloadPage() {
@@ -414,7 +419,6 @@
         }
 
         var favs = window.favs.getFavs();
-        
         if (favs.length > 0) {
             // randomly pick a pod from the favourited programs to spotlight
             var spotlightProgram = favs[Math.floor(favs.length * Math.random())];
@@ -425,9 +429,12 @@
                 createFavourites(favs)
             ]);
         } else {
-            // TODO: Display "oops no favs" view
-            return el("div.page", [
-                createSpotlight("inga favoriter rip", pod)
+            return el("div.page", {
+                "onclick": "window.handlers.goToAllProgramsView(event)"
+            }, [
+                createSpotlight("mina favoriter"),
+                el("div.no-favs-title", ["ojsan, här var det tomt"]),
+                el("div.no-favs-text", ["Tryck var som helst för att börja leta favoritprogram"])
             ]);
         }
     }
@@ -442,6 +449,17 @@
     }
 
     function createSpotlight(title, podcast, isProgramView) {
+        // no pod => radio af logo background
+        if (arguments.length === 1) {
+            return el("div.spotlight", [
+                el("img#spotlight-img", {
+                    src: "img/raf-bg2.png",
+                    style: "height: " + window.deviceStyle.maximumHeight + "px;"
+                }),
+                el("div.title-bar", [title])
+            ]);
+        }
+
         var programImage = window.app.programs[podcast.author].image,
             image = isProgramView ? programImage : (podcast.image || programImage);
 

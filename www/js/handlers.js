@@ -287,6 +287,12 @@
         // TODO: reflow handler - called when cache & other loading has been
         // completed; causes rebuild of flow/fav pages
         handleFav: handleFavourite,
+        goToAllProgramsView: function(event) {
+            window.app.scroller.gotoPage(
+                window.app.views.index["all-programs"]
+            );
+        },
         toggleProgramPane: switchAllProgramPane
+
     };
 })(window);

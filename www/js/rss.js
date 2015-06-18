@@ -10,7 +10,7 @@
                 console.error("no data received");
             }
         }).error(function() {
-            console.log("fck you");
+            window.handlers.handleNetworkError();
         });
     }
 
@@ -49,10 +49,26 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
     function parseRSS(data, xml, program, callb) {
-        var podcasts = [], entry, imgUrl;
+        var podcasts = [], entry, imgUrl, i, l, datax, url;
 
-        for (var i = 0, l = data.entries.length; i < l; i++) {
+        var parser = new DOMParser(),
+            xmlDoc = parser.parseFromString(xml, "text/xml"),
+            xmlItems = xmlDoc.getElementsByTagName("item");
+
+        for (i = 0, l = data.entries.length; i < l; i++) {
             entry = data.entries[i];
+            datax = xmlItems[i].getElementsByTagName("enclosure");
+
+            if (datax == undefined || datax[0] == undefined) {
+                continue;
+            }
+
+            var url = datax[0].getAttributeNode("url");
+            if (url == undefined || url.value == undefined || url.value.indexOf(".mp3") === -1) {
+                continue;
+            }
+            url = url.value;
+
             // get the url image
             try {
                 imgUrl = entry.content.split("src=\"")[1].split("\" alt=")[0];
@@ -73,17 +89,9 @@
                 content: removeTags(entry.content),
                 duration: 0,
                 date: entry.publishedDate, // so that we can order correctly in ~the flow~
-                image: timthumbBase + imgUrl + sizeParams
+                image: timthumbBase + imgUrl + sizeParams,
+                podcastUrl: url
             });
-        }
-
-        // Find podcast media urls
-        var mediaFinder = /\<enclosure url=\"([a-zA-Z0-9\.\/\:\_]+)\"/g,
-            match,
-            current = 0;
-
-        while ((match = mediaFinder.exec(xml))) {
-            podcasts[current++].podcastUrl = match[1];
         }
 
         var current = 0;
@@ -107,6 +115,7 @@
                     callb(podcasts);
                 }
             });
+
         });
 
         // Edge case: No podcasts
@@ -117,7 +126,7 @@
         return podcasts;
     }
 
-    function findRSS(programKey, cb) {
+    function findRSS(programKey) {
         if (/\s|ö|å|ä/g.test(programKey)) {
             console.warn("findRSS: " + programKey + " should not contain whitespace/non-ascii chars!");
         }

@@ -43,7 +43,7 @@
         console.log("Download.path: " + currentDownload.path);
 
         var fileTransfer = new FileTransfer();
-        var uri = encodeURI(currentDownload.url);
+        var uri = encodeURI(currentDownload.podcast.podcastUrl);
         console.log("Downloading " + uri + " to " + localPath);
 
         fileTransfer.download(
@@ -52,10 +52,10 @@
             function(entry) {
                 console.log("download complete (path): " + entry.fullPath);
                 console.log("download complete (url): " + entry.toURL());
-                console.log("download complete (native): " + entry.toNativeURL());
+                console.log("download complete (native): " + entry.toURL());
 
-                downloaded[currentDownload.hash] = entry.toNativeURL();
-                window.handlers.fileTransferComplete(currentDownload.hash, entry.toNativeURL());
+                downloaded[currentDownload.hash] = entry.toURL();
+                window.handlers.fileTransferSuccess(currentDownload.podcast, entry.toURL());
                 window.localStorage.setItem("_downloaded", JSON.stringify(downloaded));
 
                 if (downloadQueue.length > 0) {
@@ -69,6 +69,12 @@
                 }
             }
         );
+
+        fileTransfer.onprogress = function(progressEvent) {
+            if (progressEvent.lengthComputable) {
+                console.log(progressEvent.loaded / progressEvent.total);
+            }
+        };
     }
 
     function downloadNext() {
@@ -76,19 +82,19 @@
 
         // currentDownload.url is something like //blabla/blabla/bla/fileidentifier.mp3
         // We want only the fileidentifier.mp3 part
+        var fileIdentifier = currentDownload.podcast.podcastUrl.split(/\//g).slice(-1)[0];
 
-        folder.getFile(currentDownload.url.split(/\//g).slice(-1), {
+        folder.getFile(fileIdentifier, {
             create: true,
             exclusive: false
         }, gotFile);
     }
 
-    function queueDownload(hash, url) {
+    function queueDownload(hash, podcast) {
         downloadQueue.push({
             hash: hash,
-            url: url
+            podcast: podcast
         });
-
         if (downloadQueue.length === 1) {
             downloadNext();
         }
@@ -128,8 +134,8 @@
         get: function(trackHash) {
             return downloaded[trackHash];
         },
-        download: function(podcastUrl, trackHash) {
-            queueDownload(hash, url);
+        download: function(podcast, trackHash) {
+            queueDownload(trackHash, podcast);
         },
         remove: function(trackHash) {
             removeHash(trackHash);

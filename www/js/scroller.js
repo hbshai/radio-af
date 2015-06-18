@@ -243,6 +243,7 @@
             // Ignore touchstart if more than 1 touch points are active
             if (e.touches.length > 1) {
                 e.preventDefault();
+                e.stopPropagation();
                 return;
             }
 
@@ -264,7 +265,9 @@
             // Always stop browser from doing its thing 
             e.preventDefault() ;
 
+            // Ignore touchstart if more than 1 touch points are active
             if (e.touches.length > 1) {
+                e.stopPropagation();
                 return;
             }
 
@@ -307,7 +310,9 @@
             // Always stop browser from doing its thing 
             e.preventDefault();
 
+            // Ignore touchstart if more than 1 touch points are active
             if (e.touches.length > 1) {
+                e.stopPropagation();
                 return;
             }
 
@@ -319,10 +324,9 @@
         },
 
         touchEnd: function(e) {
-            // Always stop browser from doing its thing 
-            //e.preventDefault();
-
             if (e.touches.length > 1) {
+                e.preventDefault();
+                e.stopPropagation();
                 return;
             }
 

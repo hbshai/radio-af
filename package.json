@@ -1,7 +1,7 @@
 {
   "name": "radio-af",
   "version": "1.0.0",
-  "description": "requirements ------------",
+  "description": "yolo",
   "main": "gulpfile.js",
   "dependencies": {
     "gulp-concat": "^2.5.2",

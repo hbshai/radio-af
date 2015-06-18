@@ -16,6 +16,18 @@
         $(mainSelector + " > div > .podd-control").toggleClass("play").toggleClass("pause");
     }
 
+    function toggleDownloadButton(podcast) {
+        var mainSelector = "[data-podcast-program='" + podcast.author + "']"
+            + "[data-podcast-index='" + podcast.index + "']";
+
+        // Toggles the minipod button
+        $(mainSelector + " > .podd-control").toggleClass("play").toggleClass("pause");
+
+        // TODO: Make this work (selector is wrong)
+        // Toggles the spotlight button
+        $(mainSelector + " > div > .podd-control").toggleClass("play").toggleClass("pause");
+    }
+
     // Play or pause a podcast and 
     function playPausePodcast(podcast) {
         // First check if we are toggling the currently playing podcast
@@ -83,11 +95,16 @@
     }
     // Create a program view for the tapped on program, insert it into the DOM and focus it
     function createProgramView(evt) {
+        console.log("Please open new view!");
         var target = findDiv(evt.target, "program", "fav");
+        console.log(target);
         var programKey = target.dataset["podcastProgram"];
+        console.log(target.dataset);
+        console.log("Found: " + programKey);
 
         // Find the info for the program and open a new view
         var podcasts = window.rss.find(programKey);
+        console.log(podcasts);
         var programPage = window.htmlFarm.programView(podcasts);
 
         // insert the page into the dom
@@ -98,14 +115,18 @@
     function findDiv(node, className, optClassName) {
         if (!optClassName) {
             optClassName = "undefined";
-        // Locate the program div
         }
+
         var target = node;
         var counter = 0;
         // counter's probably overkill
         while (!(target.classList.contains(className) || target.classList.contains(optClassName)) && counter < 100) {
+            console.log(target);
             counter++;
             target = target.parentNode;
+            if (target == undefined) {
+                break;
+            }
         }
         return target;
     }
@@ -264,13 +285,48 @@
                     break;
             }
         }
+    }
 
+    function downloadSuccess(podcast, uri) {
+
+    }
+
+    function toggleDownload(evt) {
+        console.log("Please download me!");
+        var dataNode = evt.target.parentNode;
+
+        if (!dataNode.dataset["podcastProgram"] && !dataNode.dataset["podcastIndex"]) {
+            dataNode = dataNode.parentNode;
+        }
+
+
+        if (!dataNode.dataset["podcastProgram"] && !dataNode.dataset["podcastIndex"]) {
+            console.log("WARN: Did not find any parent with info!!");
+        }
+
+        var dataset = dataNode.dataset,
+            program = dataset["podcastProgram"],
+            index = dataset["podcastIndex"],
+            podcast = window.app.programs[program].podcasts[index],
+            hash = podcast.author + podcast.title,
+            alreadyDownloaded = window.dlman.has(hash);
+
+        console.log(podcast.author + " --> " + hash + " (" + podcast.podcastUrl + ")");
+
+        if (alreadyDownloaded) {
+            window.dlman.remove(hash);
+        } else {
+            window.dlman.download(podcast, hash);
+        }
+        console.log("Should start download now");
     }
 
     GLOBAL.handlers = {
         playPodcastHandler: playPodcast,
         spotlightHandler: playSpotlightPodcast,
         playerControlHandler: playPauseCurrent,
+
+        fileTransferSuccess: downloadSuccess,
         fileTransferError: downloadError,
 
         fileRemoveSuccess: console.log,
@@ -282,6 +338,7 @@
         expandPodcast: expandPodcastText,
 
         handleMenuButton: gotoPage,
+        handleDownloadButton: toggleDownload,
 
         handleFav: handleFavourite,
         goToAllProgramsView: function(event) {
@@ -289,7 +346,14 @@
                 window.app.views.index["all-programs"]
             );
         },
-        toggleProgramPane: switchAllProgramPane
+        toggleProgramPane: switchAllProgramPane,
+        handleNetworkError: function() {
+            if (window.hasNoInternet) {
+                return;
+            }
+            window.hasNoInternet = true;
+            window.alert("NO INTERNET MOFO");
+        }
 
     };
 })(window);

@@ -69,7 +69,10 @@ var AudioPlayer = function() {
 
         // No track playing. Update _paused otherwise play() will malfunction...
         _paused = true;
-        _media = new Media(podcast.podcastUrl, self.onSuccess, self.onError);
+        var uri = window.dlman.has(podcast.author + podcast.title) ? window.dlman.get(podcast.author + podcast.title) : podcast.podcastUrl;
+        console.log(window.dlman.has(podcast.author + podcast.title));
+        console.log(uri);
+        _media = new Media(uri, self.onSuccess, self.onError);
 
         // Do some UI shizzle
         this.currentDurationString = formatTime(new Date(podcast.duration * 1000));
@@ -194,8 +197,8 @@ AudioPlayer.prototype.samePodcast = function(otherPodcast) {
 AudioPlayer.prototype.goLive = function() {
     $.getJSON("http://www.radioaf.se/nowplaying/")
         .done(function(msg, txt, xhr) {
-            window.app.audiop.playLive(msg.data);
-            window.app.audiop.play();
+            //window.app.audiop.playLive(msg.data);
+            //window.app.audiop.play();
         })
         .error(function(err) {});
 //this.play()

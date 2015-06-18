@@ -171,7 +171,9 @@
             el("div.podd-control.play", {
                 "onclick": "window.handlers.playPodcastHandler(event)"
             }),
-            window.dlman.has(podcast.program + podcast.index) ? el("div.podd-dl") : el("div.podd-dl"),
+            el("div.podd-" + (window.dlman.has(podcast.author + podcast.title) ? "remove" : "dl"), {
+                "onclick": "window.handlers.handleDownloadButton(event)"
+            }),
             el("div.podd-ep-text", [podcast.content])
         ]);
     /**
@@ -250,8 +252,8 @@
     function makeAllProgramPage() {
         var currentSymbol = "",
             alternate = true;
-            // This makes the A-to-O setup, should probably be stored somehow
 
+        // This makes the A-to-O setup, should probably be stored somehow
         var listByName = Object.keys(app.programs).sort(sortByName)
             .map(function(program) {
                 // Symbol is the header: 'A' for 'Alla ska med', 'B' for 'Bara ren sprit', etc..
@@ -306,7 +308,7 @@
             })
             .reduce(flatten);
 
-        // Super shitty, but works for now...
+        // Super shitty, but works for now... (probably not THAT bad)
         window.lists = {
             byName: listByName,
 
@@ -406,19 +408,15 @@
 
 
     function makeDownloadPage() {
-        var pod = {
-            title: "spotlight title text",
-            program: "Studentaftonpodden",
-            author: "Studentaftonpodden",
-            image: "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1",
-            programImage: "http://www.radioaf.se/wp-content/themes/base/library/includes/timthumb.php?src=/wp-content/uploads/2015/03/11025258_10155328251370078_610654045703850591_o.jpg&w=950&h=670&q=100&zc=1",
-            duration: "0 min"
-        };
-        var podcasts = [pod, pod, pod, pod, pod];
+        var downloadedPods = Object.keys(window.app.programs).map(function(key) {
+            return window.app.programs[key].podcasts;
+        }).reduce(flatten).filter(function(pod) {
+            return pod != undefined && window.dlman.has(pod.author + pod.title);
+        });
 
         return el("div.page", [
-            createSpotlight("nedladdade poddar", pod),
-            populatePageWithPodcasts(podcasts, false)
+            (downloadedPods.length > 0 ? createSpotlight("nedladdade poddar", downloadedPods.shift()) : createSpotlight("nedladdade poddar")),
+            populatePageWithPodcasts(downloadedPods, false)
         ]);
     }
 

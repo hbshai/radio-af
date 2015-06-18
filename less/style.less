@@ -107,10 +107,43 @@ body,ul,li,h1,h2,p {
     height: 100%;
 }
 
+/* INFO SCREEN STUFF */
+.info-container {
+    margin-top: 25px;
+    margin-left: 15px;
+    font-family: NexaLight;
+    color: @dark-blue;
+    font-size: 13pt;
+}
 
+.shai {
+    text-transform: uppercase;
+    display: inline-block;
+    font-size: 25pt;
+    margin-right: 10px;
+}
+.small-info-text {
+    display: inline-block;
+    font-size: 9pt;
+}
+.devs {
+    font-size: 17pt;
+    margin-left: 15px;
+}
+.info-credits {
+    text-transform: uppercase;
+    font-size: 25pt;
+    margin-top: 40px;
+}
+.info-credits-container {
+    margin-left: 15px;
+    margin-bottom: 55px;
+}
+.info-element {
+    margin-top: 10px;
+}
 
 @spotlight-height: 110px;
-
 /* spotlight stuff */
 #spotlight-img {
     width: 100%;
@@ -514,6 +547,7 @@ body {
     -webkit-text-size-adjust:none;
 	font-family: OpenSans;
 	background: @raf-white; 
+    color: @dark-blue;
 }
 
 #header-text {
@@ -522,6 +556,12 @@ body {
     font-size: 24pt;
     text-transform: uppercase;
     width: 100%;
+}
+.mock-title-bar {
+    padding: 0 0;
+    margin: 0 0;
+    font-size: 32pt;
+    display: inline-block;
 }
 .title-bar {
     display:block;
@@ -839,6 +879,10 @@ body {
         height: @title-bar-height;
 
         font-size: 19pt; 
+    }
+
+    .mock-title-bar {
+        font-size: 19pt;
     }
 
     #title-bar-fixed {

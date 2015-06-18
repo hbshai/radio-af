@@ -131,7 +131,7 @@
             // copy NodeList to Array
             this.pages = new Array(pages.length);
             for (var i = -1, l = pages.length; ++i !== l; this.pages[i] = pages[i]) {
-                
+
             }
 
             // setup slider/page sizes

@@ -336,6 +336,30 @@
         }
     }
 
+    function makeInfoPage() {
+        return el("div.page", [
+            createSpotlight("utvecklat av"),
+            el("div.info-container", [
+                el("div.devs-container", [
+                    el("div.shai", ["shai"]),
+                    el("div.small-info-text", ["det vill säga"]),
+                    el("div.devs", [
+                        el("div.info-element", ["Alexander Cobleigh &"]),
+                        el("div.info-element", ["Axel Smeets"]),
+                        el("div.small-info-text", ["för mer info se designbyshai.se"])
+                    ]),
+                ]),
+                el("div.info-credits", ["credits"]),
+                el("div.info-credits-container", [
+                    el("div.info-element", ["Apache Cordova + PhoneGap"]),
+                    el("div.info-element", ["Neil Jenkins för Sugared DOM"]),
+                    el("div.info-element", ["LHS"])
+                ])
+            ])
+        ]);
+    }
+
+
     function makeDownloadPage() {
         var pod = {
             title: "spotlight title text",
@@ -422,6 +446,7 @@
                 el("div.title-bar", [title])
             ]);
         }
+
         return el("div.spotlight", {
             "data-podcast-program": podcast.author,
             "data-podcast-index": podcast.index
@@ -476,6 +501,7 @@
         menu: makeMenu,
 
         flowPage: makeFlowPage,
+        infoPage: makeInfoPage,
         favouritesPage: makeFavPage,
         downloadedPage: makeDownloadPage,
 

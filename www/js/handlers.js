@@ -13,7 +13,7 @@
 
         // TODO: Make this work (selector is wrong)
         // Toggles the spotlight button
-        $(mainSelector + " > div > .podd-control").toggleClass("play").toggleClass("pause");
+        $(mainSelector + " > div > #spotlight-play").toggleClass("spotlight-pause");
     }
 
     // Play or pause a podcast and 

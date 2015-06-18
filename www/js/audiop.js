@@ -12,7 +12,10 @@ var AudioPlayer = function() {
     var _media = null,
         _paused = true,
         _id = 0,
-        _boundUpdate = this.updateTime.bind(this);
+        _boundUpdate = function(pos){
+        	self.updatePosition(pos);
+			window.localStorage.setItem("audiop-seek", pos);
+        }
 
     // Must be accessable in prototype functions (using this)
     this.footerTimeEl = undefined;
@@ -21,7 +24,6 @@ var AudioPlayer = function() {
 
     function trackProgress() {
         _media.getCurrentPosition(_boundUpdate);
-        window.localStorage.setItem("audiop-seek", _media.position);
     }
 
     this.play = function() {
@@ -103,7 +105,7 @@ var AudioPlayer = function() {
     this.seekTo = function(pos) {
         _media.seekTo(pos * 1000); // seek expects ms
         self.updatePosition(pos);
-        window.localStorage.setItem("audiop-seek", _media.position);
+        window.localStorage.setItem("audiop-seek", pos);
     };
 
     this.playOrPause = function() {
@@ -134,13 +136,14 @@ AudioPlayer.prototype.init = function(footerTime) {
 AudioPlayer.prototype.load = function() {
     var program = window.localStorage.getItem("audiop-program"),
         index = window.localStorage.getItem("audiop-index"),
-        seek = window.localStorage.getItem("audiop-seek")
+        seek = window.localStorage.getItem("audiop-seek");
 
     if (program && index) {
         podcast = window.app.programs[program].podcasts[index];
-    	this.loadPodcast(podcast);
-	    if (seek)
-	    	this.seekTo(parseInt(seek));
+        this.loadPodcast(podcast);
+        if (seek && seek !== "undefined") {
+            this.seekTo(parseInt(seek));
+        }
     }
 
 };
@@ -156,7 +159,7 @@ AudioPlayer.prototype.updatePosition = function(pos) {
 };
 
 AudioPlayer.prototype.samePodcast = function(otherPodcast) {
-    var hashCurrent = this.currentPodcast.program + this.currentPodcast.index,
+    var hashCurrent = this.currentPodcast ? this.currentPodcast.program + this.currentPodcast.index : "",
         hashOther = otherPodcast.program + otherPodcast.index;
     return hashCurrent === hashOther;
 };

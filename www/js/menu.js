@@ -5,10 +5,6 @@
         stylesheet = (function() {
             var style = document.createElement("style");
 
-            // Add a media (and/or media query) here if you'd like!
-            // style.setAttribute("media", "screen")
-            // style.setAttribute("media", "only screen and (max-width : 1024px)")
-
             // WebKit hack :(
             style.appendChild(document.createTextNode(""));
 
@@ -19,8 +15,9 @@
         })();
 
     function touchStart(evt) {
-        if (evt.target !== menu) {
+        if (evt.target !== menu && !evt.target.classList.contains('menu-item')) {
             document.addEventListener("touchend", touchEnd, false);
+
             evt.preventDefault();
             evt.stopPropagation();
         }
@@ -85,6 +82,10 @@
     GLOBAL.menu = {
         init: initialize,
         show: setVisible,
-        hide: setHidden
+        hide: setHidden,
+        unregister : function(){
+            document.removeEventListener("touchend", touchEnd, false);
+            document.removeEventListener("touchstart", touchStart, false);
+        }
     };
 })(window);

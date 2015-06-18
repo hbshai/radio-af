@@ -36,8 +36,6 @@
 .menu-item-allap:before{ background: url('../img/menu-info.png') no-repeat; }
 .menu-item-live:before{ background: url('../img/menu-info.png') no-repeat; }
 
-
-
 .menu-item:before {
     background-size: contain;
     content: "";
@@ -58,16 +56,17 @@
     bottom: 0;
 }
 
-.menu-item:first{
-    margin-top: 2em;
+.menu-item:first-child{
+    padding-top: 1em;
 }
 .menu-item {
+    display: block;
     font-family: NexaLight;
     font-size: 5em;
     
     color: @raf-white;
-    margin-top: 1em;
-    margin-bottom: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 // OOPPA
@@ -83,10 +82,8 @@ html,
 body {
 	height: 100%;
 
-    -webkit-user-select: none !important
+    -webkit-user-select: none !important;
     -webkit-touch-callout: none !important;
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
-    -webkit-tap-highlight-color: transparent;  // i.e. Nexus5/Chrome and Kindle Fire HD 7''
 }
 
 body,ul,li,h1,h2,p {
@@ -325,7 +322,6 @@ body,ul,li,h1,h2,p {
 .program-letter {
     padding-top: 15px;
     padding-bottom: 10px;
-    width: 100%;
     font-size: 3em;
     font-family: NexaLight;
     text-transform: uppercase;
@@ -618,7 +614,7 @@ body {
 	background: @raf-white;
 	-webkit-transform:translate3d(0,0,0);
     // adjust page height: add height of footer
-    padding-bottom: @footer-height;
+    //padding-bottom: @footer-height;
 }
 
 
@@ -868,6 +864,6 @@ body {
         z-index: 1;
 
         // adjust page height: add height of footer
-        padding-bottom: @footer-height;
+        //padding-bottom: @footer-height;
     }
 }

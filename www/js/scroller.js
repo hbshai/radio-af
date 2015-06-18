@@ -1,9 +1,4 @@
 (function() {
-    var vendor = (/webkit/i).test(navigator.appVersion) ? "webkit" :
-            (/firefox/i).test(navigator.userAgent) ? "Moz" :
-                "opera" in window ? "O" : "",
-        VENDOR_TRANSFORM = vendor + "Transform";
-
     // How much momentum should we get when releasing?
     var momentum = function(originY, endY, prevY, dt) {
             // originY = screen coord where touch started
@@ -26,9 +21,6 @@
         nextFrame = (function() {
             return window.requestAnimationFrame
                 || window.webkitRequestAnimationFrame
-                || window.mozRequestAnimationFrame
-                || window.oRequestAnimationFrame
-                || window.msRequestAnimationFrame
                 || function(callback) {
                     return setTimeout(callback, 17);
                 };
@@ -36,9 +28,6 @@
         cancelFrame = (function() {
             return window.cancelRequestAnimationFrame
                 || window.webkitCancelRequestAnimationFrame
-                || window.mozCancelRequestAnimationFrame
-                || window.oCancelRequestAnimationFrame
-                || window.msCancelRequestAnimationFrame
                 || clearTimeout;
         })();
 
@@ -60,11 +49,18 @@
         this.slider = document.querySelector(this.options.slider);
         this.refreshPages();
 
-        // Bind all references so register/unregister works (bind returns new function)
-        this.boundStart = this.touchStart.bind(this);
-        this.boundMove = this.touchMove.bind(this);
-        this.boundEnd = this.touchEnd.bind(this);
-        this.boundCancel = this.touchCancel.bind(this);
+        var self = this;
+        function _bind(fn){
+            return function(){
+                fn.apply(self, arguments)
+            }
+        }
+
+        // Bind all references so register/unregister works (_bind returns new function)
+        this.boundStart = _bind(this.touchStart);
+        this.boundMove = _bind(this.touchMove);
+        this.boundEnd = _bind(this.touchEnd);
+        this.boundCancel = _bind(this.touchCancel);
 
         this.registerEvents();
 
@@ -124,27 +120,28 @@
         onScrollListener: undefined, // called on move()
         onPageChangeListener: undefined, // called on changeTarget()
 
+        lastPageIndex : -1,
+
         // This is probably perferrable to using insertPage/removePage
         refreshPages: function() {
-            var pages = document.querySelectorAll(this.options.pages);
-
-            // copy NodeList to Array
-            this.pages = new Array(pages.length);
-            for (var i = -1, l = pages.length; ++i !== l; this.pages[i] = pages[i]) {
-                
-            }
+            var pages = document.querySelectorAll(this.options.pages),
+                len = pages.length, i;
 
             // setup slider/page sizes
             var windowWidth = window.innerWidth,
                 pageWidth = windowWidth + "px";
 
-            this.slider.style.width = this.pages.length * windowWidth + "px";
-            for (var i = 0; i < this.pages.length; i++) {
+            this.slider.style.width = (len * windowWidth) + "px";
+
+            // copy NodeList to Array
+            this.pages = new Array(len);
+            for (i = 0; i < len; i++) {
+                this.pages[i] = pages[i];
                 this.pages[i].style.width = pageWidth;
             }
 
             this.currentPage = this.currentPage || 0;
-            if (pages.length > 0) {
+            if (len > 0) {
                 this.changeTarget(this.pages[this.currentPage]);
             }
         },
@@ -153,20 +150,37 @@
         // insert el before or after page pointed by targetIndex
         insertPage: function(el, targetIndex, after) {
             try {
-                this.pages[targetIndex];
+                var tmp = this.pages[targetIndex];
             } catch (e) {
                 console.log("Scroller::insertPage -- targetEl is now targetIndex. Specify page number instead of element.");
             }
-
-            var targetEl = this.pages[targetIndex];
 
             if (after) {
                 targetIndex++;
             }
 
+            if (this.lastPageIndex !== -1) {
+                console.log(this.pages[this.lastPageIndex])
+                if (this.lastPageIndex < targetIndex) 
+                    targetIndex--;
+
+                this.removePage(this.lastPageIndex);
+            }
+
+            for (k in app.views.index) {
+                if (app.views.index[k] >= targetIndex) {
+                    app.views.index[k]++;
+                }
+            }
+            console.log(app.views.index)
+
+            this.lastPageIndex = targetIndex
+
+            var targetEl = this.pages[targetIndex];
+            
             this.pages.splice(targetIndex, 0, el);
-            if (after) {
-                this.slider.insertBefore(el, targetEl.nextSibling);
+            if (!targetEl) {
+                this.slider.appendChild(el);
             } else {
                 this.slider.insertBefore(el, targetEl);
             }
@@ -177,26 +191,22 @@
 
             if (this.currentPage < targetIndex) {
                 // we insert page to the right, it's fine
-            } else if (this.currentPage > targetIndex) {
+            } else if (this.currentPage >= targetIndex) {
                 // we insert page to the left, must probably scroll some
-                this.gotoPage(this.currentPage++);
-            } else {
-                // we insert page at where we're at, not possible
-                // only explanation is that we immediately requested a
-                // gotoPage(newIndex) after inserting our new page
+                this.currentPage++;
+                this.gotoPage(this.currentPage)
             }
 
             return targetIndex;
         },
 
-        // remove a page from the DOM -- be certain it exists 
-        // or last page is removed :D
-        removePage: function(el) {
-            var targetIndex;
+        // remove a page from the DOM
+        removePage: function(targetIndex) {
+            var el = this.pages[targetIndex]
 
-            for (targetIndex = 0; targetIndex < this.pages.length; targetIndex++) {
-                if (this.pages[targetIndex] === el) {
-                    break;
+            for (k in app.views.index) {
+                if (app.views.index[k] > targetIndex) {
+                    app.views.index[k]--;
                 }
             }
 
@@ -210,18 +220,11 @@
             // Give browser some time before doing the animation
             if (this.currentPage < targetIndex) {
                 // we removed page to the right, it's fine
-            } else if (this.currentPage > targetIndex) {
+            } else if (this.currentPage >= targetIndex) {
                 // we removed page to the left, must probably scroll some
-                this.gotoPage(this.currentPage--);
-            } else {
-                if (this.currentPage >= this.pages.length) {
-                    // we removed last page, scroll back
-                    var that = this;
-                    setTimeout(function() {
-                        that.gotoPage(that.pages.length - 1);
-                    }, 0);
-                }
-            }
+                this.currentPage--;
+                this.gotoPage(this.currentPage)
+            } 
         },
 
         move: function(x, y) {
@@ -467,7 +470,7 @@
             this.scroller = target;
 
             // Get y-pos of new target; because each page is scrolled independantly in y-axis
-            var matrix = getComputedStyle(this.scroller, null)[vendor + "Transform"].replace(/[^0-9-.,]/g, "").split(",");
+            var matrix = window.getComputedStyle(this.scroller, null)["webkitTransform"].replace(/[^0-9-.,]/g, "").split(",");
             this.y = matrix[5] * 1 || 0;
 
             // Figure out new height because each page can be of different height

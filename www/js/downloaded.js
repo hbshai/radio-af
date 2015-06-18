@@ -6,6 +6,15 @@
 
     function gotDir(dirEntry) {
         folder = dirEntry;
+    }
+
+    function gotFS(fileSystem) {
+        system = fileSystem;
+        console.log("got file system:" + system.name);
+
+        fileSystem.root.getDirectory("downloaded", {
+            create: true
+        }, gotDir);
 
         downloaded = window.localStorage.getItem("_downloaded");
 
@@ -14,15 +23,6 @@
         } else {
             downloaded = {};
         }
-
-        console.log("got file system:" + system.name);
-    }
-
-    function gotFS(fileSystem) {
-        system = fileSystem;
-        fileSystem.root.getDirectory("downloaded", {
-            create: true
-        }, gotDir);
     }
 
     function fail(error) {
@@ -114,8 +114,11 @@
 
     // the download manager
     window.dlman = {
-        init: function() {
-            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
+        init: function(callb) {
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
+                gotFS(fs)
+                callb()
+            }, fail);
         },
         // track hash can be anything, but should probably be program+stuff
         has: function(trackHash) {

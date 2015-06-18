@@ -52,9 +52,13 @@
         for (var i = 0, l = data.entries.length; i < l; i++) {
             entry = data.entries[i];
             // get the url image
-            imgUrl = entry.content.split("src=\"")[1].split("\" alt=")[0];
-            // parse out the path
-            imgUrl = imgUrl.split("radioaf.se")[1];
+            try {
+                imgUrl = entry.content.split("src=\"")[1].split("\" alt=")[0];
+                // parse out the path
+                imgUrl = imgUrl.split("radioaf.se")[1];
+            } catch (e) {
+                imgUrl = program.image
+            }
 
             //console.log(timthumbBase + imgUrl + sizeParams);
             podcasts.push({
@@ -63,7 +67,6 @@
                 author: program.key,
                 // program is the name of the program, e.g. Lexikaliska Hästsällskapet
                 program: program.name,
-                programImage: program.image,
                 index: i,
                 content: removeTags(entry.content),
                 duration: 0,
@@ -103,6 +106,11 @@
                 }
             });
         });
+
+        // Edge case: No podcasts
+        if (l === 0 && callb) {
+            callb([]);
+        }
 
         return podcasts;
     }

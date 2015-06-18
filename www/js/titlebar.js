@@ -22,9 +22,9 @@
             do {
                 thresholdY += titleEl.offsetTop;
                 titleEl = titleEl.offsetParent;
-            } while (titleEl)
-            }
+            } while (titleEl);
         }
+    }
 
         function pageChangeHandler(pageEl) {
             // Search for a child element that has the child

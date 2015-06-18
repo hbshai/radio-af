@@ -40,13 +40,14 @@
         storage.setItem(program.key, JSON.stringify({
             name: program.name,
             category: program.category,
+            description : program.description,
             image: program.image,
             rss: program.rss,
             podcasts: podcastKey,
             key: program.key
         }));
 
-        storage.setItem(podcastKey, JSON.stringify(program.podcasts));
+        storage.setItem(podcastKey, JSON.stringify(program.podcasts || []));
     }
 
     // the cache manager

@@ -5,9 +5,9 @@ html
         meta(name="viewport", content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1")
         meta(name="apple-mobile-web-app-capable" content="yes")
         meta(name="apple-mobile-web-app-status-bar-style" content="black")
-    title RADIO AF APP #1
+    title RADIO AF
     link(rel='stylesheet', href='css/style.css')
-    body
+    body(oncontextmenu="return false", ondragstart="return false", onselectstart="return false")
       div#loading
   
       script(src="cordova.js")
@@ -42,7 +42,7 @@ html
 
             // Wrapper+slider loaded earlier
             var titleBar = htmlFarm.staticTitleBar(),
-                player = htmlFarm.player(), // TODO: Give this to audiop
+                player = htmlFarm.player(),
                 menuButton = htmlFarm.menuButton(),
                 menuDiv = htmlFarm.menu();
 
@@ -63,8 +63,12 @@ html
 
             window.titlebar.init(titleBar);
             window.menu.init(menuDiv, menuButton, titleBar, player);
+            window.app.audiop.init(document.getElementById("footer-time"))
+            window.dlman.init(function (){
+                window.dlman.initialized = true
+            })
 
-            app.scroller = new Scroll('#wrapper', 0);
+            app.scroller = new Scroll('#wrapper', player.offsetHeight);
 
             app.scroller.onScrollListener = window.titlebar.onScroll;
             app.scroller.onPageChangeListener = window.titlebar.onPageChange;
@@ -73,48 +77,130 @@ html
             window.localStorage.clear()
             
             var cachedPrograms = window.cache.getCachedPrograms(),
-                serverProgramList, done = false
+                serverProgramList, done = false, cachedDone = 0, serverDone = 0
 
             app.programs = {}
-            window.dlman.init()
+            
+            app.views = {
+                nodes : {},
+                index : {},
+                currentIndex : 0
+            }
+            function addView(name, el) {
+                app.views.nodes[name] = el;
+                app.views.index[name] = app.views.currentIndex++;
+            }
 
-            function doneWithRSS(programKey){
-                // flow page maintains special local storage
-                //window.flow.checkProgram(programKey)
-                console.log('Done with program: ' + programKey)
+            function bootstrap(){
+                if (done) return;
+                
+                if (!window.dlman.initialized) {
+                    setTimeout(bootstrap, 250)
+                    console.log('not done yet')
+                    return
+                }
+                console.log('Bootstrapping')
+                
+                done = true;
+                var alla = htmlFarm.allProgramPage(),
+                    flow = htmlFarm.flowPage(),
+                    download = htmlFarm.downloadedPage(),
+                    favz = htmlFarm.favouritesPage()
+                
+                // Add to bookeeper
+                addView("all-programs", alla)
+                addView("flow", flow)
+                addView("downloaded", download)
+                addView("favourites", favz)
 
-                if (!serverProgramList) 
-                  return;
+                // Add to DOM
+                slider.appendChild(alla)
+                slider.appendChild(flow)
+                slider.appendChild(download)
+                slider.appendChild(favz)
 
-                if (Object.keys(app.programs).length === serverProgramList.length && !done) {
-                    // Okay we've resolved all programs, let's start generating stuff
-                    done = true
+                app.scroller.refreshPages()
+                setTimeout(window.app.scroller.recalcHeight.bind(window.app.scroller), 250);
+                window.titlebar.onPageChange(app.scroller.pages[app.scroller.currentPage])
 
-                    // Add the permanent views to the slider
-                    slider.appendChild(htmlFarm.infoPage())
-                    slider.appendChild(htmlFarm.allProgramPage())
-                    slider.appendChild(htmlFarm.flowPage())
-                    slider.appendChild(htmlFarm.downloadedPage())
-                    slider.appendChild(htmlFarm.favouritesPage())
+                window.app.audiop.load()
+            }
 
-                    app.scroller.refreshPages()
-                    setTimeout(window.app.scroller.recalcHeight.bind(window.app.scroller), 250);
+            function patch(){
+                if (!window.dlman.initialized) {
+                    setTimeout(patch, 250)
+                    return
+                }
 
-                    console.log('Done with all!')
+                console.log('Patching')
+                // Patch will try to monkey-patch the views
+                // Generate new divz
+                var alla = htmlFarm.allProgramPage(),
+                    flow = htmlFarm.flowPage(),
+                    download = htmlFarm.downloadedPage(),
+                    favz = htmlFarm.favouritesPage()
+
+                // Remove old divs
+                for (k in app.views.nodes) {
+                    slider.removeChild(app.views.nodes[k])
+                }
+
+                app.views.nodes = {}
+                app.views.index = {}
+                app.views.currentIndex = 0;
+
+                // Add the permanent views 
+                addView("all-programs", alla)
+                addView("flow", flow)
+                addView("downloaded", download)
+                addView("favourites", favz)
+
+                // Add to DOM
+                slider.appendChild(alla)
+                slider.appendChild(flow)
+                slider.appendChild(download)
+                slider.appendChild(favz)
+
+                app.scroller.refreshPages()
+                setTimeout(window.app.scroller.recalcHeight.bind(window.app.scroller), 250);
+                window.titlebar.onPageChange(app.scroller.pages[app.scroller.currentPage])
+            }
+
+            function loadedProgramFromCache(programKey){
+                // When all cached programs have been loaded start generating stuff
+                cachedDone++;
+                
+                if (cachedDone === cachedPrograms.length)
+                    bootstrap()
+            }
+
+            function loadedProgramFromServer(programKey){
+                serverDone++;
+
+                if (serverDone === serverProgramList.length) {
+                    if (!done)
+                        bootstrap()
+                    else
+                        patch()
                 }
             }
 
             // Load cached programs
             cachedPrograms.forEach(function (programKey){
-              console.log('Loading ' + programKey + ' from cache!')
+                // Somehow the internet was faster :O
+                if (app.programs[programKey]) 
+                    return;
+
+                console.log('Loading ' + programKey + ' from cache!')
+
                 // Load program object (except podcasts)
                 app.programs[programKey] = window.cache.getObject(programKey)
 
                 // Load podcasts array
                 app.programs[programKey].podcasts = window.cache.getObject(app.programs[programKey].podcasts)
-                
+
                 // Notify the world
-                doneWithRSS(programKey)
+                loadedProgramFromCache(programKey)
             })
 
             function rssDoneLoading(data, xml) {
@@ -131,21 +217,64 @@ html
                     for (var i = 0, l = podcastsWithDur.length; i < l; i++)
                       podcasts[i].duration = podcastsWithDur[i].duration
 
-                    console.log("Updated all podcast durations (" + programKey + ")")
+                    console.log('Durations loaded for ' + programKey)
                     
                     // Cache this json!
                     window.cache.putProgram(app.programs[programKey])
-                    doneWithRSS(programKey)
+                    loadedProgramFromServer(programKey)
                 }
 
                 console.log('Parsed, waiting for duration (' + this.program + ')')
             }
 
             function mergeRSS(data, xml){
-                // TODO: Actually compare fetched vs cached data
-                console.log('Merge RSS: ' + this.program)
-                // TODO: Should call another method, really
-                doneWithRSS(this.program)
+                var programKey = this.program,
+                    serverLen = data.entries.length,
+                    cachedPodcasts = app.programs[programKey].podcasts,
+                    cacheLen = cachedPodcasts.length
+
+                if (cacheLen === serverLen) {
+                    // Assume nothing has happened :: incorrect but hey
+                    loadedProgramFromServer(programKey)
+                    return;
+                }
+
+                // Program exists in cache so try merge podcasts
+                var serverPodcasts = rss.parse(data, xml, app.programs[programKey], withDuration),
+                    serverPods = serverPodcasts.map(function(e){ return e.title }),
+                    cachePods = cachedPodcasts.map(function(e){ return e.title }),
+                    i = 0
+
+                // Remove all programs currently present that isn't on server
+                for (i = 0; i < cacheLen; i++) {
+                    if (serverPods.indexOf(cachePods[i]) === -1) {
+                        cachePods.splice(i, 1); // remove from comparision array
+                        cachedPodcasts.splice(i, 1); // remove from actual podcast array
+                        cacheLen--;
+                        i--;
+                    }
+                }
+
+                // Add all programs that exist on server but not in cache
+                for (i = 0; i < serverLen; i++){
+                    if (cachePods.indexOf(serverPods[i]) === -1){
+                        cachePods.splice(i, 0, serverPods[i]) // add to comparision array
+                        cachedPodcasts.splice(i, 0, serverPodcasts[i]) // add to actual pod array
+                    }
+                }
+
+                // We are already updating the stuff in-place, but maybe this is needed.
+                // window.app.programs[programKey].podcasts = cachedPodcasts
+
+                // ::: ::: ::: ::: ::: ::: ::: ::: ::: ::: ::: ::: ::: :::
+                var withDuration = function (podcastsWithDur){
+                    for (i = 0; i < serverLen; i++)
+                      cachedPodcasts[i].duration = podcastsWithDur[i].duration
+                    
+                    // Cache this json!
+                    window.cache.putProgram(window.app.programs[programKey])
+                    loadedProgramFromServer(programKey)
+                }
             }
 
             // Fetch the server-side list of program names, images and rss

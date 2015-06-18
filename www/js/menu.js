@@ -15,7 +15,7 @@
         })();
 
     function touchStart(evt) {
-        if (evt.target !== menu && !evt.target.classList.contains('menu-item')) {
+        if (evt.target !== menu && !evt.target.classList.contains("menu-item")) {
             document.addEventListener("touchend", touchEnd, false);
 
             evt.preventDefault();
@@ -83,7 +83,7 @@
         init: initialize,
         show: setVisible,
         hide: setHidden,
-        unregister : function(){
+        unregister: function() {
             document.removeEventListener("touchend", touchEnd, false);
             document.removeEventListener("touchstart", touchStart, false);
         }

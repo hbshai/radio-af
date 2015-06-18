@@ -40,7 +40,7 @@
         storage.setItem(program.key, JSON.stringify({
             name: program.name,
             category: program.category,
-            description : program.description,
+            description: program.description,
             image: program.image,
             rss: program.rss,
             podcasts: podcastKey,

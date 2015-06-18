@@ -115,9 +115,9 @@
     // the download manager
     window.dlman = {
         init: function(callb) {
-            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
-                gotFS(fs)
-                callb()
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs) {
+                gotFS(fs);
+                callb();
             }, fail);
         },
         // track hash can be anything, but should probably be program+stuff

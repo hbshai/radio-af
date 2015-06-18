@@ -257,11 +257,8 @@
                     window.app.audiop.goLive();
                     break;
                 case "menuDev" :
-                    console.log("dev");
-                    //window.app.scroller.insertPage(htmlFarm.infoPage(), app.scroller.currentPage)
-                    //window.app.scroller.nextPage()
-                    //        window.app.scroller.recalcHeight();
-
+                    window.app.scroller.insertPage(htmlFarm.infoPage(), app.scroller.currentPage + 1);
+                    window.app.scroller.nextPage();
                     break;
                 default :
                     break;

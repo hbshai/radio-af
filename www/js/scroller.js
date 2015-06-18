@@ -159,7 +159,6 @@
             }
 
             if (this.lastPageIndex !== -1) {
-                console.log(this.pages[this.lastPageIndex]);
                 if (this.lastPageIndex < targetIndex) {
                     targetIndex--;
                 }
@@ -172,8 +171,6 @@
                     app.views.index[k]++;
                 }
             }
-            console.log(app.views.index);
-
             this.lastPageIndex = targetIndex;
 
             var targetEl = this.pages[targetIndex];
@@ -261,9 +258,6 @@
             // record time when finger first makes contact with surface
             this.startTime = this.lastTouchTime = Date.now() ;
             this.momentumY = this.screenY;
-
-            // TODO: Remove
-            console.log(e.target.id);
         },
 
         touchMove: function(e) {

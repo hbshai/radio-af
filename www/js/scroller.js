@@ -32,10 +32,9 @@
         })();
 
     // Constructor
-    var Scroll = function(wrapper, miniPlayerHeight, headerOffset) {
-        // The mini player eats some space
+    var Scroll = function(wrapper, miniPlayerHeight) {
+        // The mini player eats some space, let's give it back!
         this.offsetHeight = miniPlayerHeight || 0;
-        this.headerOffset = headerOffset || 0;
 
         this.wrapper = document.querySelector(wrapper);
         this.wrapper.style.overflow = "hidden";

@@ -156,8 +156,8 @@ var AudioPlayer = function() {
     }
 };
 
-AudioPlayer.prototype.init = function(footerTime) {
-    this.footerTimeEl = footerTime;
+AudioPlayer.prototype.init = function() {
+    this.footerTimeEl = document.getElementById("footer-time");
 };
 
 AudioPlayer.prototype.load = function() {

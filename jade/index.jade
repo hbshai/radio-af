@@ -63,7 +63,7 @@ html
 
             window.titlebar.init(titleBar);
             window.menu.init(menuDiv, menuButton, titleBar, player);
-            window.app.audiop.init(document.getElementById("footer-time"))
+            window.app.audiop.init()
             window.dlman.init(function (){
                 window.dlman.initialized = true
             })
@@ -324,30 +324,4 @@ html
                     console.error('no data received')
                 }
             })
-
-
-
-            // a program in the favourite screen was clicked upon: 
-            // THOU SHALT HANDLE IT
-            $(".fav").on("click", function() {
-                var $el = $(this);
-                var programName = $el.data("program");
-                rss.find(programName, function(podcasts) {
-                    var programPage = window.htmlFarm.programView(podcasts);
-                    // insert the page into the dom
-                    var newPage = app.scroller.insertPage(programPage, app.scroller.currentPage, false);
-                    app.scroller.gotoPage(newPage);
-                });
-
-                // var $title = $el.find(".fav-title");
-                // if ($title.hasClass("hax")) {
-                //     $title.removeClass("hax");
-                //     $el.find(".fav-title").css("background-color", "#e05a5a");
-                //     $el.find(".fav-title").css("color", "#f2f2f2");
-                // } else {
-                //     $title.addClass("hax");
-                //     $el.find(".fav-title").css("background-color", "#89FB98");
-                //     $el.find(".fav-title").css("color", "#DD69AF");
-                // }
-            });
          }

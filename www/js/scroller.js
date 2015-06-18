@@ -50,10 +50,10 @@
         this.refreshPages();
 
         var self = this;
-        function _bind(fn){
-            return function(){
-                fn.apply(self, arguments)
-            }
+        function _bind(fn) {
+            return function() {
+                fn.apply(self, arguments);
+            };
         }
 
         // Bind all references so register/unregister works (_bind returns new function)
@@ -120,14 +120,14 @@
         onScrollListener: undefined, // called on move()
         onPageChangeListener: undefined, // called on changeTarget()
 
-        lastPageIndex : -1,
+        lastPageIndex: -1,
 
         // This is probably perferrable to using insertPage/removePage
         refreshPages: function() {
             var pages = document.querySelectorAll(this.options.pages),
                 len = pages.length, i;
 
-             // setup slider/page sizes
+            // setup slider/page sizes
             var windowWidth = window.innerWidth,
                 pageWidth = windowWidth + "px";
 
@@ -160,8 +160,9 @@
             }
 
             if (this.lastPageIndex !== -1) {
-                if (this.lastPageIndex < targetIndex) 
+                if (this.lastPageIndex < targetIndex) {
                     targetIndex--;
+                }
 
                 this.removePage(this.lastPageIndex);
             }
@@ -171,10 +172,10 @@
                     app.views.index[k]++;
                 }
             }
-            this.lastPageIndex = targetIndex
+            this.lastPageIndex = targetIndex;
 
             var targetEl = this.pages[targetIndex];
-            
+
             this.pages.splice(targetIndex, 0, el);
             if (!targetEl) {
                 this.slider.appendChild(el);
@@ -191,7 +192,7 @@
             } else if (this.currentPage >= targetIndex) {
                 // we insert page to the left, must probably scroll some
                 this.currentPage++;
-                this.gotoPage(this.currentPage)
+                this.gotoPage(this.currentPage);
             }
 
             return targetIndex;
@@ -199,7 +200,7 @@
 
         // remove a page from the DOM
         removePage: function(targetIndex) {
-            var el = this.pages[targetIndex]
+            var el = this.pages[targetIndex];
 
             for (k in app.views.index) {
                 if (app.views.index[k] > targetIndex) {
@@ -220,8 +221,8 @@
             } else if (this.currentPage >= targetIndex) {
                 // we removed page to the left, must probably scroll some
                 this.currentPage--;
-                this.gotoPage(this.currentPage)
-            } 
+                this.gotoPage(this.currentPage);
+            }
         },
 
         move: function(x, y) {

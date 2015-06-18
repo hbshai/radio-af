@@ -41,7 +41,7 @@ var app = {
     // deviceready Event Handler
     onDeviceReady: function() {
         document.removeEventListener("deviceready", app.onDeviceReady, false);
-        document.addEventListener('backbutton', function(){}, false);
+        document.addEventListener("backbutton", function() {}, false);
 
         app.log("deviceReady");
         app.onStart();

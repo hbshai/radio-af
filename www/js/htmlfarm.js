@@ -1,36 +1,36 @@
 (function(GLOBAL) {
-    
+
     // Height and width set to @podcast-height
     var imageRatio = 950 / 670;
 
-    window.deviceStyle = {}
+    window.deviceStyle = {};
     window.deviceStyle.standardHeight = (window.matchMedia("(max-width: 414px)").matches ? 70 : 100);
     window.deviceStyle.standardWidth = Math.floor(window.deviceStyle.standardHeight * imageRatio);
     window.deviceStyle.maximumHeight = Math.floor((window.innerWidth) * (670 / 950) + 0.5);
     window.deviceStyle.favWidth = (window.matchMedia("(max-width: 414px)").matches ? 140 : 325);
     window.deviceStyle.favHeight = Math.floor((window.deviceStyle.favWidth * (670 / 950) + 0.5));
-    
+
     var standardHeight = "h=" + window.deviceStyle.standardHeight,
         standardWidth = "w=" + window.deviceStyle.standardWidth,
         standardQuality = "q=" + 98,
         maximumHeight = "h=" + (window.deviceStyle.maximumHeight),
-        maximumWidth = "w=" + window.innerWidth
-        maximumQuality = "q=" + 95,
-        favWidth = "w=" + window.deviceStyle.favWidth,
-        favHeight = "h=" + window.deviceStyle.favHeight,
-        favQuality = "q=93";
+        maximumWidth = "w=" + window.innerWidth;
+    maximumQuality = "q=" + 95,
+    favWidth = "w=" + window.deviceStyle.favWidth,
+    favHeight = "h=" + window.deviceStyle.favHeight,
+    favQuality = "q=93";
 
     function resizeImage(src, hq) {
         src = src.replace(/w\=(\d)+/, hq ? maximumWidth : standardWidth)
-             .replace(/h\=(\d)+/, hq ? maximumHeight : standardHeight)
-             .replace(/q\=(\d)+/, hq ? maximumQuality : standardQuality)
-        return src
+            .replace(/h\=(\d)+/, hq ? maximumHeight : standardHeight)
+            .replace(/q\=(\d)+/, hq ? maximumQuality : standardQuality);
+        return src;
     }
-    
-    function favImageSize(src){
+
+    function favImageSize(src) {
         return src.replace(/w\=(\d)+/, favWidth)
-             .replace(/h\=(\d)+/, favHeight)
-             .replace(/q\=(\d)+/, favQuality)
+            .replace(/h\=(\d)+/, favHeight)
+            .replace(/q\=(\d)+/, favQuality);
     }
 
     // the dom wrapper for nice smeets
@@ -160,7 +160,7 @@
         }, [
             el("img#podd-img", {
                 src: resizeImage(podcast.image || window.app.programs[podcast.author].image),
-                "style" : "width: " + window.deviceStyle.standardWidth + "px;"
+                "style": "width: " + window.deviceStyle.standardWidth + "px;"
             }),
             el("div.podd-text", [
                 // Add podcast author if requested, otherwise leave it out.
@@ -223,7 +223,7 @@
             el("div.program-container.flexme", [
                 el("img.program-img", {
                     src: resizeImage(program.image),
-                    style : "width: " + window.deviceStyle.standardWidth + 'px'
+                    style: "width: " + window.deviceStyle.standardWidth + "px"
                 }),
                 el("div.program-text-container.flexme", [
                     el("div.program-title", [program.name]),
@@ -349,7 +349,7 @@
     }
 
     function makeFlowPage() {
-        var counter = 0, 
+        var counter = 0,
             alternate = true,
             favs = window.favs.getFavs();
 
@@ -362,19 +362,19 @@
                 el("div.empty-flow-text", ["Tryck var som helst för att börja leta favoritprogram"]),
             ]);
         } else {
-            favs = favs.map(function (key){
-                return window.app.programs[key].podcasts
-            }).reduce(flatten).sort(function (a, b){
+            favs = favs.map(function(key) {
+                return window.app.programs[key].podcasts;
+            }).reduce(flatten).sort(function(a, b) {
                 var dateA = new Date(a.date),
                     dateB = new Date(b.date);
-                return dateB - dateA
-            }).filter(function (pod){
+                return dateB - dateA;
+            }).filter(function(pod) {
                 return counter++ < 25; // max 25 podcasts
             });
-            
+
             return el("div#flow.page", [
-                (favs.length > 0 ? createSpotlight('flödet', favs.shift()) : createSpotlight('flödet')),
-                el("div.podd-container", favs.map(function(podcast){
+                (favs.length > 0 ? createSpotlight("flödet", favs.shift()) : createSpotlight("flödet")),
+                el("div.podd-container", favs.map(function(podcast) {
                     return createPodcastDiv(podcast, true, (alternate = !alternate));
                 }))
             ]);
@@ -493,7 +493,7 @@
         }, [
             el("img#spotlight-img", {
                 src: resizeImage(image, true),
-                "style" : "height: " + window.deviceStyle.maximumHeight + "px;"
+                "style": "height: " + window.deviceStyle.maximumHeight + "px;"
             }),
             el("div.spotlight-container.flexme", [
                 el("div#spotlight-play", {
@@ -513,24 +513,24 @@
     function makeMenu() {
 
         return el("div.menu.lefty", [
-            el("div#menuFlow.menu-item.menu-item-flode",  {
-            "onclick" : "window.handlers.handleMenuButton(event)"
-        }, ["flödet"]),
-            el("div#menuAlla.menu-item.menu-item-allap",  {
-            "onclick" : "window.handlers.handleMenuButton(event)"
-        }, ["alla program"]),
-            el("div#menuDl.menu-item.menu-item-dl",  {
-            "onclick" : "window.handlers.handleMenuButton(event)"
-        }, ["nedladdade"]),
-            el("div#menuFav.menu-item.menu-item-fav",  {
-            "onclick" : "window.handlers.handleMenuButton(event)"
-        }, ["favoriter"]),
-            el("div#menuLive.menu-item.menu-item-live",  {
-            "onclick" : "window.handlers.handleMenuButton(event)"
-        }, ["direkt"]),
-
-            el("d.menu-logo"),
-            el("d#menuDev.menu-footer", ["developed by cobleigh & smeets"]),
+            el("div#menuFlow.menu-item.menu-item-flode", {
+                "onclick": "window.handlers.handleMenuButton(event)"
+            }, ["flödet"]),
+            el("div#menuAlla.menu-item.menu-item-allap", {
+                "onclick": "window.handlers.handleMenuButton(event)"
+            }, ["alla program"]),
+            el("div#menuDl.menu-item.menu-item-dl", {
+                "onclick": "window.handlers.handleMenuButton(event)"
+            }, ["nedladdade"]),
+            el("div#menuFav.menu-item.menu-item-fav", {
+                "onclick": "window.handlers.handleMenuButton(event)"
+            }, ["favoriter"]),
+            el("div#menuLive.menu-item.menu-item-live", {
+                "onclick": "window.handlers.handleMenuButton(event)"
+            }, ["direkt"]),
+            el("div#menuDev.menu-footer", {
+                "onclick": "window.handlers.handleMenuButton(event)"
+            }, ["info"])
         ]);
     }
 

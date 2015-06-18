@@ -1,7 +1,7 @@
 (function(GLOBAL) {
 
     // Program and pocast heights are the same
-    var standardHeight = (window.matchMedia("(max-width: 414px)").matches ? 70 : 100)
+    var standardHeight = (window.matchMedia("(max-width: 414px)").matches ? 70 : 100);
 
     // Find and toggle play and pause buttons on buttons for a podcast
     function togglePlayPauseButton(podcast) {
@@ -68,7 +68,7 @@
     }
 
     function onProgramLoad(programKey) {
-        var program = app.programs[programKey]
+        var program = app.programs[programKey];
 
         // Notify flow that we might have new podcasts
         //window.flow.checkForNews(program)
@@ -96,8 +96,10 @@
     }
 
     function findDiv(node, className, optClassName) {
-        if (!optClassName) optClassName = "undefined"
+        if (!optClassName) {
+            optClassName = "undefined";
         // Locate the program div
+        }
         var target = node;
         var counter = 0;
         // counter's probably overkill
@@ -175,16 +177,16 @@
 
         var newFavz = htmlFarm.favouritesPage(),
             newFlow = htmlFarm.flowPage(),
-            oldFavz = window.app.views.nodes['favourites'],
-            oldFlow = window.app.views.nodes['flow']
+            oldFavz = window.app.views.nodes["favourites"],
+            oldFlow = window.app.views.nodes["flow"];
 
 
         window.app.scroller.slider.replaceChild(newFavz, oldFavz);
         window.app.scroller.slider.replaceChild(newFlow, oldFlow);
 
-        window.app.views.nodes['favourites'] = newFavz; 
-        window.app.views.nodes['flow'] = newFlow; 
-        window.app.scroller.refreshPages()
+        window.app.views.nodes["favourites"] = newFavz;
+        window.app.views.nodes["flow"] = newFlow;
+        window.app.scroller.refreshPages();
     }
 
 
@@ -231,38 +233,38 @@
     }
 
     var views = {
-        "menuAlla" : "all-programs",
-        "menuDl" : "downloaded",
-        "menuFav" : "favourites",
-        "menuFlow" : "flow"
-    }
-    function gotoPage(evt){
-        var targetId = evt.target.id
+        "menuAlla": "all-programs",
+        "menuDl": "downloaded",
+        "menuFav": "favourites",
+        "menuFlow": "flow"
+    };
+    function gotoPage(evt) {
+        var targetId = evt.target.id;
 
         evt.preventDefault();
         evt.stopPropagation();
 
-        window.menu.hide()
-        window.menu.unregister()
+        window.menu.hide();
+        window.menu.unregister();
 
         if (views[targetId]) {
             window.app.scroller.gotoPage(
                 window.app.views.index[views[targetId]]
-            )
+            );
         } else {
-            switch(targetId){
-                case "menuLive" : 
-                    console.log('live')
+            switch (targetId) {
+                case "menuLive" :
+                    console.log("live");
                     //window.app.audiop.goLive();
                     break;
-                case "menuDev" : 
-                    console.log('dev')
-                    //window.app.scroller.insertPage(htmlFarm.infoPage(), app.scroller.currentPage)
-                    //window.app.scroller.nextPage()
-                    //        window.app.scroller.recalcHeight();
-
+                case "menuDev" :
+                    console.log("dev");
+                    window.app.scroller.insertPage(htmlFarm.infoPage(), app.scroller.currentPage);
+                    window.app.scroller.nextPage();
+                    window.app.scroller.recalcHeight();
                     break;
-                default : break;
+                default :
+                    break;
             }
         }
 
@@ -282,7 +284,7 @@
         expandText: expandProgramText,
         expandPodcast: expandPodcastText,
 
-        handleMenuButton : gotoPage,
+        handleMenuButton: gotoPage,
 
         // TODO: reflow handler - called when cache & other loading has been
         // completed; causes rebuild of flow/fav pages

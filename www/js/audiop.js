@@ -12,10 +12,10 @@ var AudioPlayer = function() {
     var _media = null,
         _paused = true,
         _id = 0,
-        _boundUpdate = function(pos){
-        	self.updatePosition(pos);
-			window.localStorage.setItem("audiop-seek", pos);
-        }
+        _boundUpdate = function(pos) {
+            self.updatePosition(pos);
+            window.localStorage.setItem("audiop-seek", pos);
+        };
 
     // Must be accessable in prototype functions (using this)
     this.footerTimeEl = undefined;

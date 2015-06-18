@@ -57,7 +57,7 @@
                 // parse out the path
                 imgUrl = imgUrl.split("radioaf.se")[1];
             } catch (e) {
-                imgUrl = program.image
+                imgUrl = program.image;
             }
 
             //console.log(timthumbBase + imgUrl + sizeParams);

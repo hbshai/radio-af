@@ -32,11 +32,35 @@
 .menu-item-flode:before{ background: url('../img/menu-flode.png') no-repeat; }
 .menu-item-info:before{ background: url('../img/menu-info.png') no-repeat; }
 .menu-item-dl:before{ background: url('../img/dl-box.png') no-repeat; }
-.menu-item-fav:before{ background: url('../img/heart.png') no-repeat; }
-.menu-item-allap:before{ background: url('../img/menu-info.png') no-repeat; }
-.menu-item-live:before{ background: url('../img/menu-info.png') no-repeat; }
+.menu-item-fav:before{ background: url('../img/menu-heart.png') no-repeat; }
+.menu-item-allap:before{ background: url('../img/menu-program.png') no-repeat; }
+.menu-item-live:before{ background: url('../img/menu-direkt.png') no-repeat; }
 
 .menu-item:before {
+    background-size: contain;
+    content: "";
+    
+    display: block;
+    float: left;
+
+    width:  32px;
+    height: 32px;
+
+    margin-right: 16px;
+    margin-left: 16px;
+}
+
+.menu-footer {
+    position: absolute; 
+    font-family: NexaLight;
+    bottom: 20px;
+    font-size: 5em;
+    padding-top: 0.5em;
+    padding-bottom: 0.3em;
+    color: @raf-white;
+}
+
+.menu-footer:before{
     background-size: contain;
     content: "";
     
@@ -48,12 +72,8 @@
 
     margin-right: 16px;
     margin-left: 16px;
-}
-
-.menu-footer {
-    position: fixed;
-
-    bottom: 0;
+    background: url('../img/menu-info.png') no-repeat; 
+    background-position: 50% 80%;
 }
 
 .menu-item:first-child{
@@ -149,11 +169,10 @@ body,ul,li,h1,h2,p {
 @spotlight-height: 110px;
 /* spotlight stuff */
 #spotlight-img {
+    display: block;
     width: 100%;
     margin: 0;
     padding: 0;
-    margin-bottom: -3px; // magic offset ~o~ (removes weird whitespace between
-                         // image and elements below
 }
 
 
@@ -699,7 +718,15 @@ body {
     @podd-height: 70px;
     @footer-height: 70px;
 
-    /* spotlight stuff */
+    /* MENU STUFF */
+    .menu-item {
+        font-size: 19pt;
+    }
+
+    .menu-footer {
+        font-size: 19pt;
+    }
+    /* SPOTLIGHT STUFF */
     #spotlight-title {
         font-size: 1.3em;
     }

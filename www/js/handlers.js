@@ -28,6 +28,14 @@
         $(mainSelector + " > div > .podd-control").toggleClass("play").toggleClass("pause");
     }
 
+    function togglePlayerSlider(event) {
+        if (event.target.classList.contains("footer-pause") || event.target.classList.contains("footer-play")) {
+            return;
+        }
+        var player = findDiv(event.target, "lefty");
+        $("#footer").toggleClass("expanded-player");
+    }
+
     // Play or pause a podcast and 
     function playPausePodcast(podcast) {
         // First check if we are toggling the currently playing podcast
@@ -97,14 +105,11 @@
     function createProgramView(evt) {
         console.log("Please open new view!");
         var target = findDiv(evt.target, "program", "fav");
-        console.log(target);
         var programKey = target.dataset["podcastProgram"];
-        console.log(target.dataset);
-        console.log("Found: " + programKey);
+        // console.log("Found: " + programKey);
 
         // Find the info for the program and open a new view
         var podcasts = window.rss.find(programKey);
-        console.log(podcasts);
         var programPage = window.htmlFarm.programView(podcasts);
 
         // insert the page into the dom
@@ -121,7 +126,6 @@
         var counter = 0;
         // counter's probably overkill
         while (!(target.classList.contains(className) || target.classList.contains(optClassName)) && counter < 100) {
-            console.log(target);
             counter++;
             target = target.parentNode;
             if (target == undefined) {
@@ -346,6 +350,30 @@
                 window.app.views.index["all-programs"]
             );
         },
+        togglePlayerSlider : togglePlayerSlider,
+        // suddenly: a closure!
+        handleInfoClick: (function(event) {
+             var counter = 0;
+             return function(event) {
+                 var topLevel = findDiv(event.target, "page");
+                 for (var i = 0; topLevel.children.length; i++) {
+                     if (topLevel.children[i].classList.contains("shai-img")) {
+                         var div = topLevel.children[i];
+                         break;
+                     }
+                 }
+                 // only increment when the div isn't visible
+                 if (!div.style.display) {
+                     counter = counter + 1;
+                 }
+                 if (counter >= 3) {
+                     // reset the counter
+                     counter = 0;
+                     div.style.display = "block";
+                     window.app.scroller.recalcHeight();
+                 }
+             }
+         })(),
         toggleProgramPane: switchAllProgramPane,
         handleNetworkError: function() {
             if (window.hasNoInternet) {

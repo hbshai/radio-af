@@ -202,7 +202,9 @@
     }
 
     function makeFooter() {
-        return el("div#footer.lefty", [
+        return el("div#footer.lefty", {
+            'onclick' : 'window.handlers.togglePlayerSlider(event)'
+        }, [
             el("img#footer-img", {
                 src: "img/player-placeholder-img.png"
             }),
@@ -213,7 +215,8 @@
             ]),
             el("div#footer-btn.footer-pause", {
                 "onclick": "window.handlers.playerControlHandler(event)"
-            })
+            }),
+            el("div.slider")
         ]);
     }
 
@@ -384,8 +387,11 @@
     }
 
     function makeInfoPage() {
-        return el("div.page", [
+        return el("div.page", 
+            { 'onclick' : 'window.handlers.handleInfoClick(event)'
+        },[
             createSpotlight("utvecklat av"),
+            el("img.shai-img", {src: "img/shai-devs-named.png"}),
             el("div.info-container", [
                 el("div.devs-container", [
                     el("div.shai", ["shai"]),
@@ -529,7 +535,7 @@
             el("d.menu-logo"),
             el("div#menuDev.menu-footer", {
                 "onclick": "window.handlers.handleMenuButton(event)"
-            }, ["info"])
+            }, ["om appen"])
         ]);
     }
 

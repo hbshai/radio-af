@@ -139,6 +139,14 @@ body,ul,li,h1,h2,p {
     font-size: 13pt;
 }
 
+.shai-img {
+    max-width: 100%;
+    height: auto;
+    width: auto;
+    text-align: center;
+    display: none;
+}
+
 .shai {
     text-transform: uppercase;
     display: inline-block;
@@ -636,6 +644,7 @@ body {
 
 /* FOOTER STUFF */
 @footer-height: 120px;
+@slider-height: 60px;
 #footer {
     position: fixed;
     z-index: 2;
@@ -644,6 +653,15 @@ body {
     height: @footer-height;
     background-color: @dark-blue;
     color: @raf-white;
+}
+.expanded-player {
+    padding-bottom: @slider-height;
+}
+.slider {
+    display: block;
+    height: @slider-height;
+    background-color: green;
+    width: 100%;
 }
 #footer-img {
     position: absolute;

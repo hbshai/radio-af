@@ -279,7 +279,9 @@
         } else {
             switch (targetId) {
                 case "menuLive" :
-                    window.app.audiop.goLive();
+                    if (!evt.target.classList.contains("grey-out")) {
+                        window.app.audiop.goLive();
+                    }
                     break;
                 case "menuDev" :
                     window.app.scroller.insertPage(htmlFarm.infoPage(), app.scroller.currentPage + 1);

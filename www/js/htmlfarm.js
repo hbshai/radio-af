@@ -548,7 +548,7 @@
             el("div#menuFav.menu-item.menu-item-fav", {
                 "onclick": "window.handlers.handleMenuButton(event)"
             }, ["favoriter"]),
-            el("div#menuLive.menu-item.menu-item-live", {
+            el("div#menuLive.menu-item.menu-item-live" + (window.hasNoInternet ? ".grey-out" : ""), {
                 "onclick": "window.handlers.handleMenuButton(event)"
             }, ["direkt"]),
             el("d.menu-logo"),

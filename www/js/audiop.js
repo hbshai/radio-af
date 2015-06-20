@@ -70,13 +70,46 @@ var AudioPlayer = function() {
         // No track playing. Update _paused otherwise play() will malfunction...
         _paused = true;
         var uri = window.dlman.has(podcast.author + podcast.title) ? window.dlman.get(podcast.author + podcast.title) : podcast.podcastUrl;
-        console.log(window.dlman.has(podcast.author + podcast.title));
-        console.log(uri);
         _media = new Media(uri, self.onSuccess, self.onError);
+
+        var counter = 0;
+        this.timerDur && clearInterval(this.timerDur);
+        this.timerDur = setInterval(function() {
+            counter = counter + 100;
+            if (counter > 20000) {
+                clearInterval(self.timerDur);
+                self.timerDur = 0;
+            }
+            var dur = _media.getDuration();
+            if (dur > 0) {
+                clearInterval(self.timerDur);
+            	self.timerDur = 0;
+            	
+            	// Update the durations, sadly not for html :((
+            	self.currentDurationString = formatTime(new Date(dur * 1000));
+            	self.currentPodcast.duration = dur;
+
+        	    self.seekBar.noUiSlider({
+        	    	start : 0,
+        			range: {
+        				'min': 0,
+        				'max': dur
+        			}
+        	    }, true);
+            }
+        }, 100);
 
         // Do some UI shizzle
         this.currentDurationString = formatTime(new Date(podcast.duration * 1000));
         this.updatePosition(0);
+
+        this.seekBar.noUiSlider({
+        	start : 0,
+    		range: {
+    			'min': 0,
+    			'max': podcast.duration
+    		}
+        }, true);
 
         $("#footer-img").attr("src", podcast.image);
         $("#footer-title").text(podcast.program);
@@ -125,6 +158,8 @@ var AudioPlayer = function() {
         // Do some UI shizzle
         this.currentDurationString = "∞";
         this.updatePosition(0);
+		
+	    this.seekBar.attr('disabled', 'disabled')
 
         $("#footer-img").attr("src", msg.author.show_image);
         $("#footer-title").text(msg.author.show_name);
@@ -161,6 +196,22 @@ var AudioPlayer = function() {
 
 AudioPlayer.prototype.init = function() {
     this.footerTimeEl = document.getElementById("footer-time");
+    this.seekBar = $("#seekbar") // noUiSlideBar requires jquery
+    this.seekBar.noUiSlider({
+    	start : 0,
+		range: {
+			'min': 0,
+			'max': 100
+		}
+    });
+	
+	this.disableAutoSeek = false;
+    this.seekBar.on('slide', function(){
+		window.app.audiop.updatePosition(window.app.audiop.seekBar.val())
+    })
+    this.seekBar.on('change', function(){
+		window.app.audiop.seekTo(window.app.audiop.seekBar.val())    	
+    })
 };
 
 AudioPlayer.prototype.load = function() {
@@ -175,7 +226,6 @@ AudioPlayer.prototype.load = function() {
             this.seekTo(parseInt(seek));
         }
     }
-
 };
 
 // Does not actually seek; only updates the visuals
@@ -183,9 +233,11 @@ AudioPlayer.prototype.updatePosition = function(pos) {
     if (pos < 0) {
         pos = 0;
     }
-
     var time = formatTime(new Date(pos * 1000));
     this.footerTimeEl.innerHTML = time + " / " + this.currentDurationString;
+
+    if (!this.disableAutoSeek)
+    	this.seekBar.val(pos)
 };
 
 AudioPlayer.prototype.samePodcast = function(otherPodcast) {
@@ -204,9 +256,9 @@ AudioPlayer.prototype.goLive = function() {
         		$("#footer-ep").text("");
 				return;
         	}
+
             window.app.audiop.playLive(msg.data);
             window.app.audiop.play();
         })
         .error(function(err) {});
-//this.play()
 };

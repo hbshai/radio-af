@@ -580,6 +580,18 @@ body,ul,li,h1,h2,p {
     background-position: center;
 }
 
+.podd-remove {
+    float: right;
+    display: inline-block;
+    margin-top: 14px; // was 15px
+    margin-left: @play-margin;
+    height: @podd-height - @play-margin;
+    width: @podd-height;
+    background-image: url("../img/dl-check-blue.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 
 // for empty icon message
 .dl-message-icon {
@@ -874,6 +886,10 @@ body {
         width: @podd-height;
 
         background-size: 31.5px 38.5px;
+    }
+
+    .podd-remove {
+        .podd-dl();
     }
 
     /* FAV STUFF */

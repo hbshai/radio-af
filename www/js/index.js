@@ -40,8 +40,6 @@ app.onStart = function() {
     var wrapper = htmlFarm.wrapper(),
         slider = wrapper.slider;
 
-    // TODO: Do DOM shit while we are loading RSS
-
     // Remove the loading div
     document.body.removeChild(document.getElementById("loading"));
 
@@ -335,9 +333,12 @@ app.onStart = function() {
             }
             for (i = 0; i < serverLen; i++) {
                 cachedPodcasts[i].duration = podcastsWithDur[i].duration;
+            }
+            window.app.programs[programKey].podcasts = cachedPodcasts.filter(function (pod){
+                return pod != undefined
+            })
 
             // Cache this json!
-            }
             window.cache.putProgram(window.app.programs[programKey]);
             loadedProgramFromServer(programKey);
         };

@@ -124,6 +124,7 @@
         // This is probably perferrable to using insertPage/removePage
         refreshPages: function() {
             var pages = document.querySelectorAll(this.options.pages),
+                height = window.innerHeight - this.offsetHeight,
                 len = pages.length, i;
 
             // setup slider/page sizes
@@ -136,6 +137,10 @@
             this.pages = new Array(len);
             for (i = 0; i < len; i++) {
                 this.pages[i] = pages[i];
+                console.log(this.pages[i].offsetHeight)
+                if (this.pages[i].offsetHeight < height)
+                    this.pages[i].style.height = height + 'px';
+
                 this.pages[i].style.width = pageWidth;
             }
 
@@ -182,10 +187,12 @@
                 this.slider.insertBefore(el, targetEl);
             }
 
-            var width = window.innerWidth;
+            var width = window.innerWidth,
+                height = window.innerHeight - this.offsetHeight
+
             el.style.width = width + "px";
-            if (el.offsetHeight < window.innerHeight)
-                el.style.height = window.innerHeight;
+            if (el.offsetHeight < height)
+                el.style.height = height + 'px';
             
             this.slider.style.width = this.pages.length * width + "px";
 

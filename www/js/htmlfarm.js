@@ -419,11 +419,19 @@
         }).reduce(flatten).filter(function(pod) {
             return pod != undefined && window.dlman.has(pod.author + pod.title);
         });
-
-        return el("div.page", [
-            (downloadedPods.length > 0 ? createSpotlight("nedladdade poddar", downloadedPods.shift()) : createSpotlight("nedladdade poddar")),
-            populatePageWithPodcasts(downloadedPods, false)
-        ]);
+        
+        if (downloadedPods.length > 0) {
+            return el("div.page", [
+                createSpotlight("nedladdade poddar", downloadedPods.shift()),
+                populatePageWithPodcasts(downloadedPods, false)
+            ]);
+        } else {
+            return el("div.page", [
+                createSpotlight("nedladdade poddar"),
+                el("div.empty-flow-top", ["Här samlas dina nedladdade poddar"]),
+                el("div.empty-flow-text", ["Tryck på ", el("div.dl-message-icon"), " för att ladda ned en podd"]),
+            ]);
+        }
     }
 
     function makeFavPage() {

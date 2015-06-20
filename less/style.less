@@ -581,6 +581,17 @@ body,ul,li,h1,h2,p {
 }
 
 
+// for empty icon message
+.dl-message-icon {
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    background-image: url("../img/dl-box-blue.png");
+    background-size: contain; 
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .alternating {
     background-color: @off-white;
 }
@@ -727,7 +738,10 @@ body {
 	font-size:2em;
 	-webkit-transform:translate3d(0,0,0);
 }
-
+.fullscreen {
+    height: 400px;
+    background-color: @raf-white;
+}
 .page {
 	-webkit-box-sizing:border-box;
 	position:relative;

@@ -151,6 +151,18 @@
     // doTitle : generate a podd-title div?
     // alternate : append .alternating class?
     function createPodcastDiv(podcast, doTitle, alternate) {
+        // offline mode stuff
+        var poddAvailable = !window.hasNoInternet || window.dlman.has(podcast.author + podcast.title);
+        // create podd-dl if we have internet, or podd-remove if we've previously
+        // downloaded the podd
+        if (poddAvailable) {
+            var dlElement = el("div.podd-" + (window.dlman.has(podcast.author + podcast.title) ? "remove" : "dl"), {
+                    "onclick": "window.handlers.handleDownloadButton(event)"
+                })
+        } else {
+            var dlElement = el("div");
+        }
+
         return el("div.podd" + (alternate ? ".alternating" : ""), {
             // Allow each div to carry its own pointer(s) to the podcast.
             // See comment further down how they (could) work.
@@ -168,12 +180,11 @@
                 el("div#podd-ep", [podcast.title]),
                 el("div#podd-time", [Math.floor(podcast.duration / 60) + " min"])
             ]),
-            el("div.podd-control.play", {
+            // if podd isn't available (offline & not downloaded) -> grey out the play button
+            el("div.podd-control.play" + (poddAvailable ? "" : ".grey-out-bg"), {
                 "onclick": "window.handlers.playPodcastHandler(event)"
             }),
-            el("div.podd-" + (window.dlman.has(podcast.author + podcast.title) ? "remove" : "dl"), {
-                "onclick": "window.handlers.handleDownloadButton(event)"
-            }),
+            dlElement,
             el("div.podd-ep-text", [podcast.content])
         ]);
     /**

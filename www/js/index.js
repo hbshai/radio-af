@@ -17,7 +17,7 @@ var app = {
     bindEvents: function() {
         document.addEventListener("deviceready", this.onDeviceReady, false);
         document.addEventListener("touchmove", function(e) {
-            e.preventDefault();
+            //e.preventDefault();
         }, false);
     },
 
@@ -77,7 +77,7 @@ app.onStart = function() {
     app.scroller.onPageChangeListener = window.titlebar.onPageChange;
 
     console.log("Begin cache control");
-    //window.localStorage.clear();
+    window.localStorage.clear();
 
     var cachedPrograms = window.cache.getCachedPrograms(),
         serverProgramList,
@@ -184,28 +184,9 @@ app.onStart = function() {
         }
     }
 
-    var donePrograms = [];
     function loadedProgramFromServer(programKey) {
         serverDone++;
-        donePrograms.push(programKey);
-        var remaining = serverProgramList.filter(function(a) {
-            return donePrograms.indexOf(a) === -1;
-        });
-        console.log(remaining);
-
-        if (!done) {
-            console.log("OK: " + serverDone);
-            var progress = document.getElementById("progress-bar");
-            if (!progress) {
-                progress = document.createElement("h1");
-                progress.setAttribute("id", "progress-bar");
-                document.body.appendChild(progress);
-            }
-            progress.textContent = serverDone + "/" + serverProgramList.length;
-            if (progress && serverDone === serverProgramList.length) {
-                document.body.removeChild(progress);
-            }
-        }
+        console.log("OK: " + serverDone + " (" + programKey + ")");
 
         if (serverDone === serverProgramList.length) {
             if (!done) {
@@ -236,31 +217,33 @@ app.onStart = function() {
     });
 
     function rssDoneLoading(data, xml) {
-        if (data.entries.length === 0) {
+        var programKey = this.program,
+            podds = rss.parse(data, xml, app.programs[programKey], withDuration);
+
+        if (data.entries.length === 0 || podds.length === 0) {
             console.log("Loaded " + this.program + ", but no podcasts: skipping... !!!!!!!!!!!!!!");
-            window.app.programs[this.program] = undefined;
-            delete window.app.programs[this.program];
+            window.app.programs[programKey] = undefined;
+            delete window.app.programs[programKey];
             loadedProgramFromServer(programKey);
             return;
         }
 
-        console.log("Loaded " + this.program + ", parsing...");
-        // parse returns pre-emptively without durations
-        var programKey = this.program,
-            podcasts = rss.parse(data, xml, app.programs[programKey], withDuration);
-
-        // Setup links
-        app.programs[programKey].podcasts = podcasts;
-
+        console.log("Loaded " + programKey + ", parsing...");
         var tid = setTimeout(function() {
-            console.log("Waited a long time for: " + programKey);
-        }, 2000);
+                console.log("Waited a long time for: " + programKey);
+            }, 2000);
 
         // Copy duration when done, store in cache
         function withDuration(podcastsWithDur) {
-            for (var i = 0, l = podcastsWithDur.length; i < l; i++) {
-                podcasts[i].duration = podcastsWithDur[i].duration;
+            if (podcastsWithDur.length === 0) {
+                console.log("Loaded " + programKey + ", but no podcasts: skipping... !!!!!!!!!!!!!!");
+                window.app.programs[programKey] = undefined;
+                delete window.app.programs[programKey];
+                loadedProgramFromServer(programKey);
+                return;
             }
+
+            app.programs[programKey].podcasts = podcastsWithDur;
             clearTimeout(tid);
             console.log("Durations loaded for " + programKey);
 
@@ -272,76 +255,61 @@ app.onStart = function() {
         console.log("Parsed, waiting for duration (" + this.program + ")");
     }
 
+    // Either short-circuited non-equal or equal check, cannot have both :((
+    function arePodcastsEqual(poddA, poddB){
+        return (poddA.title === poddB.title)
+            && (poddA.image === poddB.image)
+            && (poddA.content === poddB.content)
+            && (poddA.podcastUrl === poddB.podcastUrl);
+    }
+
     function mergeRSS(data, xml) {
         var programKey = this.program,
-            serverLen = data.entries.length,
-            cachedPodcasts = app.programs[programKey].podcasts,
-            cacheLen = cachedPodcasts.length;
+            estPodds = rss.parse(data, xml, window.app.programs[programKey], onPoddComplete);
 
-        if (serverLen === 0) {
+        if (estPodds.length === 0) {
             console.log("Loaded " + programKey + ", but no podcasts: skipping...");
             window.app.programs[programKey] = undefined;
-            delete window.app.programs[this.program];
+            delete window.app.programs[programKey];
             loadedProgramFromServer(programKey);
             return;
         }
 
-        if (cacheLen === serverLen) {
-            // Assume nothing has happened :: incorrect but hey
-            loadedProgramFromServer(programKey);
-            return;
-        }
+        function onPoddComplete(legitServerPodcasts) {
+            var cachedPodcasts = window.app.programs[programKey].podcasts,
+                len;
 
-        // Program exists in cache so try merge podcasts
-        var serverPodcasts = rss.parse(data, xml, app.programs[programKey], withDuration),
-            serverPods = serverPodcasts.map(function(e) {
-                return e.title;
-            }),
-            cachePods = cachedPodcasts.map(function(e) {
-                return e.title;
-            }),
-            i = 0;
+            console.log('Merge ' + programKey)
 
-        // Remove all programs currently present that isn't on server
-        for (i = 0; i < cacheLen; i++) {
-            if (serverPods.indexOf(cachePods[i]) === -1) {
-                cachePods.splice(i, 1); // remove from comparision array
-                cachedPodcasts.splice(i, 1); // remove from actual podcast array
-                cacheLen--;
-                i--;
+            // Remove all unknown podcasts (that aren't on server-side)
+            len = legitServerPodcasts.length;
+            cachedPodcasts = cachedPodcasts.filter(function(podd){
+                for (i = 0; i < len; i++) {
+                    if (arePodcastsEqual(legitServerPodcasts[i], podd))
+                        return true;
+                }
+                console.log('Removed ' + podd.title + ' from ' + programKey)
                 mustPatch = true;
-            }
-        }
-
-        // Add all programs that exist on server but not in cache
-        for (i = 0; i < serverLen; i++) {
-            if (cachePods.indexOf(serverPods[i]) === -1) {
-                cachePods.splice(i, 0, serverPods[i]); // add to comparision array
-                cachedPodcasts.splice(i, 0, serverPodcasts[i]); // add to actual pod array
-                mustPatch = true;
-            }
-        }
-
-        // We are already updating the stuff in-place, but maybe this is needed.
-        // window.app.programs[programKey].podcasts = cachedPodcasts
-
-        // ::: ::: ::: ::: ::: ::: ::: ::: ::: ::: ::: ::: ::: :::
-        var withDuration = function(podcastsWithDur) {
-            if (podcastsWithDur.length) {
-                console.log("something strange is going on?");
-                return;
-            }
-            for (i = 0; i < serverLen; i++) {
-                cachedPodcasts[i].duration = podcastsWithDur[i].duration;
-            }
-            window.app.programs[programKey].podcasts = cachedPodcasts.filter(function (pod){
-                return pod != undefined
+                return false;
+            })
+            
+            len = cachedPodcasts.length;
+            legitServerPodcasts.forEach(function(podd){
+                for (i = 0; i < len; i++) {
+                    if (!arePodcastsEqual(cachedPodcasts[i], podd)) {
+                        cachedPodcasts.splice(i, 0, podd);
+                        console.log('Added ' + podd.title + ' to ' + programKey)
+                        mustPatch = true;
+                    }
+                }
             })
 
-            // Cache this json!
+            // We are already updating the stuff in-place, but maybe this is needed
+            // b/c of the filter stuff returning new array :s
+            window.app.programs[programKey].podcasts = cachedPodcasts
             window.cache.putProgram(window.app.programs[programKey]);
             loadedProgramFromServer(programKey);
-        };
+        }
     }
 
     // Fetch the server-side list of program names, images and rss
@@ -352,8 +320,8 @@ app.onStart = function() {
             serverProgramList = Object.keys(data);
             serverProgramList.forEach(function(programKey) {
                 data[programKey].key = programKey;
-                if (!app.programs[programKey]) {
-                    app.programs[programKey] = data[programKey];
+                if (!window.app.programs[programKey]) {
+                    window.app.programs[programKey] = data[programKey];
                     rss.load(data[programKey].rss, 100, rssDoneLoading.bind({
                         program: programKey
                     }));

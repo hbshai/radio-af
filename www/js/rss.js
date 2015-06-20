@@ -94,7 +94,10 @@
             });
         }
 
-        var current = 0;
+        console.log(podcasts)
+
+        // Update length b/c we might have encountered (malicious) podcasts
+        var remaining = podcasts.length;
         podcasts.forEach(function(podd, index) {
             /**
              * Make a HEAD request for the resource (podcast) to find the
@@ -110,16 +113,18 @@
                 podd.duration = Math.floor(poddSize / (128 * 1024)); // bits/128kbps = s
             }).always(function() {
                 // When all podcasts have been failed/done, proceed.
-                current++;
-                if (current === podcasts.length && callb) {
+                remaining--;
+                if (remaining === 0 && callb) {
                     callb(podcasts);
                 }
-            });
-
+            }).error(function(){
+                var index = podcasts.indexOf(podd)
+                podcasts.splice(index, 1)
+            })
         });
 
         // Edge case: No podcasts
-        if (l === 0 && callb) {
+        if (podcasts.length === 0 && callb) {
             callb([]);
         }
 

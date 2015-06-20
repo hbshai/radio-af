@@ -184,6 +184,9 @@
 
             var width = window.innerWidth;
             el.style.width = width + "px";
+            if (el.offsetHeight < window.innerHeight)
+                el.style.height = window.innerHeight;
+            
             this.slider.style.width = this.pages.length * width + "px";
 
             if (this.currentPage < targetIndex) {
@@ -262,11 +265,9 @@
         },
 
         touchMove: function(e) {
-            // Always stop browser from doing its thing 
-            e.preventDefault() ;
-
             // Ignore touchstart if more than 1 touch points are active
             if (e.touches.length > 1) {
+                e.preventDefault();
                 e.stopPropagation();
                 return;
             }

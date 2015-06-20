@@ -7,7 +7,15 @@
 @title-bar-height: 50px;
 
 // OOPPA
-
+.noUi-horizontal.noUi-extended {
+    padding-right: 32px;
+}
+.noUi-horizontal.noUi-extended .noUi-handle {
+    left: -1px;
+}
+.noUi-horizontal.noUi-extended .noUi-origin  {
+    right: -32px;
+}
 .menu {
     height: 100%;
     width: 70%;
@@ -19,7 +27,11 @@
 
     left: -100%;
 }
-
+// 60px height
+#seekbar {    
+    width: 70%;
+    margin: 0 auto;
+}
 .lefty {
     -webkit-transition: left 0.2s ease-out;
             transition: left 0.2s ease-out;
@@ -102,9 +114,6 @@
 .grey-out-bg {
     background-color: @raf-white - #333 !important;
 }
-
-// OOPPA
-
 
 // remove android highlighting on click/focus
 * {
@@ -690,15 +699,25 @@ body {
     height: @footer-height;
     background-color: @dark-blue;
     color: @raf-white;
+
+    -webkit-transition: bottom 0.15s ease;
+            transition: bottom 0.15s ease;
 }
 .expanded-player {
-    padding-bottom: @slider-height;
+    bottom: @slider-height !important;
 }
 .slider {
-    display: block;
     height: @slider-height;
-    background-color: green;
     width: 100%;
+    background-color: @dark-blue;
+
+    padding-top: 15px;
+    padding-bottom: 15px;
+
+    -webkit-box-align-content: center;
+        -webkit-align-content: center;
+        -ms-flex-align-content: center;
+        align-content: center;
 }
 #footer-img {
     position: absolute;
@@ -706,13 +725,14 @@ body {
     display: inline-block;
 }
 #footer-title {
-    //font-size: 1em;
+    color: black;
 }
 .footer-text-container {
     display: inline-block;
     margin-top: 12px;
     margin-left: @footer-height + 65px; // spacing for footer img btn
 	font-size:1.75em; font-weight:bold;
+    background-color: red;
 }
 #footer-btn {
     position: absolute;

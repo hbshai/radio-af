@@ -34,20 +34,33 @@
 
         // Simple key naming scheme
         var podcastKey = program.key + "-podcasts";
-
-        // Store program info and podcasts separately for much faster JSON parsing
-        // during app initialization, allowing more control over initialization.
-        storage.setItem(program.key, JSON.stringify({
-            name: program.name,
-            category: program.category,
-            description: program.description,
-            image: program.image,
-            rss: program.rss,
-            podcasts: podcastKey,
-            key: program.key
-        }));
-
-        storage.setItem(podcastKey, JSON.stringify(program.podcasts || []));
+        
+        // If cache runs out of space don't cache any more :((
+        try {
+            // Store program info and podcasts separately for much faster JSON parsing
+            // during app initialization, allowing more control over initialization.
+            storage.setItem(program.key, JSON.stringify({
+                name: program.name,
+                category: program.category,
+                description: program.description,
+                image: program.image,
+                rss: program.rss,
+                podcasts: podcastKey,
+                key: program.key
+            }));
+        } catch (e){
+            available.pop()
+            storage.setItem("programs", JSON.stringify(available));
+            return;
+        }
+        
+        try {
+            storage.setItem(podcastKey, JSON.stringify(program.podcasts || []));
+        } catch (E){
+            storage.removeItem(program.key); // remove the program as well
+            available.pop()
+            storage.setItem("programs", JSON.stringify(available));
+        }
     }
 
     // the cache manager

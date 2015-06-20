@@ -227,7 +227,9 @@
             el("div#footer-btn.footer-pause", {
                 "onclick": "window.handlers.playerControlHandler(event)"
             }),
-            el("div.slider")
+            el("div.slider", [
+                el("div#seekbar.noUi-extended")
+            ])
         ]);
     }
 

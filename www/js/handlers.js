@@ -34,6 +34,7 @@
         }
         var player = findDiv(event.target, "lefty");
         $("#footer").toggleClass("expanded-player");
+        window.app.audiop.disableAutoSeek = !window.app.audiop.disableAutoSeek;
     }
 
     // Play or pause a podcast and 
@@ -84,7 +85,9 @@
 
     function playPauseCurrent(event) {
         window.app.audiop.playOrPause();
-        togglePlayPauseButton(window.app.audiop.currentPodcast);
+
+        if (window.app.audiop.currentPodcast)
+            togglePlayPauseButton(window.app.audiop.currentPodcast);
     }
 
     function onProgramLoad(programKey) {
@@ -327,6 +330,10 @@
         console.log("Should start download now");
     }
 
+    function handleTheSeek(evt){
+        console.log('Seek'+ evt)
+    }
+
     GLOBAL.handlers = {
         playPodcastHandler: playPodcast,
         spotlightHandler: playSpotlightPodcast,
@@ -347,6 +354,7 @@
         handleDownloadButton: toggleDownload,
 
         handleFav: handleFavourite,
+        handleSeekChange : handleTheSeek,
         goToAllProgramsView: function(event) {
             window.app.scroller.gotoPage(
                 window.app.views.index["all-programs"]

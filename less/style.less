@@ -25,6 +25,7 @@
             transition: left 0.2s ease-out;
 }
 
+
 .menu-active {
     left: 0%;
 }
@@ -631,12 +632,14 @@ body {
     text-transform: uppercase;
     width: 100%;
 }
-.mock-title-bar {
-    padding: 0 0;
-    margin: 0 0;
-    font-size: 32pt;
+
+// used in conjunction with .title-bar
+p {
     display: inline-block;
+    margin: 0 0;
+    padding: 0 0;
 }
+
 .title-bar {
     display:block;
     position: -webkit-sticky;
@@ -663,6 +666,12 @@ body {
     position: fixed;
     top: 0;
     z-index: 2;
+}
+.fixed-content {
+    width: 75%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 
@@ -979,10 +988,6 @@ body {
         height: @title-bar-height;
 
         font-size: 19pt; 
-    }
-
-    .mock-title-bar {
-        font-size: 19pt;
     }
 
     #title-bar-fixed {

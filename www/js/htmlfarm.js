@@ -503,7 +503,9 @@
                     src: "img/raf-bg2.png",
                     style: "height: " + window.deviceStyle.maximumHeight + "px;"
                 }),
-                el("div.title-bar", [title])
+                el("div.title-bar", [
+                    el("p", [title])
+                ])
             ]);
         }
 
@@ -529,7 +531,9 @@
                 ]),
                 el("div#spotlight-dl"),
             ]),
-            el("div.title-bar", [title])
+            el("div.title-bar", [
+                el("p", [title])
+            ])
         ]);
     }
 
@@ -567,7 +571,7 @@
         },
 
         staticTitleBar: function() {
-            return el("div#title-bar-fixed.lefty");
+            return el("div#title-bar-fixed.lefty", [el("p.fixed-content")]);
         },
         menuButton: function() {
             return el("div#menu-btn.lefty", {

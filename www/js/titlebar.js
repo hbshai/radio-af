@@ -14,16 +14,33 @@
         // Setting textContent will obliterate any data in the element; so
         // make sure that staticTitleBar only contains text. The menu icon
         // is overlapped using a higher z-index.
-        staticTitleBar.textContent = titleEl.textContent;
+        staticTitleBar.querySelector("p").textContent = titleEl.textContent;
 
         thresholdY = window.deviceStyle.maximumHeight;
+    }
+
+    function fitTitle(titleBar) {
+        var titleEl = titleBar.querySelector("p");
+        var titleWidth = titleEl.offsetWidth;
+        var maxWidth = window.innerWidth;
+
+        var $titleBar = $(titleBar);
+        var fontSize = parseInt($titleBar.css("font-size"));
+        // resize titleBar's font size until it fits the screen
+        while (titleWidth >= maxWidth) {
+            fontSize--;
+            $titleBar.css('font-size', fontSize.toString() + 'px');
+            titleWidth = titleEl.offsetWidth;
+        }
+
     }
 
     function pageChangeHandler(pageEl) {
         // Search for a child element that has the child
         var titleBar = pageEl.querySelector(".title-bar");
-
+       
         if (titleBar) {
+            fitTitle(titleBar)
             mount(titleBar);
         } else {
             // Somehow the page we moved to hasn't a title bar - so hackily disable ourselves
@@ -60,6 +77,7 @@
         init: function(el) {
             staticTitleBar = el; //document.body.querySelector('#title-bar-fixed')
             staticTitleBar.style.top = "-1000px";
+            staticTitleBar.querySelector("p").textContent = "titel";
         }
     };
 })(window);

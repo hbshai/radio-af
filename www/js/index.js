@@ -191,9 +191,9 @@ app.onStart = function() {
 
     function loadedProgramFromServer(programKey) {
         serverDone++;
-        console.log("OK: " + serverDone + " (" + programKey + ")");
 
         if (serverDone === serverProgramList.length) {
+            console.log('Server done: bootstrapped=' + done + ", mustPatch=" + mustPatch)
             if (!done) {
                 bootstrap();
             } else if (mustPatch) {
@@ -206,39 +206,40 @@ app.onStart = function() {
         var programKey = this.program,
             podds = rss.parse(data, xml, app.programs[programKey], withDuration);
 
-        if (data.entries.length === 0 || podds.length === 0) {
-            console.log("Loaded " + this.program + ", but no podcasts: skipping... !!!!!!!!!!!!!!");
+        if ((data.entries.length === 0 || podds.length === 0) && window.app.programs[programKey]) {
+            console.log("Loaded " + this.program + ", but no podcasts: skipping... 1")
             window.app.programs[programKey] = undefined;
             delete window.app.programs[programKey];
             loadedProgramFromServer(programKey);
             return;
         }
 
+        if (!window.app.programs[programKey])
+            return;
+
         console.log("Loaded " + programKey + ", parsing...");
-        var tid = setTimeout(function() {
-                console.log("Waited a long time for: " + programKey);
-            }, 2000);
 
         // Copy duration when done, store in cache
         function withDuration(podcastsWithDur) {
-            if (podcastsWithDur.length === 0) {
-                console.log("Loaded " + programKey + ", but no podcasts: skipping... !!!!!!!!!!!!!!");
+
+            if (podcastsWithDur.length === 0 && window.app.programs[programKey]) {
+                console.log("Loaded " + programKey + ", but no podcasts: skipping... 2");
                 window.app.programs[programKey] = undefined;
                 delete window.app.programs[programKey];
                 loadedProgramFromServer(programKey);
                 return;
             }
 
+            if (!window.app.programs[programKey])
+                return;
+
             app.programs[programKey].podcasts = podcastsWithDur;
-            clearTimeout(tid);
-            console.log("Durations loaded for " + programKey);
+            console.log("Finished loading " + programKey);
 
             // Cache this json!
             window.cache.putProgram(app.programs[programKey]);
             loadedProgramFromServer(programKey);
         }
-
-        console.log("Parsed, waiting for duration (" + this.program + ")");
     }
 
     // Either short-circuited non-equal or equal check, cannot have both :((
@@ -330,7 +331,6 @@ app.onStart = function() {
 
         // Load cached programs
         cachedPrograms.forEach(function(programKey) {
-            console.log('Loading...?')
             // Somehow the internet was faster :O
             if (window.app.programs[programKey]) {
                 return;

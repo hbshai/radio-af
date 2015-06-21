@@ -12,6 +12,8 @@ var AudioPlayer = function() {
     var _media = null,
         _paused = true,
         _id = 0,
+        
+        _htmlAudio, // only for iOS
         _boundUpdate = function(pos) {
             self.updatePosition(pos);
             window.localStorage.setItem("audiop-seek", pos);
@@ -23,11 +25,16 @@ var AudioPlayer = function() {
     this.currentPodcast = undefined;
 
     function trackProgress() {
-        _media.getCurrentPosition(_boundUpdate);
+    	if (_media)
+        	_media.getCurrentPosition(_boundUpdate);
+
+        if (_htmlAudio) {
+        	_boundUpdate(_htmlAudio.currentTime)
+        }
     }
 
     this.play = function() {
-        if (!_media) {
+        if (!_media && !_htmlAudio) {
             console.err("No media.");
             return;
         }
@@ -36,8 +43,13 @@ var AudioPlayer = function() {
             console.err("Already playing.");
             return;
         }
-
-        _media.play({ /* super secret options here */ });
+	
+		if (_media) {
+        	_media.play({ /* super secret options here */ });
+        }
+        if (_htmlAudio) {
+        	_htmlAudio.play()
+        }
         _paused = false;
 
         _id = setInterval(trackProgress, 500);
@@ -53,6 +65,12 @@ var AudioPlayer = function() {
         if (_media) {
             _media.stop();
             _media.release();
+            _media = undefined
+        }
+
+        if (_htmlAudio) {
+        	_htmlAudio.pause()
+        	_htmlAudio = undefined
         }
 
         if (_id) {
@@ -124,6 +142,10 @@ var AudioPlayer = function() {
             _media.pause();
         }
 
+        if (_htmlAudio) {
+        	_htmlAudio.pause()
+        }
+
         $("#footer-btn").attr("class", "footer-pause");
 
         // If we were tracking progress for some reason, cleanup!
@@ -138,6 +160,7 @@ var AudioPlayer = function() {
         if (_media) {
             _media.stop();
             _media.release();
+            _media = undefined
         }
 
         if (_id) {
@@ -153,7 +176,11 @@ var AudioPlayer = function() {
 
         // No track playing. Update _paused otherwise play() will malfunction...
         _paused = true;
-        _media = new Media("http://live.radioaf.se:8000/;stream/1", self.onSuccess, self.onError);
+        if (window.iOSPlatform) {
+        	_htmlAudio = new Audio("http://live.radioaf.se:8000/;stream/1")
+        } else {
+        	_media = new Media("http://live.radioaf.se:8000/;stream/1", self.onSuccess, self.onError);
+		}
 
         // Do some UI shizzle
         this.currentDurationString = "∞";
@@ -161,7 +188,7 @@ var AudioPlayer = function() {
 		
 	    this.seekBar.attr('disabled', 'disabled')
 
-        $("#footer-img").attr("src", msg.author.show_image);
+        $("#footer-img").attr("src", window.fixImageUrl(msg.author.show_image));
         $("#footer-title").text(msg.author.show_name);
         $("#footer-ep").text("Du lyssnar live");
     };
@@ -195,15 +222,19 @@ var AudioPlayer = function() {
 };
 
 AudioPlayer.prototype.init = function() {
+	if (window.device.platform === 'iOS') {
+		window.iOSPlatform = true;
+	}
     this.footerTimeEl = document.getElementById("footer-time");
     this.seekBar = $("#seekbar") // noUiSlideBar requires jquery
     this.seekBar.noUiSlider({
     	start : 0,
 		range: {
 			'min': 0,
-			'max': 100
+			'max': 0
 		}
     });
+    //this.seekBar.attr('disabled', 'disabled')
 	
 	this.disableAutoSeek = false;
 	this.seeking = false;

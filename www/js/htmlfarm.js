@@ -32,6 +32,7 @@
             .replace(/h\=(\d)+/, favHeight)
             .replace(/q\=(\d)+/, favQuality);
     }
+    window.fixImageUrl = resizeImage
 
     // the dom wrapper for nice smeets
     // credits to: https://gist.github.com/neilj/1532562

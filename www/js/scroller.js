@@ -4,12 +4,12 @@
             // originY = screen coord where touch started
             // endY = screen coord where touch ended
             // dt = time of interaction in seconds
-            return 1.2 * ((endY - originY) / dt);
+            return ((endY - originY) / dt);
         },
         updateMomentum = function(velY, t) {
             // velY = velocity
             // t = time elapsed in seconds
-            return velY * 0.96; // static friction
+            return velY * 0.955; // static friction
         },
         // should go from 0 --> 1
         // EASE OUT: ( 1 - Math.sqrt(1 - t * t) )
@@ -137,7 +137,6 @@
             this.pages = new Array(len);
             for (i = 0; i < len; i++) {
                 this.pages[i] = pages[i];
-                console.log(this.pages[i].offsetHeight)
                 if (this.pages[i].offsetHeight < height)
                     this.pages[i].style.height = height + 'px';
 
@@ -246,7 +245,7 @@
             this.x = x;
             this.y = y;
         },
-
+        
         touchStart: function(e) {
             if (this.frame) {
                 cancelFrame(this.frame);
@@ -275,6 +274,8 @@
         },
 
         touchMove: function(e) {
+            //e.preventDefault()
+
             // Ignore touchstart if more than 1 touch points are active
             if (e.touches.length > 1) {
                 e.preventDefault();

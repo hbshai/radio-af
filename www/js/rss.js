@@ -3,7 +3,6 @@
         var gurl = "http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&output=json_xml&callback=?&q=" + url + "&num=" + postCount;
 
         $.getJSON(gurl, function(data) {
-            //console.log(data.responseData.feed)
             if (data.responseData.feed) {
                 callback(data.responseData.feed, data.responseData.xmlString);
             } else {
@@ -93,8 +92,6 @@
                 podcastUrl: url
             });
         }
-
-        console.log(podcasts)
 
         // Update length b/c we might have encountered (malicious) podcasts
         var remaining = podcasts.length;

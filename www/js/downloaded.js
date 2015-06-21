@@ -72,7 +72,7 @@
 
         fileTransfer.onprogress = function(progressEvent) {
             if (progressEvent.lengthComputable) {
-                console.log(progressEvent.loaded / progressEvent.total);
+                // console.log(progressEvent.loaded / progressEvent.total);
             }
         };
     }

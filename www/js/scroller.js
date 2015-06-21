@@ -209,6 +209,9 @@
 
         // remove a page from the DOM
         removePage: function(targetIndex) {
+            if (targetIndex < 0) {
+                return;
+            }
             var el = this.pages[targetIndex];
 
             for (k in app.views.index) {

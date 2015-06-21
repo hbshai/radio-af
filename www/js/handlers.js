@@ -277,6 +277,9 @@
         window.menu.unregister();
 
         if (views[targetId]) {
+            // remove any old page from the scroller
+            window.app.scroller.removePage(window.app.scroller.lastPageIndex);
+            window.app.scroller.lastPageIndex = -1;
             window.app.scroller.gotoPage(
                 window.app.views.index[views[targetId]]
             );

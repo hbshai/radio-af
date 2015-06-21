@@ -36,11 +36,7 @@
         var localPath = fileEntry.fullPath;
         var localUrl = fileEntry.toURL();
 
-        currentDownload.path = fileEntry.toNativeURL();
-
-        console.log("Loaded local path: " + localPath);
-        console.log("Loaded local url: " + localUrl);
-        console.log("Download.path: " + currentDownload.path);
+        currentDownload.path = localUrl;
 
         var fileTransfer = new FileTransfer();
         var uri = encodeURI(currentDownload.podcast.podcastUrl);
@@ -50,34 +46,49 @@
             uri,
             localUrl,
             function(entry) {
-                console.log("download complete (path): " + entry.fullPath);
-                console.log("download complete (url): " + entry.toURL());
-                console.log("download complete (native): " + entry.toURL());
-
                 downloaded[currentDownload.hash] = entry.toURL();
-                window.handlers.fileTransferSuccess(currentDownload.podcast, entry.toURL());
+                
                 window.localStorage.setItem("_downloaded", JSON.stringify(downloaded));
+                window.handlers.fileTransferSuccess(currentDownload.podcast, currentDownload.hash);
 
+                currentDownload = undefined
                 if (downloadQueue.length > 0) {
-                    downloadNext();
+                    setTimeout(downloadNext, 250);
                 }
             },
             function(error) {
-                window.handlers.fileTransferError(currentDownload, fileEntry, fileTransfer, error);
+                window.handlers.fileTransferError(currentDownload, error);
+                currentDownload = undefined
                 if (downloadQueue.length > 0) {
-                    downloadNext();
+                    setTimeout(downloadNext, 250);
                 }
             }
         );
 
+        currentDownload.transfer = fileTransfer;
+
+        var lastUpdate = Date.now() - 2000,
+            queryMini = "[data-podcast-program='" + currentDownload.podcast.author + "']"
+                + "[data-podcast-index='" + currentDownload.podcast.index + "']"
+                + " > .podd-dl",
+            querySpot = "[data-podcast-program='" + currentDownload.podcast.author + "']"
+                + "[data-podcast-index='" + currentDownload.podcast.index + "']"
+                + " > div > .spotlight-dl";
+
         fileTransfer.onprogress = function(progressEvent) {
-            if (progressEvent.lengthComputable) {
-                // console.log(progressEvent.loaded / progressEvent.total);
+            if (progressEvent.lengthComputable && (Date.now() - lastUpdate >= 1000)) {
+                var progress = Math.floor(100 * (progressEvent.loaded / progressEvent.total)) + "%"
+                $(queryMini).text(progress);
+                $(querySpot).text(progress);
+                lastUpdate = Date.now()
             }
         };
     }
 
     function downloadNext() {
+        if (downloadQueue.length === 0 || currentDownload)
+            return;
+
         currentDownload = downloadQueue.shift();
 
         // currentDownload.url is something like //blabla/blabla/bla/fileidentifier.mp3
@@ -95,24 +106,34 @@
             hash: hash,
             podcast: podcast
         });
-        if (downloadQueue.length === 1) {
+        
+        if (downloadQueue.length === 1 && !currentDownload) {
+            console.log('Download next!')
             downloadNext();
         }
     }
 
     function removeFile(fileEntry) {
-        fileEntry.remove(window.handlers.fileRemoveSuccess, window.handlers.fileRemoveFail);
+        var podd = this.podcast,
+            hash = this.hash
+
+        fileEntry.remove(function(){
+            window.handlers.fileRemoveSuccess(podd, hash)
+        }, window.handlers.fileRemoveFail);
     }
 
-    function removeHash(trackHash) {
+    function removeHash(trackHash, podcast) {
         if (!downloaded[trackHash]) {
+            console.log("I dunno about this one really: " + trackHash)
             return;
         }
 
-        folder.getFile(downloaded[trackHash], {
-            create: false,
-            exclusive: false
-        }, removeFile);
+        window.resolveLocalFileSystemURL(downloaded[trackHash], removeFile.bind({
+            hash : trackHash,
+            podcast : podcast
+        }), function(error){
+            console.log(error)
+        });
 
         delete downloaded[trackHash];
         window.localStorage.setItem("_downloaded", JSON.stringify(downloaded));
@@ -120,11 +141,8 @@
 
     // the download manager
     window.dlman = {
-        init: function(callb) {
-            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs) {
-                gotFS(fs);
-                callb();
-            }, fail);
+        init: function(fs) {
+            gotFS(fs)
         },
         // track hash can be anything, but should probably be program+stuff
         has: function(trackHash) {
@@ -137,8 +155,38 @@
         download: function(podcast, trackHash) {
             queueDownload(trackHash, podcast);
         },
-        remove: function(trackHash) {
-            removeHash(trackHash);
+        downloading : function(trackHash){
+            return currentDownload && currentDownload.hash === trackHash
+        },
+        queued : function (trackHash){
+            for (var i = 0; i < downloadQueue.length; i++){
+                if (downloadQueue[i].hash === trackHash){
+                    return true;
+                }
+            }
+            return false;
+        },
+        remove: function(trackHash, podcast) {
+            removeHash(trackHash, podcast);
+        },
+        abort : function(trackHash){
+            if (currentDownload && trackHash === currentDownload.hash) {
+                if (currentDownload.transfer)
+                    currentDownload.transfer.abort()
+                else {
+                    currentDownload = undefined
+                    setTimeout(downloadNext, 250)
+                }
+                return true;
+            }
+
+            for (var i = 0; i < downloadQueue.length; i++){
+                if (downloadQueue[i].hash === trackHash){
+                    downloadQueue.splice(i, 1);
+                    return true;
+                }
+            }
+            return false;
         }
     };
 

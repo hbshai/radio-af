@@ -300,8 +300,20 @@
         }
     }
 
-    function downloadSuccess(podcast, uri) {
+    function rebuildDownloadPage(podcast, uri) {
+        var slider = window.app.scroller.slider,
+            newDl = window.htmlFarm.downloadedPage();
 
+        slider.replaceChild(newDl, window.app.views.nodes['downloaded'])
+        window.app.views.nodes['downloaded'] = newDl
+        window.app.scroller.refreshPages()
+
+        if (podcast) {
+            // The podcast we just added or removed
+            $("[data-podcast-program='" + podcast.author + "']"
+                + "[data-podcast-index='" + podcast.index + "']"
+                + " > .podd-dl").text("").toggleClass('podd-dl').toggleClass('podd-remove')
+        }
     }
 
     function toggleDownload(evt) {
@@ -345,10 +357,10 @@
         spotlightHandler: playSpotlightPodcast,
         playerControlHandler: playPauseCurrent,
 
-        fileTransferSuccess: downloadSuccess,
+        fileTransferSuccess: rebuildDownloadPage,
         fileTransferError: downloadError,
 
-        fileRemoveSuccess: console.log,
+        fileRemoveSuccess: rebuildDownloadPage,
         fileRemoveFail: console.log,
 
         loadedProgramRSS: onProgramLoad,

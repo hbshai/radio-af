@@ -20,10 +20,10 @@
             + "[data-podcast-index='" + podcast.index + "']"
 
         // Toggles the minipod button
-        $(mainSelector + " > .podd-dl").toggleClass("podd-" + toggleWhat).text("");
+        $(mainSelector + " > .podd-dl").toggleClass("podd-" + toggleWhat).text(" ");
 
         // Toggles the spotlight button
-        $(mainSelector + " > div > .spotlight-dl").toggleClass("spotlight-" + toggleWhat).text("");
+        $(mainSelector + " > div > .spotlight-dl").toggleClass("spotlight-" + toggleWhat).text(" ");
     }
 
     function togglePlayerSlider(event) {
@@ -290,14 +290,13 @@
             newDl = window.htmlFarm.downloadedPage(),
             wasAdded = window.dlman.has(hash);
 
-        slider.replaceChild(newDl, window.app.views.nodes['downloaded'])
-        window.app.views.nodes['downloaded'] = newDl
-        window.app.scroller.refreshPages()
-
-        console.log('rebuilding...')
+        slider.replaceChild(newDl, window.app.views.nodes['downloaded']);
+        window.app.views.nodes['downloaded'] = newDl;
+        window.app.scroller.refreshPages();
 
         if (wasAdded) {
             toggleDownloadButton(podcast, 'queued')
+            toggleDownloadButton(podcast, 'remove')
         }
     }
 

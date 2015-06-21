@@ -1,6 +1,6 @@
 (function(GLOBAL) {
 
-    // Height and width set to @podcast-height
+    // Height and width set to @podcast-height etc.
     var imageRatio = 950 / 670;
 
     window.deviceStyle = {};
@@ -158,15 +158,21 @@
     // alternate : append .alternating class?
     function createPodcastDiv(podcast, doTitle, alternate) {
         // offline mode stuff
-        var poddAvailable = !window.hasNoInternet || window.dlman.has(podcast.author + podcast.title);
+        var hash = podcast.author + podcast.title,
+            poddAvailable = !window.hasNoInternet || window.dlman.has(hash),
+            dlElement = undefined;
+
         // create podd-dl if we have internet, or podd-remove if we've previously
         // downloaded the podd
         if (poddAvailable) {
-            var dlElement = el("div.podd-" + (window.dlman.has(podcast.author + podcast.title) ? "remove" : "dl"), {
+            dlElement = el("div.podd-dl" 
+                    + (window.dlman.has(hash) ? ".podd-remove" : "")
+                    + (window.dlman.downloading(hash) ? ".podd-queue" : "")
+                    + (window.dlman.queued(hash) ? ".podd-queue" : ""), {
                     "onclick": "window.handlers.handleDownloadButton(event)"
                 })
         } else {
-            var dlElement = el("div");
+            dlElement = el("div");
         }
 
         return el("div.podd" + (alternate ? ".alternating" : ""), {
@@ -522,11 +528,15 @@
         var programImage = window.app.programs[podcast.author].image,
             image = isProgramView ? programImage : (podcast.image || programImage);
 
-        var poddAvailable = !window.hasNoInternet || window.dlman.has(podcast.author + podcast.title);
+        var hash = podcast.author + podcast.title,
+            poddAvailable = !window.hasNoInternet || window.dlman.has(hash);
         // create podd-dl if we have internet, or podd-remove if we've previously
         // downloaded the podd
         if (poddAvailable) {
-            var dlElement = el("div.spotlight-" + (window.dlman.has(podcast.author + podcast.title) ? "remove" : "dl"), {
+            var dlElement = el("div.spotlight-dl" 
+                + (window.dlman.has(hash) ? ".spotlight-remove" : "")
+                + (window.dlman.downloading(hash) ? ".spotlight-queue" : "")
+                + (window.dlman.queued(hash) ? ".spotlight-queue" : ""), {
                     "onclick": "window.handlers.handleDownloadButton(event)"
                 })
         } else {

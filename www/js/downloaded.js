@@ -47,6 +47,7 @@
             localUrl,
             function(entry) {
                 downloaded[currentDownload.hash] = entry.toURL();
+                
                 window.localStorage.setItem("_downloaded", JSON.stringify(downloaded));
                 window.handlers.fileTransferSuccess(currentDownload.podcast, currentDownload.hash);
 
@@ -107,6 +108,7 @@
         });
         
         if (downloadQueue.length === 1 && !currentDownload) {
+            console.log('Download next!')
             downloadNext();
         }
     }
@@ -177,6 +179,7 @@
                 }
                 return true;
             }
+
             for (var i = 0; i < downloadQueue.length; i++){
                 if (downloadQueue[i].hash === trackHash){
                     downloadQueue.splice(i, 1);

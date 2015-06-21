@@ -125,12 +125,14 @@ app.onStart = function() {
         addView("favourites", favz);
 
         // Add to DOM
-        slider.appendChild(flow);
-        slider.appendChild(alla);
+        slider.appendChild(flow)
+        slider.appendChild(alla)
         slider.appendChild(download);
         slider.appendChild(favz);
 
         app.scroller.refreshPages();
+        app.scroller.enforceBounds();
+
         setTimeout(window.app.scroller.recalcHeight.bind(window.app.scroller), 250);
         window.titlebar.onPageChange(app.scroller.pages[app.scroller.currentPage]);
 
@@ -151,28 +153,19 @@ app.onStart = function() {
             download = htmlFarm.downloadedPage(),
             favz = htmlFarm.favouritesPage();
 
-        // Remove old divs
-        for (k in app.views.nodes) {
-            slider.removeChild(app.views.nodes[k]);
-        }
-
-        app.views.nodes = {};
-        app.views.index = {};
-        app.views.currentIndex = 0;
+        // Replace old divs with new ones
+        slider.replaceChild(flow , app.views.nodes["flow"]);
+        slider.replaceChild(alla , app.views.nodes["all-programs"]);
+        slider.replaceChild(download , app.views.nodes["downloaded"]);
+        slider.replaceChild(favz , app.views.nodes["favourites"]);
 
         // Add the permanent views 
-        addView("flow", flow);
-        addView("all-programs", alla);
-        addView("downloaded", download);
-        addView("favourites", favz);
+        app.views.nodes["flow"] = flow;
+        app.views.nodes["all-programs"] = alla;
+        app.views.nodes["downloaded"] = download;
+        app.views.nodes["favourites"] = favz;
 
-        // Add to DOM
-        slider.appendChild(flow);
-        slider.appendChild(alla);
-        slider.appendChild(download);
-        slider.appendChild(favz);
-
-        app.scroller.refreshPages();
+        window.app.scroller.refreshPages()
         setTimeout(window.app.scroller.recalcHeight.bind(window.app.scroller), 250);
         window.titlebar.onPageChange(app.scroller.pages[app.scroller.currentPage]);
     }
@@ -274,9 +267,6 @@ app.onStart = function() {
                     }
                 }
                 console.log('Removed ' + podd.title + ' from ' + programKey)
-                console.log(podd)
-                console.log(cachedPodcasts)
-                console.log(legitServerPodcasts)
                 mustPatch = true;
                 return false;
             })
@@ -290,12 +280,14 @@ app.onStart = function() {
                 }
 
                 console.log('Added ' + podd.title + ' to ' + programKey)
-                console.log(podd)
-                console.log(cachedPodcasts)
-                console.log(legitServerPodcasts)
                 cachedPodcasts.splice(i, 0, podd);
                 mustPatch = true;
             })
+
+            // Make sure indexes are correct!!
+            for (var i = cachedPodcasts.length - 1; i >= 0; i--) {
+                cachedPodcasts[i].index = i;
+            };
 
             // We are already updating the stuff in-place, but maybe this is needed
             // b/c of the filter stuff returning new array :s

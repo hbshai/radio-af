@@ -258,8 +258,14 @@ body,ul,li,h1,h2,p {
 }
 
 .spotlight-remove {
-    .spotlight-dl();
     background-image: url("../img/dl-check.png") !important;
+}
+
+.spotlight-queued {
+    font-size: 0.8em;
+    text-align: center;
+    line-height: 2em;
+    background-image: url("../img/dl-cross.png") !important;
 }
 
 #spotlight-play {
@@ -594,11 +600,9 @@ body,ul,li,h1,h2,p {
     background-position: center;
 }
 .podd-queued {
-    border-radius: 100%;
-    border-style: 2px solid @dark-blue;
+    font-size: 0.8em;
     text-align: center;
-    font-size: 1.2em;
-    background-image: none !important;
+    background-image: url("../img/dl-cross-blue.png") !important;
 }
 
 .podd-remove {
@@ -871,10 +875,6 @@ p {
         min-width: @spotlight-height;
         
         background-size: 31.5px 38.5px;
-    }
-
-    .spotlight-remove {
-        .spotlight-dl();
     }
 
     #spotlight-play {

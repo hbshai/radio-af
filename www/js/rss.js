@@ -48,7 +48,8 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
     function parseRSS(data, xml, program, callb) {
-        var podcasts = [], entry, imgUrl, i, l, datax, url;
+        var podcasts = [], counter = 0,
+            entry, imgUrl, i, l, datax, url;
 
         var parser = new DOMParser(),
             xmlDoc = parser.parseFromString(xml, "text/xml"),
@@ -86,7 +87,7 @@
                 program: program.name,
                 index: podcasts.length,
                 content: removeTags(entry.content),
-                duration: 0,
+                duration: counter++,
                 date: entry.publishedDate, // so that we can order correctly in ~the flow~
                 image: timthumbBase + imgUrl + sizeParams,
                 podcastUrl: url
@@ -94,7 +95,6 @@
         }
 
         // Update length b/c we might have encountered (malicious) podcasts
-        var remaining = podcasts.length;
         podcasts.forEach(function(podd, index) {
             /**
              * Make a HEAD request for the resource (podcast) to find the
@@ -110,8 +110,8 @@
                 podd.duration = Math.floor(poddSize / (128 * 1024)); // bits/128kbps = s
 
                 // When all podcasts have been failed/done, proceed.
-                remaining--;
-                if (remaining === 0 && callb) {
+                counter--;
+                if (counter === 0 && callb) {
                     callb(podcasts);
                 }
             }).error(function(){
@@ -119,8 +119,8 @@
                 podcasts.splice(index, 1)
 
                 // When all podcasts have been failed/done, proceed.
-                remaining--;
-                if (remaining === 0 && callb) {
+                counter--;
+                if (counter === 0 && callb) {
                     callb(podcasts);
                 }
             })

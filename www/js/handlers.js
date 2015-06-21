@@ -140,8 +140,6 @@
     }
 
     function expandProgramText(evt) {
-        // TODO: don't react to the program chevron in a much nicer fashion
-        // than this pls
         if (evt.target.classList.contains("program-chevron")) {
             return;
         }
@@ -177,6 +175,8 @@
         var totalHeight = standardHeight + target.querySelector(".podd-ep-text").offsetHeight + 30;
         var currentHeight = target.offsetHeight;
 
+        $(target.querySelector(".podd-text")).toggleClass("chevron-inverted");
+        console.log(target.querySelector(".podd-text").classList);
         // Determine if we are expanding or contracting the div
         if (target.classList.contains("podd-expanded")) {
             target.classList.remove("podd-expanded");

@@ -136,6 +136,10 @@
     function createProgramView(podcasts) {
         var firstPod = podcasts[0];
         var counter = 0;
+        var messages = ["#slutpåpoddar", "inga fler poddar!", "ensam lyssnare söker podd"];
+        var msg = messages[Math.floor(Math.random() * messages.length)];
+
+        var podNotice = el("div.end-of-list", [msg]);
 
         return el("div.page", [
             el(window.favs.containsProgram(firstPod.author) ? "div.fav-heart-red" : "div.fav-heart", {
@@ -143,7 +147,8 @@
                 "onclick": "window.handlers.handleFav(event)"
             }),
             createSpotlight(firstPod.program, firstPod, true),
-            populatePageWithPodcasts(podcasts, true)
+            populatePageWithPodcasts(podcasts, true),
+            podcasts.length <= 1 ? podNotice : el("div")
         ]);
     }
 
@@ -216,17 +221,19 @@
         return el("div#footer.lefty", {
             'onclick' : 'window.handlers.togglePlayerSlider(event)'
         }, [
-            el("img#footer-img", {
-                src: "img/player-placeholder-img.png"
-            }),
-            el("div.footer-text-container", [
-                el("div#footer-title", ["inget program valt"]),
-                el("div#footer-ep", ["ingen podd vald"]),
-                el("div#footer-time", ["-- / --"])
+            el("div.footer-container.flexme", [
+                el("img#footer-img", {
+                    src: "img/player-placeholder-img.png"
+                }),
+                el("div.footer-text-container.flexme", [
+                    el("div#footer-title", ["inget program valt"]),
+                    el("div#footer-ep", ["ingen podd vald"]),
+                    el("div#footer-time", ["-- / --"])
+                ]),
+                el("div#footer-btn.footer-pause", {
+                    "onclick": "window.handlers.playerControlHandler(event)"
+                })
             ]),
-            el("div#footer-btn.footer-pause", {
-                "onclick": "window.handlers.playerControlHandler(event)"
-            }),
             el("div.slider", [
                 el("div#seekbar.noUi-extended")
             ])

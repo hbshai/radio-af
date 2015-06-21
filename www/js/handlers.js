@@ -11,22 +11,19 @@
         // Toggles the minipod button
         $(mainSelector + " > .podd-control").toggleClass("play").toggleClass("pause");
 
-        // TODO: Make this work (selector is wrong)
         // Toggles the spotlight button
         $(mainSelector + " > div > #spotlight-play").toggleClass("spotlight-pause");
     }
 
-    function toggleDownloadButton(podcast) {
+    function toggleDownloadButton(podcast, toggleWhat) {
         var mainSelector = "[data-podcast-program='" + podcast.author + "']"
-            + "[data-podcast-index='" + podcast.index + "']";
-        console.log("WOWOWO DL!?!?!??!?");
+            + "[data-podcast-index='" + podcast.index + "']"
 
         // Toggles the minipod button
-        $(mainSelector + " > .podd-dl").toggleClass("podd-remove");
+        $(mainSelector + " > .podd-dl").toggleClass("podd-" + toggleWhat).text("");
 
-        // TODO: Make this work (selector is wrong)
         // Toggles the spotlight button
-        $(mainSelector + " > div > .spotlight-dl").toggleClass("spotlight-remove");
+        $(mainSelector + " > div > .spotlight-dl").toggleClass("spotlight-" + toggleWhat).text("");
     }
 
     function togglePlayerSlider(event) {
@@ -91,26 +88,14 @@
             togglePlayPauseButton(window.app.audiop.currentPodcast);
     }
 
-    function onProgramLoad(programKey) {
-        var program = app.programs[programKey];
-
-        // Notify flow that we might have new podcasts
-        //window.flow.checkForNews(program)
-
-    // Notify all program page that a program is ready
-    //window.proglist.addProgram(program)
-    }
-
-    function downloadError(download, file, ft, error) {
-        // Should probably send notification and notify DOM
-        console.log("FT Error: " + download.hash + " == " + error.name + ": " + error.message);
+    function downloadError(download, error) {
+        if (download)
+            rebuildDownloadPage(download.podcast, download.hash, true)
     }
     // Create a program view for the tapped on program, insert it into the DOM and focus it
     function createProgramView(evt) {
-        console.log("Please open new view!");
         var target = findDiv(evt.target, "program", "fav");
         var programKey = target.dataset["podcastProgram"];
-        // console.log("Found: " + programKey);
 
         // Find the info for the program and open a new view
         var podcasts = window.rss.find(programKey);
@@ -300,24 +285,23 @@
         }
     }
 
-    function rebuildDownloadPage(podcast, uri) {
+    function rebuildDownloadPage(podcast, hash) {
         var slider = window.app.scroller.slider,
-            newDl = window.htmlFarm.downloadedPage();
+            newDl = window.htmlFarm.downloadedPage(),
+            wasAdded = window.dlman.has(hash);
 
         slider.replaceChild(newDl, window.app.views.nodes['downloaded'])
         window.app.views.nodes['downloaded'] = newDl
         window.app.scroller.refreshPages()
 
-        if (podcast) {
-            // The podcast we just added or removed
-            $("[data-podcast-program='" + podcast.author + "']"
-                + "[data-podcast-index='" + podcast.index + "']"
-                + " > .podd-dl").text("").toggleClass('podd-dl').toggleClass('podd-remove')
+        console.log('rebuilding...')
+
+        if (wasAdded) {
+            toggleDownloadButton(podcast, 'queued')
         }
     }
 
     function toggleDownload(evt) {
-        console.log("Please download me!");
         var dataNode = evt.target.parentNode;
 
         if (!dataNode.dataset["podcastProgram"] && !dataNode.dataset["podcastIndex"]) {
@@ -327,29 +311,38 @@
 
         if (!dataNode.dataset["podcastProgram"] && !dataNode.dataset["podcastIndex"]) {
             console.log("WARN: Did not find any parent with info!!");
+            return;
         }
+
+        evt.preventDefault()
+        evt.stopPropagation()
 
         var dataset = dataNode.dataset,
             program = dataset["podcastProgram"],
             index = dataset["podcastIndex"],
             podcast = window.app.programs[program].podcasts[index],
             hash = podcast.author + podcast.title,
-            alreadyDownloaded = window.dlman.has(hash);
-
-        toggleDownloadButton(podcast);
-
-        console.log(podcast.author + " --> " + hash + " (" + podcast.podcastUrl + ")");
-
-        if (alreadyDownloaded) {
-            window.dlman.remove(hash);
-        } else {
+            alreadyDownloaded = window.dlman.has(hash),
+            inProgress = window.dlman.downloading(hash),
+            isQueued = window.dlman.queued(hash);
+        
+        if (inProgress || isQueued){
+            // Remove the queued class
+            console.log('Abort please!')
+            toggleDownloadButton(podcast, 'queued');
+            window.dlman.abort(hash)
+        } else if (alreadyDownloaded) {
+            // Remove the remove class
+            console.log("Removing downloaded podcast...");
+            toggleDownloadButton(podcast, 'remove');
+            window.dlman.remove(hash, podcast);
+        } else if (!alreadyDownloaded && !inProgress && !isQueued) {
+            console.log("Should start download now");
             window.dlman.download(podcast, hash);
+            toggleDownloadButton(podcast, 'queued');
+        } else {
+            console.log('in: ' + inProgress + ', q: ' + isQueued + ', dl: ' + alreadyDownloaded)
         }
-        console.log("Should start download now");
-    }
-
-    function handleTheSeek(evt){
-        console.log('Seek'+ evt)
     }
 
     GLOBAL.handlers = {
@@ -363,7 +356,6 @@
         fileRemoveSuccess: rebuildDownloadPage,
         fileRemoveFail: console.log,
 
-        loadedProgramRSS: onProgramLoad,
         openProgramView: createProgramView,
         expandText: expandProgramText,
         expandPodcast: expandPodcastText,
@@ -372,7 +364,6 @@
         handleDownloadButton: toggleDownload,
 
         handleFav: handleFavourite,
-        handleSeekChange : handleTheSeek,
         goToAllProgramsView: function(event) {
             window.app.scroller.gotoPage(
                 window.app.views.index["all-programs"]

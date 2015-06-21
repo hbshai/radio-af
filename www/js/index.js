@@ -40,9 +40,6 @@ app.onStart = function() {
     var wrapper = htmlFarm.wrapper(),
         slider = wrapper.slider;
 
-    // Remove the loading div
-    document.body.removeChild(document.getElementById("loading"));
-
     // Wrapper+slider loaded earlier
     var titleBar = htmlFarm.staticTitleBar(),
         player = htmlFarm.player(),
@@ -122,14 +119,14 @@ app.onStart = function() {
             favz = htmlFarm.favouritesPage();
 
         // Add to bookeeper
-        addView("all-programs", alla);
         addView("flow", flow);
+        addView("all-programs", alla);
         addView("downloaded", download);
         addView("favourites", favz);
 
         // Add to DOM
-        slider.appendChild(alla);
         slider.appendChild(flow);
+        slider.appendChild(alla);
         slider.appendChild(download);
         slider.appendChild(favz);
 
@@ -164,14 +161,14 @@ app.onStart = function() {
         app.views.currentIndex = 0;
 
         // Add the permanent views 
-        addView("all-programs", alla);
         addView("flow", flow);
+        addView("all-programs", alla);
         addView("downloaded", download);
         addView("favourites", favz);
 
         // Add to DOM
-        slider.appendChild(alla);
         slider.appendChild(flow);
+        slider.appendChild(alla);
         slider.appendChild(download);
         slider.appendChild(favz);
 
@@ -272,10 +269,14 @@ app.onStart = function() {
             len = legitServerPodcasts.length;
             cachedPodcasts = cachedPodcasts.filter(function(podd){
                 for (var i = 0; i < len; i++) {
-                    if (arePodcastsEqual(legitServerPodcasts[i], podd))
+                    if (arePodcastsEqual(legitServerPodcasts[i], podd)) {
                         return true;
+                    }
                 }
                 console.log('Removed ' + podd.title + ' from ' + programKey)
+                console.log(podd)
+                console.log(cachedPodcasts)
+                console.log(legitServerPodcasts)
                 mustPatch = true;
                 return false;
             })
@@ -288,8 +289,11 @@ app.onStart = function() {
                         return;
                 }
 
-                cachedPodcasts.splice(i, 0, podd);
                 console.log('Added ' + podd.title + ' to ' + programKey)
+                console.log(podd)
+                console.log(cachedPodcasts)
+                console.log(legitServerPodcasts)
+                cachedPodcasts.splice(i, 0, podd);
                 mustPatch = true;
             })
 
@@ -347,5 +351,8 @@ app.onStart = function() {
             // Notify the world
             loadedProgramFromCache(programKey);
         });
+
+        // Remove the loading div
+        document.body.removeChild(document.getElementById("loading"));
     }
 };

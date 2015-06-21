@@ -240,7 +240,7 @@ AudioPlayer.prototype.init = function() {
 	this.seeking = false;
     this.seekBar.on('slide', function(){
     	window.app.audiop.seeking = true;
-		window.app.audiop.updatePosition(window.app.audiop.seekBar.val())
+		window.app.audiop.updatePosition(window.app.audiop.seekBar.val(), true)
     })
     this.seekBar.on('change', function(){
     	window.app.audiop.seeking = false;
@@ -263,13 +263,13 @@ AudioPlayer.prototype.load = function() {
 };
 
 // Does not actually seek; only updates the visuals
-AudioPlayer.prototype.updatePosition = function(pos) {
+AudioPlayer.prototype.updatePosition = function(pos, force) {
     if (pos < 0) {
         pos = 0;
     }
     var time = formatTime(new Date(pos * 1000));
 
-    if (!window.app.audiop.seeking)
+    if (!window.app.audiop.seeking || force)
     	this.footerTimeEl.innerHTML = time + " / " + this.currentDurationString;
 
     if (!this.disableAutoSeek)

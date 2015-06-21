@@ -53,7 +53,7 @@
         var parser = new DOMParser(),
             xmlDoc = parser.parseFromString(xml, "text/xml"),
             xmlItems = xmlDoc.getElementsByTagName("item");
-
+       
         for (i = 0, l = data.entries.length; i < l; i++) {
             entry = data.entries[i];
             datax = xmlItems[i].getElementsByTagName("enclosure");
@@ -64,6 +64,7 @@
 
             var url = datax[0].getAttributeNode("url");
             if (url == undefined || url.value == undefined || url.value.indexOf(".mp3") === -1) {
+                console.log('Didn\'t find any url in: ' + (url ? url.value : url))
                 continue;
             }
             url = url.value;
@@ -77,14 +78,13 @@
                 imgUrl = program.image;
             }
 
-            //console.log(timthumbBase + imgUrl + sizeParams);
             podcasts.push({
                 title: entry.title,
                 // author is the rss author / program.key, e.g. lhs
                 author: program.key,
                 // program is the name of the program, e.g. Lexikaliska Hästsällskapet
                 program: program.name,
-                index: i,
+                index: podcasts.length,
                 content: removeTags(entry.content),
                 duration: 0,
                 date: entry.publishedDate, // so that we can order correctly in ~the flow~
@@ -108,7 +108,7 @@
             }).done(function(message, text, jqXHR) {
                 var poddSize = jqXHR.getResponseHeader("Content-Length") * 8; // byte --> bits
                 podd.duration = Math.floor(poddSize / (128 * 1024)); // bits/128kbps = s
-            }).always(function() {
+
                 // When all podcasts have been failed/done, proceed.
                 remaining--;
                 if (remaining === 0 && callb) {
@@ -117,6 +117,12 @@
             }).error(function(){
                 var index = podcasts.indexOf(podd)
                 podcasts.splice(index, 1)
+
+                // When all podcasts have been failed/done, proceed.
+                remaining--;
+                if (remaining === 0 && callb) {
+                    callb(podcasts);
+                }
             })
         });
 

@@ -206,10 +206,13 @@ AudioPlayer.prototype.init = function() {
     });
 	
 	this.disableAutoSeek = false;
+	this.seeking = false;
     this.seekBar.on('slide', function(){
+    	window.app.audiop.seeking = true;
 		window.app.audiop.updatePosition(window.app.audiop.seekBar.val())
     })
     this.seekBar.on('change', function(){
+    	window.app.audiop.seeking = false;
 		window.app.audiop.seekTo(window.app.audiop.seekBar.val())    	
     })
 };
@@ -234,7 +237,9 @@ AudioPlayer.prototype.updatePosition = function(pos) {
         pos = 0;
     }
     var time = formatTime(new Date(pos * 1000));
-    this.footerTimeEl.innerHTML = time + " / " + this.currentDurationString;
+
+    if (!window.app.audiop.seeking)
+    	this.footerTimeEl.innerHTML = time + " / " + this.currentDurationString;
 
     if (!this.disableAutoSeek)
     	this.seekBar.val(pos)

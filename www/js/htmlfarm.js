@@ -182,21 +182,23 @@
             "data-podcast-index": podcast.index,
             "onclick": "window.handlers.expandPodcast(event)"
         }, [
-            el("img#podd-img", {
-                src: resizeImage(podcast.image || window.app.programs[podcast.author].image),
-                "style": "width: " + window.deviceStyle.standardWidth + "px;"
-            }),
-            el("div.podd-text", [
-                // Add podcast author if requested, otherwise leave it out.
-                doTitle ? el("div#podd-title", [podcast.program]) : undefined,
-                el("div#podd-ep", [podcast.title]),
-                el("div#podd-time", [Math.floor(podcast.duration / 60) + " min"])
+            el("div.podd-container.flexme", [
+                el("img#podd-img", {
+                    src: resizeImage(podcast.image || window.app.programs[podcast.author].image),
+                    "style": "width: " + window.deviceStyle.standardWidth + "px;"
+                }),
+                el("div.podd-text.flexme", [
+                    // Add podcast author if requested, otherwise leave it out.
+                    doTitle ? el("div#podd-title", [podcast.program]) : undefined,
+                    el("div#podd-ep" + (doTitle ? ".two-line" : ""), [podcast.title]),
+                    el("div#podd-time", [Math.floor(podcast.duration / 60) + " min"])
+                ]),
+                dlElement,
+                // if podd isn't available (offline & not downloaded) -> grey out the play button
+                el("div.podd-control.play" + (poddAvailable ? "" : ".grey-out-bg"), {
+                    "onclick": "window.handlers.playPodcastHandler(event)"
+                })
             ]),
-            // if podd isn't available (offline & not downloaded) -> grey out the play button
-            el("div.podd-control.play" + (poddAvailable ? "" : ".grey-out-bg"), {
-                "onclick": "window.handlers.playPodcastHandler(event)"
-            }),
-            dlElement,
             el("div.podd-ep-text", [podcast.content])
         ]);
     /**

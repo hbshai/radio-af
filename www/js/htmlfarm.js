@@ -221,7 +221,7 @@
             }),
             el("div.footer-text-container", [
                 el("div#footer-title", ["inget program valt"]),
-                el("div#footer-ep", ["inget avsnitt valt"]),
+                el("div#footer-ep", ["ingen podd vald"]),
                 el("div#footer-time", ["-- / --"])
             ]),
             el("div#footer-btn.footer-pause", {

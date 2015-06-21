@@ -7,15 +7,6 @@
 @title-bar-height: 50px;
 
 // OOPPA
-.noUi-horizontal.noUi-extended {
-    padding-right: 32px;
-}
-.noUi-horizontal.noUi-extended .noUi-handle {
-    left: -1px;
-}
-.noUi-horizontal.noUi-extended .noUi-origin  {
-    right: -32px;
-}
 .menu {
     height: 100%;
     width: 70%;
@@ -26,11 +17,6 @@
     background-color: @dark-blue;
 
     left: -100%;
-}
-// 60px height
-#seekbar {    
-    width: 70%;
-    margin: 0 auto;
 }
 .lefty {
     -webkit-transition: left 0.2s ease-out;
@@ -723,20 +709,35 @@ p {
         -ms-flex-align-content: center;
         align-content: center;
 }
+
+.noUi-horizontal.noUi-extended {
+    padding-right: 10px;
+}
+.noUi-horizontal.noUi-extended .noUi-handle {
+    left: -3px;
+}
+.noUi-horizontal.noUi-extended .noUi-origin  {
+    right: -32px;
+}
+// 60px height
+#seekbar {    
+    width: 85%;
+    margin: auto auto;
+    margin-top: 10px;
+}
+
 #footer-img {
     position: absolute;
     height: @footer-height;
     display: inline-block;
 }
 #footer-title {
-    color: black;
 }
 .footer-text-container {
     display: inline-block;
     margin-top: 12px;
     margin-left: @footer-height + 65px; // spacing for footer img btn
 	font-size:1.75em; font-weight:bold;
-    background-color: red;
 }
 #footer-btn {
     position: absolute;

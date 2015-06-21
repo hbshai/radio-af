@@ -256,7 +256,7 @@ body,ul,li,h1,h2,p {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-#spotlight-dl {
+.spotlight-dl {
     /* flex box stuff */
     -webkit-box-flex: 0;
     -webkit-flex: 1 0 auto; /*important*/
@@ -270,6 +270,12 @@ body,ul,li,h1,h2,p {
     background-position: center;
     // background-size: 31.5px 38.5px;
 }
+
+.spotlight-remove {
+    .spotlight-dl();
+    background-image: url("../img/dl-check.png") !important;
+}
+
 #spotlight-play {
     /* flex box stuff */
     -webkit-box-flex: 0;
@@ -594,15 +600,8 @@ body,ul,li,h1,h2,p {
 }
 
 .podd-remove {
-    float: right;
-    display: inline-block;
-    margin-top: 14px; // was 15px
-    margin-left: @play-margin;
-    height: @podd-height - @play-margin;
-    width: @podd-height;
-    background-image: url("../img/dl-check-blue.png");
-    background-repeat: no-repeat;
-    background-position: center;
+    .podd-dl();
+    background-image: url("../img/dl-check-blue.png") !important;
 }
 
 
@@ -829,7 +828,7 @@ p {
         height:  @spotlight-height;
     }
 
-    #spotlight-dl {
+    .spotlight-dl {
         /* flex box stuff */
         max-height: @spotlight-height;
         min-height: @spotlight-height;
@@ -838,6 +837,11 @@ p {
         
         background-size: 31.5px 38.5px;
     }
+
+    .spotlight-remove {
+        .spotlight-dl();
+    }
+
     #spotlight-play {
         /* flex box stuff */
         max-height: @spotlight-height;

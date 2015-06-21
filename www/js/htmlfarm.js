@@ -514,6 +514,17 @@
         var programImage = window.app.programs[podcast.author].image,
             image = isProgramView ? programImage : (podcast.image || programImage);
 
+        var poddAvailable = !window.hasNoInternet || window.dlman.has(podcast.author + podcast.title);
+        // create podd-dl if we have internet, or podd-remove if we've previously
+        // downloaded the podd
+        if (poddAvailable) {
+            var dlElement = el("div.spotlight-" + (window.dlman.has(podcast.author + podcast.title) ? "remove" : "dl"), {
+                    "onclick": "window.handlers.handleDownloadButton(event)"
+                })
+        } else {
+            var dlElement = el("div");
+        }
+
         return el("div.spotlight", {
             "data-podcast-program": podcast.author,
             "data-podcast-index": podcast.index
@@ -531,7 +542,7 @@
                     el("div#spotlight-ep", [podcast.title]),
                     el("div#spotlight-time", [Math.floor(podcast.duration / 60) + " min"])
                 ]),
-                el("div#spotlight-dl"),
+                dlElement,
             ]),
             el("div.title-bar", [
                 el("p", [title])

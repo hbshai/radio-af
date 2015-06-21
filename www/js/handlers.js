@@ -19,13 +19,14 @@
     function toggleDownloadButton(podcast) {
         var mainSelector = "[data-podcast-program='" + podcast.author + "']"
             + "[data-podcast-index='" + podcast.index + "']";
+        console.log("WOWOWO DL!?!?!??!?");
 
         // Toggles the minipod button
-        $(mainSelector + " > .podd-control").toggleClass("play").toggleClass("pause");
+        $(mainSelector + " > .podd-dl").toggleClass("podd-remove");
 
         // TODO: Make this work (selector is wrong)
         // Toggles the spotlight button
-        $(mainSelector + " > div > .podd-control").toggleClass("play").toggleClass("pause");
+        $(mainSelector + " > div > .spotlight-dl").toggleClass("spotlight-remove");
     }
 
     function togglePlayerSlider(event) {
@@ -319,6 +320,8 @@
             podcast = window.app.programs[program].podcasts[index],
             hash = podcast.author + podcast.title,
             alreadyDownloaded = window.dlman.has(hash);
+
+        toggleDownloadButton(podcast);
 
         console.log(podcast.author + " --> " + hash + " (" + podcast.podcastUrl + ")");
 

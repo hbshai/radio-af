@@ -17,7 +17,7 @@ var app = {
     bindEvents: function() {
         document.addEventListener("deviceready", this.onDeviceReady, false);
         document.addEventListener("touchmove", function(e) {
-            //e.preventDefault();
+            e.preventDefault();
         }, false);
     },
 
@@ -67,8 +67,13 @@ app.onStart = function() {
     window.titlebar.init(titleBar);
     window.menu.init(menuDiv, menuButton, titleBar, player);
     window.app.audiop.init();
-    window.dlman.init(function() {
+
+    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs) {
         window.dlman.initialized = true;
+        window.dlman.init(fs);
+        window.cache.init(fs, function (){
+            startGenerating();
+        })
     });
 
     app.scroller = new Scroll("#wrapper", player.offsetHeight);
@@ -76,10 +81,10 @@ app.onStart = function() {
     app.scroller.onScrollListener = window.titlebar.onScroll;
     app.scroller.onPageChangeListener = window.titlebar.onPageChange;
 
-    console.log("Begin cache control");
-    window.localStorage.clear();
+    //window.cache.clear()
+    //window.localStorage.clear();
 
-    var cachedPrograms = window.cache.getCachedPrograms(),
+    var cachedPrograms,
         serverProgramList,
         done = false,
         cachedDone = 0,
@@ -197,25 +202,6 @@ app.onStart = function() {
         }
     }
 
-    // Load cached programs
-    cachedPrograms.forEach(function(programKey) {
-        // Somehow the internet was faster :O
-        if (app.programs[programKey]) {
-            return;
-        }
-
-        console.log("Loading " + programKey + " from cache!");
-
-        // Load program object (except podcasts)
-        app.programs[programKey] = window.cache.getObject(programKey);
-
-        // Load podcasts array
-        app.programs[programKey].podcasts = window.cache.getObject(app.programs[programKey].podcasts);
-
-        // Notify the world
-        loadedProgramFromCache(programKey);
-    });
-
     function rssDoneLoading(data, xml) {
         var programKey = this.program,
             podds = rss.parse(data, xml, app.programs[programKey], withDuration);
@@ -284,7 +270,7 @@ app.onStart = function() {
             // Remove all unknown podcasts (that aren't on server-side)
             len = legitServerPodcasts.length;
             cachedPodcasts = cachedPodcasts.filter(function(podd){
-                for (i = 0; i < len; i++) {
+                for (var i = 0; i < len; i++) {
                     if (arePodcastsEqual(legitServerPodcasts[i], podd))
                         return true;
                 }
@@ -295,13 +281,15 @@ app.onStart = function() {
             
             len = cachedPodcasts.length;
             legitServerPodcasts.forEach(function(podd){
+                var i;
                 for (i = 0; i < len; i++) {
-                    if (!arePodcastsEqual(cachedPodcasts[i], podd)) {
-                        cachedPodcasts.splice(i, 0, podd);
-                        console.log('Added ' + podd.title + ' to ' + programKey)
-                        mustPatch = true;
-                    }
+                    if (arePodcastsEqual(cachedPodcasts[i], podd))
+                        return;
                 }
+
+                cachedPodcasts.splice(i, 0, podd);
+                console.log('Added ' + podd.title + ' to ' + programKey)
+                mustPatch = true;
             })
 
             // We are already updating the stuff in-place, but maybe this is needed
@@ -312,27 +300,52 @@ app.onStart = function() {
         }
     }
 
-    // Fetch the server-side list of program names, images and rss
-    // TODO: Use server side instead of local side
-    $.getJSON("programs.json", function(data) {
-        // data = { 'bestforeigar' : { name : 'walla', image : 'www', rss : 'www' }, ... }
-        if (data) {
-            serverProgramList = Object.keys(data);
-            serverProgramList.forEach(function(programKey) {
-                data[programKey].key = programKey;
-                if (!window.app.programs[programKey]) {
-                    window.app.programs[programKey] = data[programKey];
-                    rss.load(data[programKey].rss, 100, rssDoneLoading.bind({
-                        program: programKey
-                    }));
-                } else {
-                    rss.load(data[programKey].rss, 100, mergeRSS.bind({
-                        program: programKey
-                    }));
-                }
-            });
-        } else {
-            console.error("no data received");
-        }
-    });
+    function startGenerating(){
+        console.log('Begin cache control')
+        cachedPrograms = window.cache.getCachedPrograms()
+    
+        // Fetch the server-side list of program names, images and rss
+        // TODO: Use server side instead of local side
+        $.getJSON("programs.json", function(data) {
+            // data = { 'bestforeigar' : { name : 'walla', image : 'www', rss : 'www' }, ... }
+            if (data) {
+                serverProgramList = Object.keys(data);
+                serverProgramList.forEach(function(programKey) {
+                    data[programKey].key = programKey;
+                    if (!window.app.programs[programKey]) {
+                        window.app.programs[programKey] = data[programKey];
+                        rss.load(data[programKey].rss, 100, rssDoneLoading.bind({
+                            program: programKey
+                        }));
+                    } else {
+                        rss.load(data[programKey].rss, 100, mergeRSS.bind({
+                            program: programKey
+                        }));
+                    }
+                });
+            } else {
+                console.error("no data received");
+            }
+        });
+
+        // Load cached programs
+        cachedPrograms.forEach(function(programKey) {
+            console.log('Loading...?')
+            // Somehow the internet was faster :O
+            if (window.app.programs[programKey]) {
+                return;
+            }
+
+            console.log("Loading " + programKey + " from cache!");
+
+            // Load program object (except podcasts)
+            app.programs[programKey] = window.cache.getObject(programKey);
+
+            // Load podcasts array
+            //app.programs[programKey].podcasts = window.cache.getObject(app.programs[programKey].podcasts);
+
+            // Notify the world
+            loadedProgramFromCache(programKey);
+        });
+    }
 };

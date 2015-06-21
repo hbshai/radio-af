@@ -9,7 +9,7 @@
             + "[data-podcast-index='" + podcast.index + "']";
 
         // Toggles the minipod button
-        $(mainSelector + " > .podd-control").toggleClass("play").toggleClass("pause");
+        $(mainSelector + " > div > .podd-control").toggleClass("play").toggleClass("pause");
 
         // Toggles the spotlight button
         $(mainSelector + " > div > #spotlight-play").toggleClass("spotlight-pause");
@@ -20,7 +20,7 @@
             + "[data-podcast-index='" + podcast.index + "']"
 
         // Toggles the minipod button
-        $(mainSelector + " > .podd-dl").toggleClass("podd-" + toggleWhat).text(" ");
+        $(mainSelector + " > div > .podd-dl").toggleClass("podd-" + toggleWhat).text(" ");
 
         // Toggles the spotlight button
         $(mainSelector + " > div > .spotlight-dl").toggleClass("spotlight-" + toggleWhat).text(" ");

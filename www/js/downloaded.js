@@ -10,7 +10,6 @@
 
     function gotFS(fileSystem) {
         system = fileSystem;
-        console.log("got file system:" + system.name);
 
         fileSystem.root.getDirectory("downloaded", {
             create: true
@@ -33,35 +32,42 @@
         currentDownload;
 
     function gotFile(fileEntry) {
-        var localPath = fileEntry.fullPath;
         var localUrl = fileEntry.toURL();
-
-        currentDownload.path = localUrl;
+        console.log(fileEntry)
 
         var fileTransfer = new FileTransfer();
         var uri = encodeURI(currentDownload.podcast.podcastUrl);
-        console.log("Downloading " + uri + " to " + localPath);
+        console.log("Downloading " + uri + " to " + localUrl);
 
         fileTransfer.download(
             uri,
             localUrl,
             function(entry) {
-                downloaded[currentDownload.hash] = entry.toURL();
+                console.log('Transfer success::begin')
+                downloaded[currentDownload.hash] = localUrl;
                 
                 window.localStorage.setItem("_downloaded", JSON.stringify(downloaded));
                 window.handlers.fileTransferSuccess(currentDownload.podcast, currentDownload.hash);
 
                 currentDownload = undefined
                 if (downloadQueue.length > 0) {
-                    setTimeout(downloadNext, 250);
+                    //setTimeout(downloadNext, 250);
                 }
+                console.log('Transfer success::end')
+
             },
             function(error) {
+                console.log('Transfer abort::begin')
+
                 window.handlers.fileTransferError(currentDownload, error);
+                console.log('Transfer abort::callback done')
+
                 currentDownload = undefined
                 if (downloadQueue.length > 0) {
+                    console.log('Transfer abort::setting timeout')
                     setTimeout(downloadNext, 250);
                 }
+                console.log('Transfer abort::done')
             }
         );
 
@@ -70,7 +76,7 @@
         var lastUpdate = Date.now() - 2000,
             queryMini = "[data-podcast-program='" + currentDownload.podcast.author + "']"
                 + "[data-podcast-index='" + currentDownload.podcast.index + "']"
-                + " > .podd-dl",
+                + " > div > .podd-dl",
             querySpot = "[data-podcast-program='" + currentDownload.podcast.author + "']"
                 + "[data-podcast-index='" + currentDownload.podcast.index + "']"
                 + " > div > .spotlight-dl";
@@ -78,6 +84,7 @@
         fileTransfer.onprogress = function(progressEvent) {
             if (progressEvent.lengthComputable && (Date.now() - lastUpdate >= 1000)) {
                 var progress = Math.floor(100 * (progressEvent.loaded / progressEvent.total)) + "%"
+                console.log('UI update: ' + progress)
                 $(queryMini).text(progress);
                 $(querySpot).text(progress);
                 lastUpdate = Date.now()
@@ -86,9 +93,13 @@
     }
 
     function downloadNext() {
-        if (downloadQueue.length === 0 || currentDownload)
+        console.log('downloadnext::begin')
+        if (downloadQueue.length === 0 || currentDownload) {
+            console.log('downloadnext::bail')
             return;
+        }
 
+        console.log('Alright, begin downloading: ' + downloadQueue[0].hash)
         currentDownload = downloadQueue.shift();
 
         // currentDownload.url is something like //blabla/blabla/bla/fileidentifier.mp3
@@ -99,16 +110,18 @@
             create: true,
             exclusive: false
         }, gotFile);
+        console.log('downloadnext::end')
     }
 
     function queueDownload(hash, podcast) {
+        console.log('QUEUE DOWNLOAD: ' + hash)
         downloadQueue.push({
             hash: hash,
             podcast: podcast
         });
         
         if (downloadQueue.length === 1 && !currentDownload) {
-            console.log('Download next!')
+            console.log('Download next!: ' + hash)
             downloadNext();
         }
     }
@@ -171,12 +184,14 @@
         },
         abort : function(trackHash){
             if (currentDownload && trackHash === currentDownload.hash) {
-                if (currentDownload.transfer)
+                if (currentDownload.transfer) {
                     currentDownload.transfer.abort()
-                else {
+                } else {
+                    console.log('OH SHIT!')
                     currentDownload = undefined
                     setTimeout(downloadNext, 250)
                 }
+
                 return true;
             }
 

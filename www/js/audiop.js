@@ -45,7 +45,7 @@ var AudioPlayer = function() {
         }
 	
 		if (_media) {
-        	_media.play({ /* super secret options here */ });
+        	_media.play({ playAudioWhenScreenIsLocked : true });
         }
         if (_htmlAudio) {
         	_htmlAudio.play()
@@ -88,34 +88,43 @@ var AudioPlayer = function() {
         // No track playing. Update _paused otherwise play() will malfunction...
         _paused = true;
         var uri = window.dlman.has(podcast.author + podcast.title) ? window.dlman.get(podcast.author + podcast.title) : podcast.podcastUrl;
-        _media = new Media(uri, self.onSuccess, self.onError);
-
+        if (window.iOSPlatform) {
+            _htmlAudio = new Audio(uri)
+            _htmlAudio.id = podcast.title
+        } else {
+            _media = new Media(uri, self.onSuccess, self.onError);
+        }
+        
         var counter = 0;
-        this.timerDur && clearInterval(this.timerDur);
-        this.timerDur = setInterval(function() {
-            counter = counter + 100;
-            if (counter > 20000) {
-                clearInterval(self.timerDur);
-                self.timerDur = 0;
-            }
-            var dur = _media.getDuration();
-            if (dur > 0) {
-                clearInterval(self.timerDur);
-            	self.timerDur = 0;
-            	
-            	// Update the durations, sadly not for html :((
-            	self.currentDurationString = formatTime(new Date(dur * 1000));
-            	self.currentPodcast.duration = dur;
+        if (this.timerDur)
+            clearInterval(this.timerDur);
 
-        	    self.seekBar.noUiSlider({
-        	    	start : 0,
-        			range: {
-        				'min': 0,
-        				'max': dur
-        			}
-        	    }, true);
-            }
-        }, 100);
+        if (_media) {
+            this.timerDur = setInterval(function() {
+                counter = counter + 100;
+                if (counter > 20000) {
+                    clearInterval(self.timerDur);
+                    self.timerDur = 0;
+                }
+                var dur = _media.getDuration();
+                if (dur > 0) {
+                    clearInterval(self.timerDur);
+                	self.timerDur = 0;
+                	
+                	// Update the durations, sadly not for html :((
+                	self.currentDurationString = formatTime(new Date(dur * 1000));
+                	self.currentPodcast.duration = dur;
+
+            	    self.seekBar.noUiSlider({
+            	    	start : 0,
+            			range: {
+            				'min': 0,
+            				'max': dur
+            			}
+            	    }, true);
+                }
+            }, 100);
+        }
 
         // Do some UI shizzle
         this.currentDurationString = formatTime(new Date(podcast.duration * 1000));
@@ -169,11 +178,7 @@ var AudioPlayer = function() {
         }
 
         this.currentPodcast = undefined;
-
-        //window.localStorage.removeItem("audiop-program");
-        //window.localStorage.removeItem("audiop-index");
-        //window.localStorage.removeItem("audiop-seek"); // init to 0
-
+        
         // No track playing. Update _paused otherwise play() will malfunction...
         _paused = true;
         if (window.iOSPlatform) {
@@ -195,7 +200,12 @@ var AudioPlayer = function() {
 
     // Yes I am seek
     this.seekTo = function(pos) {
-        _media.seekTo(pos * 1000); // seek expects ms
+        if (_media)
+            _media.seekTo(pos * 1000); // seek expects ms
+        
+        if (_htmlAudio)
+            _htmlAudio.currentTime = pos;
+
         self.updatePosition(pos);
         window.localStorage.setItem("audiop-seek", pos);
     };

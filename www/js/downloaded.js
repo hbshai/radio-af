@@ -1,5 +1,7 @@
 (function(GLOBAL) {
 
+    // download.js stores its trackHash --> fileUrl map in localStorage
+
     var folder, // the directory where files are
         downloaded, // track hash --> file name
         system; // the file system
@@ -51,7 +53,7 @@
 
                 currentDownload = undefined
                 if (downloadQueue.length > 0) {
-                    //setTimeout(downloadNext, 250);
+                    setTimeout(downloadNext, 250);
                 }
                 console.log('Transfer success::end')
 

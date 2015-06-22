@@ -554,15 +554,28 @@ body,ul,li,h1,h2,p {
     -webkit-box-flex: 0;
     -webkit-flex: 1 0 auto; /*important*/
 
-    max-height: @podd-height - @play-margin / 2;
-    min-height: @podd-height - @play-margin / 2;
-    max-width: @podd-height - @play-margin / 2;
-    min-width: @podd-height - @play-margin / 2 ;
+    // max-height: @podd-height - @play-margin / 2;
+    // min-height: @podd-height - @play-margin / 2;
+    // max-width: @podd-height - @play-margin / 2;
+    // min-width: @podd-height - @play-margin / 2 ;
 
-    margin-top: @play-margin / 2;
-    margin-bottom: @play-margin / 2;
     background-color: @raf-red;
     background-image: url("../img/play-small.png");
+    background-repeat: no-repeat;
+
+    background-size: 32px 32px;
+    margin: auto 0;
+    height: 48px !important;
+}
+
+.play {
+    background-image: url("../img/play-small.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.pause {
+    background-image: url("../img/pause-small.png");
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -572,15 +585,22 @@ body,ul,li,h1,h2,p {
     -webkit-box-flex: 0;
     -webkit-flex: 1 0 auto; /*important*/
 
-    margin-top: @play-margin / 2;
-    margin-bottom: @play-margin / 2;
-    max-height: @podd-height - @play-margin;
-    min-height: @podd-height - @play-margin;
-    max-width: @podd-height;
-    min-width: @podd-height;
+    // margin-top: @play-margin / 2;
+    // margin-bottom: @play-margin / 2;
+    // max-height: @podd-height - @play-margin;
+    // min-height: @podd-height - @play-margin;
+    // max-width: @podd-height;
+    // min-width: @podd-height;
     background-image: url("../img/dl-box-blue.png");
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.podd-control, .podd-dl {
+    width: 50px; // width from codepen.io proto
+    background-repeat: no-repeat;
+    background-position: center;
+
 }
 .chevron-inverted {
     background-repeat: no-repeat;
@@ -606,17 +626,6 @@ body,ul,li,h1,h2,p {
 	font-family: OpenSans;
 }
 
-.play {
-    background-image: url("../img/play-small.png");
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.pause {
-    background-image: url("../img/pause-small.png");
-    background-repeat: no-repeat;
-    background-position: center;
-}
 
 .fav-heart {
     background-image: url("../img/heart.png");
@@ -965,13 +974,15 @@ p {
     }
 
     .podd-control {
-        margin-left: 10px;
-        margin-right: 10px;
+        // margin-left: 10px;
+        // margin-right: 10px;
 
-        max-height: @podd-height - 35px;
-        min-height: @podd-height - 35px;
-        max-width: @podd-height - 30px;
-        min-width: @podd-height - 30px;
+        // max-height: @podd-height - 35px;
+        // min-height: @podd-height - 35px;
+        // max-width: @podd-height - 30px;
+        // min-width: @podd-height - 30px;
+
+        height: 40px !important;
     }
 
     @play-margin: 30px;
@@ -980,8 +991,21 @@ p {
     }
 
     .pause {
-        background-size: 14.5px 18px;
+        .play();
     }
+    .podd-dl {
+        // max-height: 38.5px;
+        // min-height: 38.5px;
+        // max-width: 31.5px;
+        // min-width: 31.5px;
+
+        background-size: 31.5px 38.5px;
+    }
+
+    .podd-remove {
+        .podd-dl();
+    }
+
 
     .fav-heart {
         width: 40px;
@@ -994,18 +1018,7 @@ p {
         .fav-heart();
     }
 
-    .podd-dl {
-        max-height: 38.5px;
-        min-height: 38.5px;
-        max-width: 31.5px;
-        min-width: 31.5px;
 
-        background-size: 31.5px 38.5px;
-    }
-
-    .podd-remove {
-        .podd-dl();
-    }
 
     /* FAV STUFF */
     @fav-width: 140px;

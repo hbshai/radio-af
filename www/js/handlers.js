@@ -27,7 +27,8 @@
     }
 
     function togglePlayerSlider(event) {
-        if (event.target.classList.contains("footer-pause") || event.target.classList.contains("footer-play")) {
+        if (event.target.classList.contains("footer-pause") || event.target.classList.contains("footer-play") || 
+            event.target.classList.contains("slider")) {
             return;
         }
         var player = findDiv(event.target, "lefty");

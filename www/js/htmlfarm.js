@@ -448,11 +448,12 @@
         }).reduce(flatten).filter(function(pod) {
             return pod != undefined && window.dlman.has(pod.author + pod.title);
         });
-        
+       
         if (downloadedPods.length > 0) {
             return el("div.page", [
                 createSpotlight("nedladdade poddar", downloadedPods.shift()),
-                populatePageWithPodcasts(downloadedPods, false)
+                populatePageWithPodcasts(downloadedPods, false),
+                (downloadedPods.length <= 1 ? el("div.end-of-list", ["...tomt"]) : el("div"))
             ]);
         } else {
             return el("div.page", [

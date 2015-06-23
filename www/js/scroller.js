@@ -124,7 +124,7 @@
         // This is probably perferrable to using insertPage/removePage
         refreshPages: function() {
             var pages = document.querySelectorAll(this.options.pages),
-                height = window.innerHeight - this.offsetHeight,
+                innerPageHeight = window.innerHeight - this.offsetHeight,
                 len = pages.length, i;
 
             // setup slider/page sizes
@@ -137,10 +137,13 @@
             this.pages = new Array(len);
             for (i = 0; i < len; i++) {
                 this.pages[i] = pages[i];
-                if (this.pages[i].offsetHeight < height)
-                    this.pages[i].style.height = height + 'px';
 
                 this.pages[i].style.width = pageWidth;
+
+                if (this.pages[i].offsetHeight < innerPageHeight) {
+                    this.pages[i].style.height = innerPageHeight + "px";
+                }
+
             }
 
             this.currentPage = this.currentPage || 0;
@@ -187,12 +190,14 @@
             }
 
             var width = window.innerWidth,
-                height = window.innerHeight - this.offsetHeight
+                innerPageHeight = (window.innerHeight - this.offsetHeight),
+                elHeight = el.offsetHeight;
 
             el.style.width = width + "px";
-            if (el.offsetHeight < height)
-                el.style.height = height + 'px';
-            
+            if (elHeight < innerPageHeight) {
+                el.style.height = innerPageHeight + "px";
+            }
+
             this.slider.style.width = this.pages.length * width + "px";
 
             if (this.currentPage < targetIndex) {
@@ -245,7 +250,7 @@
             this.x = x;
             this.y = y;
         },
-        
+
         touchStart: function(e) {
             if (this.frame) {
                 cancelFrame(this.frame);

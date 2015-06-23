@@ -16,8 +16,15 @@
     }
 
     function toggleDownloadButton(podcast, toggleWhat) {
+        for (var i = window.app.programs[podcast.author].podcasts.length - 1; i >= 0; i--) {
+            if (window.app.programs[podcast.author].podcasts[i].title === podcast.title) {
+                if (i !== podcast.index) {
+                    window.alert(i + " vs " + podcast.index);
+                }
+            }
+        }
         var mainSelector = "[data-podcast-program='" + podcast.author + "']"
-            + "[data-podcast-index='" + podcast.index + "']"
+            + "[data-podcast-index='" + podcast.index + "']";
 
         // Toggles the minipod button
         $(mainSelector + " > div > .podd-dl").toggleClass("podd-" + toggleWhat).text(" ");
@@ -27,7 +34,7 @@
     }
 
     function togglePlayerSlider(event) {
-        if (event.target.classList.contains("footer-pause") || event.target.classList.contains("footer-play") || 
+        if (event.target.classList.contains("footer-pause") || event.target.classList.contains("footer-play") ||
             event.target.classList.contains("slider")) {
             return;
         }
@@ -59,7 +66,8 @@
         togglePlayPauseButton(podcast);
     }
 
-    function playSpotlightPodcast(event) {
+    function playPodcast(event) {
+
         // Two parents up
         var dataset = event.target.parentNode.parentNode.dataset,
             // Dataset converts podcast-program --> podcastProgram
@@ -68,30 +76,24 @@
             // Use above data to find podcast
             podcast = window.app.programs[program].podcasts[index];
 
-        playPausePodcast(podcast);
-    }
-
-    function playPodcast(event) {
-        var dataset = event.target.parentNode.dataset,
-            // Dataset converts podcast-program --> podcastProgram
-            program = dataset["podcastProgram"],
-            index = dataset["podcastIndex"],
-            // Use above data to find podcast
-            podcast = window.app.programs[program].podcasts[index];
-
+        if (window.hasNoInternet() && !window.dlman.has(podcast.author + podcast.title)) {
+            return;
+        }
         playPausePodcast(podcast);
     }
 
     function playPauseCurrent(event) {
         window.app.audiop.playOrPause();
 
-        if (window.app.audiop.currentPodcast)
+        if (window.app.audiop.currentPodcast) {
             togglePlayPauseButton(window.app.audiop.currentPodcast);
+        }
     }
 
     function downloadError(download, error) {
-        if (download)
-            rebuildDownloadPage(download.podcast, download.hash, true)
+        if (download) {
+            rebuildDownloadPage(download.podcast, download.hash, true);
+        }
     }
     // Create a program view for the tapped on program, insert it into the DOM and focus it
     function createProgramView(evt) {
@@ -201,6 +203,7 @@
 
         window.app.views.nodes["favourites"] = newFavz;
         window.app.views.nodes["flow"] = newFlow;
+
         window.app.scroller.refreshPages();
     }
 
@@ -291,14 +294,14 @@
             newDl = window.htmlFarm.downloadedPage(),
             wasAdded = window.dlman.has(hash);
 
-        slider.replaceChild(newDl, window.app.views.nodes['downloaded']);
-        window.app.views.nodes['downloaded'] = newDl;
-        window.app.scroller.refreshPages();
-
         if (wasAdded) {
-            toggleDownloadButton(podcast, 'queued')
-            toggleDownloadButton(podcast, 'remove')
+            toggleDownloadButton(podcast, "queued");
+            toggleDownloadButton(podcast, "remove");
         }
+
+        slider.replaceChild(newDl, window.app.views.nodes["downloaded"]);
+        window.app.views.nodes["downloaded"] = newDl;
+        window.app.scroller.refreshPages();
     }
 
     function toggleDownload(evt) {
@@ -308,14 +311,13 @@
             dataNode = dataNode.parentNode;
         }
 
-
         if (!dataNode.dataset["podcastProgram"] && !dataNode.dataset["podcastIndex"]) {
             console.log("WARN: Did not find any parent with info!!");
             return;
         }
 
-        evt.preventDefault()
-        evt.stopPropagation()
+        evt.preventDefault();
+        evt.stopPropagation();
 
         var dataset = dataNode.dataset,
             program = dataset["podcastProgram"],
@@ -325,29 +327,29 @@
             alreadyDownloaded = window.dlman.has(hash),
             inProgress = window.dlman.downloading(hash),
             isQueued = window.dlman.queued(hash);
-        
-        if (inProgress || isQueued){
+
+        if (inProgress || isQueued) {
             // Remove the queued class
-            console.log('Abort please!')
-            toggleDownloadButton(podcast, 'queued');
-            window.dlman.abort(hash)
+            console.log("Abort please!");
+            toggleDownloadButton(podcast, "queued");
+            window.dlman.abort(hash);
         } else if (alreadyDownloaded) {
             // Remove the remove class
             console.log("Removing downloaded podcast...");
-            toggleDownloadButton(podcast, 'remove');
+            toggleDownloadButton(podcast, "remove");
             window.dlman.remove(hash, podcast);
         } else if (!alreadyDownloaded && !inProgress && !isQueued) {
             console.log("Should start download now");
             window.dlman.download(podcast, hash);
-            toggleDownloadButton(podcast, 'queued');
+            toggleDownloadButton(podcast, "queued");
         } else {
-            console.log('in: ' + inProgress + ', q: ' + isQueued + ', dl: ' + alreadyDownloaded)
+            console.log("in: " + inProgress + ", q: " + isQueued + ", dl: " + alreadyDownloaded);
         }
     }
 
     GLOBAL.handlers = {
         playPodcastHandler: playPodcast,
-        spotlightHandler: playSpotlightPodcast,
+        spotlightHandler: playPodcast,
         playerControlHandler: playPauseCurrent,
 
         fileTransferSuccess: rebuildDownloadPage,
@@ -369,38 +371,44 @@
                 window.app.views.index["all-programs"]
             );
         },
-        togglePlayerSlider : togglePlayerSlider,
+        togglePlayerSlider: togglePlayerSlider,
         // suddenly: a closure!
         handleInfoClick: (function(event) {
-             var counter = 0;
-             return function(event) {
-                 var topLevel = findDiv(event.target, "page");
-                 for (var i = 0; topLevel.children.length; i++) {
-                     if (topLevel.children[i].classList.contains("shai-img")) {
-                         var div = topLevel.children[i];
-                         break;
-                     }
-                 }
-                 // only increment when the div isn't visible
-                 if (!div.style.display) {
-                     counter = counter + 1;
-                 }
-                 if (counter >= 3) {
-                     // reset the counter
-                     counter = 0;
-                     div.style.display = "block";
-                     window.app.scroller.recalcHeight();
-                 }
-             }
-         })(),
+            var counter = 0;
+            return function(event) {
+                var topLevel = findDiv(event.target, "page");
+                for (var i = 0; topLevel.children.length; i++) {
+                    if (topLevel.children[i].classList.contains("shai-img")) {
+                        var div = topLevel.children[i];
+                        break;
+                    }
+                }
+                // only increment when the div isn't visible
+                if (!div.style.display) {
+                    counter = counter + 1;
+                }
+                if (counter >= 3) {
+                    // reset the counter
+                    counter = 0;
+                    div.style.display = "block";
+                    window.app.scroller.recalcHeight();
+                }
+            };
+        })(),
         toggleProgramPane: switchAllProgramPane,
         handleNetworkError: function() {
-            if (window.hasNoInternet) {
+            if (window._hasShownNetworkError) {
                 return;
             }
-            window.hasNoInternet = true;
-            window.alert("NO INTERNET MOFO");
-        }
+            window._hasShownNetworkError = true;
+            navigator.notification.alert(
+                "Enbart nedladdade poddar kan spelas.", // message
+                function() {}, // callback
+                "Inget internet", // title
+                "Ok" // buttonName
+            );
+        },
+        togglePlayPauseButton: togglePlayPauseButton
 
     };
 })(window);

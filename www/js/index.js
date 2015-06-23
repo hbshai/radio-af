@@ -37,6 +37,26 @@ app.onStart = function() {
 
     app.log("onstart");
 
+    window.hasNoInternet = function() {
+        return navigator.connection.type === Connection.NONE;
+    };
+
+    if (window.hasNoInternet()) {
+        window.handlers.handleNetworkError();
+    }
+
+    var loadingDiv = document.createElement("div"),
+        loadingText = document.createElement("div");
+
+    loadingText.innerHTML = "Första uppstarten kan ta upp till 1 min<br>Vi föreslår en kopp kaffe under tiden";
+    loadingDiv.classList.add("loading-spinner");
+
+    var loadingImg = document.createElement("img");
+    loadingImg["src"] = "img/reload.svg";
+
+    loadingDiv.appendChild(loadingText);
+    loadingDiv.appendChild(loadingImg);
+
     var wrapper = htmlFarm.wrapper(),
         slider = wrapper.slider;
 
@@ -58,6 +78,7 @@ app.onStart = function() {
 
     // Finally setup the slider wrapper
     document.body.appendChild(wrapper);
+    document.body.appendChild(loadingDiv);
 
     FastClick.attach(document.body);
 
@@ -68,12 +89,13 @@ app.onStart = function() {
     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs) {
         window.dlman.initialized = true;
         window.dlman.init(fs);
-        window.cache.init(fs, function (){
+        window.cache.init(fs, function() {
             startGenerating();
-        })
+        });
     });
 
     app.scroller = new Scroll("#wrapper", player.offsetHeight);
+    app.scroller.unregisterEvents();
 
     app.scroller.onScrollListener = window.titlebar.onScroll;
     app.scroller.onPageChangeListener = window.titlebar.onPageChange;
@@ -105,6 +127,9 @@ app.onStart = function() {
             return;
         }
 
+        document.body.removeChild(loadingDiv);
+        app.scroller.registerEvents();
+
         if (!window.dlman.initialized) {
             setTimeout(bootstrap, 250);
             console.log("not done yet");
@@ -125,8 +150,8 @@ app.onStart = function() {
         addView("favourites", favz);
 
         // Add to DOM
-        slider.appendChild(flow)
-        slider.appendChild(alla)
+        slider.appendChild(flow);
+        slider.appendChild(alla);
         slider.appendChild(download);
         slider.appendChild(favz);
 
@@ -154,10 +179,10 @@ app.onStart = function() {
             favz = htmlFarm.favouritesPage();
 
         // Replace old divs with new ones
-        slider.replaceChild(flow , app.views.nodes["flow"]);
-        slider.replaceChild(alla , app.views.nodes["all-programs"]);
-        slider.replaceChild(download , app.views.nodes["downloaded"]);
-        slider.replaceChild(favz , app.views.nodes["favourites"]);
+        slider.replaceChild(flow, app.views.nodes["flow"]);
+        slider.replaceChild(alla, app.views.nodes["all-programs"]);
+        slider.replaceChild(download, app.views.nodes["downloaded"]);
+        slider.replaceChild(favz, app.views.nodes["favourites"]);
 
         // Add the permanent views 
         app.views.nodes["flow"] = flow;
@@ -165,7 +190,7 @@ app.onStart = function() {
         app.views.nodes["downloaded"] = download;
         app.views.nodes["favourites"] = favz;
 
-        window.app.scroller.refreshPages()
+        window.app.scroller.refreshPages();
         setTimeout(window.app.scroller.recalcHeight.bind(window.app.scroller), 250);
         window.titlebar.onPageChange(app.scroller.pages[app.scroller.currentPage]);
     }
@@ -183,7 +208,7 @@ app.onStart = function() {
         serverDone++;
 
         if (serverDone === serverProgramList.length) {
-            console.log('Server done: bootstrapped=' + done + ", mustPatch=" + mustPatch)
+            console.log("Server done: bootstrapped=" + done + ", mustPatch=" + mustPatch);
             if (!done) {
                 bootstrap();
             } else if (mustPatch) {
@@ -197,15 +222,16 @@ app.onStart = function() {
             podds = rss.parse(data, xml, app.programs[programKey], withDuration);
 
         if ((data.entries.length === 0 || podds.length === 0) && window.app.programs[programKey]) {
-            console.log("Loaded " + this.program + ", but no podcasts: skipping... 1")
+            console.log("Loaded " + this.program + ", but no podcasts: skipping... 1");
             window.app.programs[programKey] = undefined;
             delete window.app.programs[programKey];
             loadedProgramFromServer(programKey);
             return;
         }
 
-        if (!window.app.programs[programKey])
+        if (!window.app.programs[programKey]) {
             return;
+        }
 
         console.log("Loaded " + programKey + ", parsing...");
 
@@ -220,8 +246,9 @@ app.onStart = function() {
                 return;
             }
 
-            if (!window.app.programs[programKey])
+            if (!window.app.programs[programKey]) {
                 return;
+            }
 
             app.programs[programKey].podcasts = podcastsWithDur;
             console.log("Finished loading " + programKey);
@@ -233,7 +260,7 @@ app.onStart = function() {
     }
 
     // Either short-circuited non-equal or equal check, cannot have both :((
-    function arePodcastsEqual(poddA, poddB){
+    function arePodcastsEqual(poddA, poddB) {
         return (poddA.title === poddB.title)
             && (poddA.image === poddB.image)
             && (poddA.content === poddB.content)
@@ -256,51 +283,52 @@ app.onStart = function() {
             var cachedPodcasts = window.app.programs[programKey].podcasts,
                 len;
 
-            console.log('Merge ' + programKey)
+            console.log("Merge " + programKey);
 
             // Remove all unknown podcasts (that aren't on server-side)
             len = legitServerPodcasts.length;
-            cachedPodcasts = cachedPodcasts.filter(function(podd){
+            cachedPodcasts = cachedPodcasts.filter(function(podd) {
                 for (var i = 0; i < len; i++) {
                     if (arePodcastsEqual(legitServerPodcasts[i], podd)) {
                         return true;
                     }
                 }
-                console.log('Removed ' + podd.title + ' from ' + programKey)
+                console.log("Removed " + podd.title + " from " + programKey);
                 mustPatch = true;
                 return false;
-            })
-            
+            });
+
             len = cachedPodcasts.length;
-            legitServerPodcasts.forEach(function(podd){
+            legitServerPodcasts.forEach(function(podd) {
                 var i;
                 for (i = 0; i < len; i++) {
-                    if (arePodcastsEqual(cachedPodcasts[i], podd))
+                    if (arePodcastsEqual(cachedPodcasts[i], podd)) {
                         return;
+                    }
                 }
 
-                console.log('Added ' + podd.title + ' to ' + programKey)
+                console.log("Added " + podd.title + " to " + programKey);
                 cachedPodcasts.splice(i, 0, podd);
                 mustPatch = true;
-            })
+            });
 
             // Make sure indexes are correct!!
             for (var i = cachedPodcasts.length - 1; i >= 0; i--) {
                 cachedPodcasts[i].index = i;
-            };
+            }
 
             // We are already updating the stuff in-place, but maybe this is needed
             // b/c of the filter stuff returning new array :s
-            window.app.programs[programKey].podcasts = cachedPodcasts
+            window.app.programs[programKey].podcasts = cachedPodcasts;
             window.cache.putProgram(window.app.programs[programKey]);
             loadedProgramFromServer(programKey);
         }
     }
 
-    function startGenerating(){
-        console.log('Begin cache control')
-        cachedPrograms = window.cache.getCachedPrograms()
-    
+    function startGenerating() {
+        console.log("Begin cache control");
+        cachedPrograms = window.cache.getCachedPrograms();
+
         // Fetch the server-side list of program names, images and rss
         // TODO: Use server side instead of local side
         $.getJSON("programs.json", function(data) {

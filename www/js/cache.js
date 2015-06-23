@@ -1,5 +1,5 @@
 (function() {
-    var db = {},  
+    var db = {},
         fileSystem,
         cacheFile,
         //
@@ -13,84 +13,84 @@
         _wantTruncate = false,
         _dontLoad = false,
         _writing = false,
-        _write = function(){
+        _write = function() {
             if (_writing) {
-                setTimeout(_write, 10000)
-                return
+                setTimeout(_write, 10000);
+                return;
             }
 
             _writing = true;
-            cacheFile.createWriter(function(writer){
+            cacheFile.createWriter(function(writer) {
                 // HOLY SHIT WOOP WOOP
                 if (_wantTruncate) {
-                    writer.truncate(0)
+                    writer.truncate(0);
                     _wantTruncate = false;
                 }
                 writer.onwrite = _done;
                 try {
-                    writer.write(JSON.stringify(db))
-                } catch (e) { 
-                    console.log(e)
-                }                    
+                    writer.write(JSON.stringify(db));
+                } catch (e) {
+                    console.log(e);
+                }
             });
         },
-        _done = function (){
-            console.log('ok, cache saved.')
-            _writing = false
-        }
+        _done = function() {
+            console.log("ok, cache saved.");
+            _writing = false;
+        };
 
     // Wrapper around the localStorage API, with some added methods
     var storage = {
-        getItem : function (key){
-            return db[key]
+        getItem: function(key) {
+            return db[key];
         },
-        setItem : function (key, value){
-            db[key] = value
-            this.save()
+        setItem: function(key, value) {
+            db[key] = value;
+            this.save();
         },
-        removeItem : function (key) {
-            db[key] = undefined
-            delete db[key]
-            this.save()
+        removeItem: function(key) {
+            db[key] = undefined;
+            delete db[key];
+            this.save();
         },
-        
-        save : function(){
+
+        save: function() {
             if (_tid) {
-                clearTimeout(_tid)
+                clearTimeout(_tid);
             }
-            _tid = setTimeout(_write, 5000)
+            _tid = setTimeout(_write, 5000);
         },
-        load : function(){
+        load: function() {
             // get the file entry
-            fileSystem.root.getFile('radioaf-cache', {
+            fileSystem.root.getFile("radioaf-cache", {
                 create: true,
                 exclusive: false
-            }, function gotFileEntry (fileEntry) {
+            }, function gotFileEntry(fileEntry) {
                 cacheFile = fileEntry;
                 // get the file handle
-                fileEntry.file(function (file){
-                    console.log(file)
+                fileEntry.file(function(file) {
+                    console.log(file);
                     if (file.size === 0 || _dontLoad) {
-                        db = {}
-                        _appCallback()
+                        db = {};
+                        _appCallback();
                         return;
                     }
 
-                    var reader = new FileReader()
-                    reader.onloadend = function (evt){
+                    var reader = new FileReader();
+                    reader.onloadend = function(evt) {
                         try {
-                            db = JSON.parse(evt.target.result)
+                            db = JSON.parse(evt.target.result);
                         } catch (e) {
-                            console.log(evt.target.result)
-                            console.log(e)
+                            console.log(evt.target.result);
+                            console.log(e);
                         }
-                        _appCallback()
-                    }
-                    reader.readAsText(file)
+                        _appCallback();
+                    };
+                    reader.readAsText(file);
                 }, window.alert);
             });
         }
-    }
+    };
 
     function programs() {
         var availble = storage.getItem("programs"); // array of cached programs
@@ -125,10 +125,10 @@
 
     // the cache manager
     window.cache = {
-        init : function (fs, callb) {
+        init: function(fs, callb) {
             fileSystem = fs;
             _appCallback = callb;
-            storage.load()
+            storage.load();
         },
         // Returns array of available programs. Feed into getBasicInfo
         getCachedPrograms: programs,
@@ -139,7 +139,7 @@
 
         putProgram: cacheProgram,
 
-        clear : function(){
+        clear: function() {
             _dontLoad = true;
             _wantTruncate = true;
         }

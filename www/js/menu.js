@@ -15,7 +15,7 @@
         })();
 
     function touchStart(evt) {
-        var cl = evt.target.classList
+        var cl = evt.target.classList;
         if (evt.target !== menu && !cl.contains("menu-item") && !cl.contains("menu-footer")) {
             document.addEventListener("touchend", touchEnd, false);
 

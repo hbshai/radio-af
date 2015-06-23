@@ -32,7 +32,7 @@
             .replace(/h\=(\d)+/, favHeight)
             .replace(/q\=(\d)+/, favQuality);
     }
-    window.fixImageUrl = resizeImage
+    window.fixImageUrl = resizeImage;
 
     // the dom wrapper for nice smeets
     // credits to: https://gist.github.com/neilj/1532562
@@ -159,18 +159,17 @@
     function createPodcastDiv(podcast, doTitle, alternate) {
         // offline mode stuff
         var hash = podcast.author + podcast.title,
-            poddAvailable = !window.hasNoInternet || window.dlman.has(hash),
+            poddAvailable = !window.hasNoInternet() || window.dlman.has(hash),
             dlElement = undefined;
-
         // create podd-dl if we have internet, or podd-remove if we've previously
         // downloaded the podd
         if (poddAvailable) {
-            dlElement = el("div.podd-dl" 
-                    + (window.dlman.has(hash) ? ".podd-remove" : "")
-                    + (window.dlman.downloading(hash) ? ".podd-queue" : "")
-                    + (window.dlman.queued(hash) ? ".podd-queue" : ""), {
+            dlElement = el("div.podd-dl"
+                + (window.dlman.has(hash) ? ".podd-remove" : "")
+                + (window.dlman.downloading(hash) ? ".podd-queue" : "")
+                + (window.dlman.queued(hash) ? ".podd-queue" : ""), {
                     "onclick": "window.handlers.handleDownloadButton(event)"
-                })
+                });
         } else {
             dlElement = el("div");
         }
@@ -184,7 +183,7 @@
         }, [
             el("div.podd-container.flexme", [
                 el("img#podd-img", {
-                    src: resizeImage(podcast.image || window.app.programs[podcast.author].image),
+                    src: (window.hasNoInternet() ? resizeImage("img/player-placeholder-img-black.png") : resizeImage(podcast.image || window.app.programs[podcast.author].image)),
                     "style": "width: " + window.deviceStyle.standardWidth + "px;"
                 }),
                 el("div.podd-text.flexme", [
@@ -228,7 +227,7 @@
 
     function makeFooter() {
         return el("div#footer.lefty", {
-            'onclick' : 'window.handlers.togglePlayerSlider(event)'
+            "onclick": "window.handlers.togglePlayerSlider(event)"
         }, [
             el("div.footer-container.flexme", [
                 el("img#footer-img", {
@@ -256,7 +255,7 @@
         }, [
             el("div.program-container.flexme", [
                 el("img.program-img", {
-                    src: resizeImage(program.image),
+                    src: (window.hasNoInternet() ? resizeImage("img/player-placeholder-img-black.png") : resizeImage(program.image)),
                     style: "width: " + window.deviceStyle.standardWidth + "px"
                 }),
                 el("div.program-text-container.flexme", [
@@ -416,29 +415,32 @@
     }
 
     function makeInfoPage() {
-        return el("div.page", 
-            { 'onclick' : 'window.handlers.handleInfoClick(event)'
-        },[
-            createSpotlight("utvecklat av"),
-            el("img.shai-img", {src: "img/shai-devs-named.png"}),
-            el("div.info-container", [
-                el("div.devs-container", [
-                    el("div.shai", ["shai"]),
-                    el("div.small-info-text", ["det vill säga"]),
-                    el("div.devs", [
-                        el("div.info-element", ["Alexander Cobleigh &"]),
-                        el("div.info-element", ["Axel Smeets"]),
-                        el("div.small-info-text", ["för mer info se designbyshai.se"])
+        return el("div.page",
+            {
+                "onclick": "window.handlers.handleInfoClick(event)"
+            }, [
+                createSpotlight("utvecklat av"),
+                el("img.shai-img", {
+                    src: "img/shai-devs-named.png"
+                }),
+                el("div.info-container", [
+                    el("div.devs-container", [
+                        el("div.shai", ["shai"]),
+                        el("div.small-info-text", ["det vill säga"]),
+                        el("div.devs", [
+                            el("div.info-element", ["Alexander Cobleigh &"]),
+                            el("div.info-element", ["Axel Smeets"]),
+                            el("div.small-info-text", ["för mer info se designbyshai.se"])
+                        ]),
                     ]),
-                ]),
-                el("div.info-credits", ["credits"]),
-                el("div.info-credits-container", [
-                    el("div.info-element", ["Apache Cordova + PhoneGap"]),
-                    el("div.info-element", ["Neil Jenkins för Sugared DOM"]),
-                    el("div.info-element", ["LHS"])
+                    el("div.info-credits", ["credits"]),
+                    el("div.info-credits-container", [
+                        el("div.info-element", ["Apache Cordova + PhoneGap"]),
+                        el("div.info-element", ["Neil Jenkins för Sugared DOM"]),
+                        el("div.info-element", ["LHS"])
+                    ])
                 ])
-            ])
-        ]);
+            ]);
     }
 
 
@@ -448,12 +450,12 @@
         }).reduce(flatten).filter(function(pod) {
             return pod != undefined && window.dlman.has(pod.author + pod.title);
         });
-       
+
         if (downloadedPods.length > 0) {
             return el("div.page", [
                 createSpotlight("nedladdade poddar", downloadedPods.shift()),
                 populatePageWithPodcasts(downloadedPods, false),
-                (downloadedPods.length <= 1 ? el("div.end-of-list", ["...tomt"]) : el("div"))
+                (downloadedPods.length <= 0 ? el("div.end-of-list", ["...tomt"]) : el("div"))
             ]);
         } else {
             return el("div.page", [
@@ -470,16 +472,20 @@
             var favList = [];
             favs.forEach(function(key) {
                 var fav = window.app.programs[key];
+                if (fav === undefined) {
+                    return;
+                }
+
                 favList.push(el("div.fav", {
                     "data-podcast-program": fav.key,
                     "onclick": "window.handlers.openProgramView(event)"
                 }, [
                     el("img.fav-img", {
-                        src: favImageSize(fav.image)
+                        src: (window.hasNoInternet() ? "img/player-placeholder-img-black-2x.png" : favImageSize(fav.image)),
+                        style: "height: " + window.deviceStyle.favHeight + "px"
                     }),
                     el("div.fav-title", [fav.name])
-                ])
-                );
+                ]));
             });
             return el("div.fav-container", favList);
         }
@@ -532,16 +538,16 @@
             image = isProgramView ? programImage : (podcast.image || programImage);
 
         var hash = podcast.author + podcast.title,
-            poddAvailable = !window.hasNoInternet || window.dlman.has(hash);
+            poddAvailable = !window.hasNoInternet() || window.dlman.has(hash);
         // create podd-dl if we have internet, or podd-remove if we've previously
         // downloaded the podd
         if (poddAvailable) {
-            var dlElement = el("div.spotlight-dl" 
+            var dlElement = el("div.spotlight-dl"
                 + (window.dlman.has(hash) ? ".spotlight-remove" : "")
                 + (window.dlman.downloading(hash) ? ".spotlight-queue" : "")
                 + (window.dlman.queued(hash) ? ".spotlight-queue" : ""), {
                     "onclick": "window.handlers.handleDownloadButton(event)"
-                })
+                });
         } else {
             var dlElement = el("div");
         }
@@ -551,11 +557,11 @@
             "data-podcast-index": podcast.index
         }, [
             el("img#spotlight-img", {
-                src: resizeImage(image, true),
+                src: (window.hasNoInternet() ? "img/raf-bg2.png" : resizeImage(image, true)),
                 "style": "height: " + window.deviceStyle.maximumHeight + "px;"
             }),
             el("div.spotlight-container.flexme", [
-                el("div#spotlight-play", {
+                el("div#spotlight-play" + (poddAvailable ? "" : ".grey-out-bg"), {
                     "onclick": "window.handlers.spotlightHandler(event)"
                 }),
                 el("div.spotlight-text-container.flexme", [
@@ -586,7 +592,7 @@
             el("div#menuFav.menu-item.menu-item-fav", {
                 "onclick": "window.handlers.handleMenuButton(event)"
             }, ["favoriter"]),
-            el("div#menuLive.menu-item.menu-item-live" + (window.hasNoInternet ? ".grey-out" : ""), {
+            el("div#menuLive.menu-item.menu-item-live" + (window.hasNoInternet() ? ".grey-out" : ""), {
                 "onclick": "window.handlers.handleMenuButton(event)"
             }, ["direkt"]),
             el("d.menu-logo"),

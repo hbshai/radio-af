@@ -12,9 +12,17 @@ var AudioPlayer = function() {
     var _media = null,
         _paused = true,
         _id = 0,
-        
+        _hasEnded = false,
+
         _htmlAudio, // only for iOS
         _boundUpdate = function(pos) {
+            if (self.currentPodcast) {
+                if (Math.floor(pos) === Math.floor(self.currentPodcast.duration)) {
+                    self.pause();
+                    _hasEnded = true;
+                    window.handlers.togglePlayPauseButton(self.currentPodcast);
+                }
+            }
             self.updatePosition(pos);
             window.localStorage.setItem("audiop-seek", pos);
         };
@@ -25,11 +33,12 @@ var AudioPlayer = function() {
     this.currentPodcast = undefined;
 
     function trackProgress() {
-    	if (_media)
-        	_media.getCurrentPosition(_boundUpdate);
+        if (_media) {
+            _media.getCurrentPosition(_boundUpdate);
+        }
 
         if (_htmlAudio) {
-        	_boundUpdate(_htmlAudio.currentTime)
+            _boundUpdate(_htmlAudio.currentTime);
         }
     }
 
@@ -43,14 +52,26 @@ var AudioPlayer = function() {
             console.err("Already playing.");
             return;
         }
-	
-		if (_media) {
-        	_media.play({ playAudioWhenScreenIsLocked : true });
+
+        if (_media) {
+            _media.play({
+                playAudioWhenScreenIsLocked: true
+            });
+            if (_hasEnded) {
+                _media.seekTo(0);
+                self.seekBar.val(0);
+            }
         }
         if (_htmlAudio) {
-        	_htmlAudio.play()
+            _htmlAudio.play();
+            if (_hasEnded) {
+                _htmlAudio.currentTime = 0;
+                self.seekBar.val(0);
+            }
         }
+
         _paused = false;
+        _hasEnded = false;
 
         _id = setInterval(trackProgress, 500);
         trackProgress();
@@ -65,12 +86,12 @@ var AudioPlayer = function() {
         if (_media) {
             _media.stop();
             _media.release();
-            _media = undefined
+            _media = undefined;
         }
 
         if (_htmlAudio) {
-        	_htmlAudio.pause()
-        	_htmlAudio = undefined
+            _htmlAudio.pause();
+            _htmlAudio.src = "";
         }
 
         if (_id) {
@@ -79,6 +100,7 @@ var AudioPlayer = function() {
         }
 
         this.currentPodcast = podcast;
+        self.seekBar.val(0);
 
         // Store so that we can load when restarting app
         window.localStorage.setItem("audiop-program", podcast.author);
@@ -89,56 +111,73 @@ var AudioPlayer = function() {
         _paused = true;
         var uri = window.dlman.has(podcast.author + podcast.title) ? window.dlman.get(podcast.author + podcast.title) : podcast.podcastUrl;
         if (window.iOSPlatform) {
-            _htmlAudio = new Audio(uri)
-            _htmlAudio.id = podcast.title
+            if (!_htmlAudio) {
+                _htmlAudio = new Audio(uri);
+            } else {
+                _htmlAudio.src = uri;
+            }
+
+            _htmlAudio.id = podcast.title;
+            _htmlAudio.load();
         } else {
             _media = new Media(uri, self.onSuccess, self.onError);
         }
-        
+
         var counter = 0;
-        if (this.timerDur)
+        if (this.timerDur) {
             clearInterval(this.timerDur);
-
-        if (_media) {
-            this.timerDur = setInterval(function() {
-                counter = counter + 100;
-                if (counter > 20000) {
-                    clearInterval(self.timerDur);
-                    self.timerDur = 0;
-                }
-                var dur = _media.getDuration();
-                if (dur > 0) {
-                    clearInterval(self.timerDur);
-                	self.timerDur = 0;
-                	
-                	// Update the durations, sadly not for html :((
-                	self.currentDurationString = formatTime(new Date(dur * 1000));
-                	self.currentPodcast.duration = dur;
-
-            	    self.seekBar.noUiSlider({
-            	    	start : 0,
-            			range: {
-            				'min': 0,
-            				'max': dur
-            			}
-            	    }, true);
-                }
-            }, 100);
         }
+
+        this.timerDur = setInterval(function() {
+            counter = counter + 100;
+            if (counter > 20000) {
+                clearInterval(self.timerDur);
+                self.timerDur = 0;
+            }
+
+            var dur = 0;
+            if (_media) {
+                dur = _media.getDuration();
+            } else if (_htmlAudio) {
+                dur = _htmlAudio.duration;
+            }
+
+            if (dur > 0) {
+                clearInterval(self.timerDur);
+                self.timerDur = 0;
+
+                // Update the durations, sadly not for html :((
+                self.currentDurationString = formatTime(new Date(dur * 1000));
+                self.currentPodcast.duration = dur;
+
+                self.seekBar.noUiSlider({
+                    start: 0,
+                    range: {
+                        "min": 0,
+                        "max": dur
+                    }
+                }, true);
+            }
+        }, 100);
 
         // Do some UI shizzle
         this.currentDurationString = formatTime(new Date(podcast.duration * 1000));
         this.updatePosition(0);
 
+        this.seekBar.removeAttr("disabled");
         this.seekBar.noUiSlider({
-        	start : 0,
-    		range: {
-    			'min': 0,
-    			'max': podcast.duration
-    		}
+            start: 0,
+            range: {
+                "min": 0,
+                "max": podcast.duration
+            }
         }, true);
 
-        $("#footer-img").attr("src", podcast.image);
+        if (window.hasNoInternet()) {
+            $("#footer-img").attr("src", "img/player-placeholder-img.png");
+        } else {
+            $("#footer-img").attr("src", podcast.image);
+        }
         $("#footer-title").text(podcast.program);
         $("#footer-ep").text(podcast.title);
     };
@@ -152,7 +191,7 @@ var AudioPlayer = function() {
         }
 
         if (_htmlAudio) {
-        	_htmlAudio.pause()
+            _htmlAudio.pause();
         }
 
         $("#footer-btn").attr("class", "footer-pause");
@@ -169,7 +208,11 @@ var AudioPlayer = function() {
         if (_media) {
             _media.stop();
             _media.release();
-            _media = undefined
+            _media = undefined;
+        }
+
+        if (_htmlAudio) {
+            _htmlAudio.pause();
         }
 
         if (_id) {
@@ -178,20 +221,25 @@ var AudioPlayer = function() {
         }
 
         this.currentPodcast = undefined;
-        
+
         // No track playing. Update _paused otherwise play() will malfunction...
         _paused = true;
         if (window.iOSPlatform) {
-        	_htmlAudio = new Audio("http://live.radioaf.se:8000/;stream/1")
+            if (!_htmlAudio) {
+                _htmlAudio = new Audio("http://live.radioaf.se:8000/;stream/1");
+            } else {
+                _htmlAudio.src = "http://live.radioaf.se:8000/;stream/1";
+            }
+            _htmlAudio.load();
         } else {
-        	_media = new Media("http://live.radioaf.se:8000/;stream/1", self.onSuccess, self.onError);
-		}
+            _media = new Media("http://live.radioaf.se:8000/;stream/1", self.onSuccess, self.onError);
+        }
 
         // Do some UI shizzle
         this.currentDurationString = "∞";
         this.updatePosition(0);
-		
-	    this.seekBar.attr('disabled', 'disabled')
+
+        this.seekBar.attr("disabled", "disabled");
 
         $("#footer-img").attr("src", window.fixImageUrl(msg.author.show_image));
         $("#footer-title").text(msg.author.show_name);
@@ -200,11 +248,19 @@ var AudioPlayer = function() {
 
     // Yes I am seek
     this.seekTo = function(pos) {
-        if (_media)
-            _media.seekTo(pos * 1000); // seek expects ms
-        
-        if (_htmlAudio)
+        if (_media) {
+            _media.seekTo(pos * 1000);
+        } // seek expects ms
+
+        if (_htmlAudio) {
             _htmlAudio.currentTime = pos;
+        }
+
+        if (Math.floor(pos) === Math.floor(self.currentPodcast.duration)) {
+            self.pause();
+            _hasEnded = true;
+            window.handlers.togglePlayPauseButton(self.currentPodcast);
+        }
 
         self.updatePosition(pos);
         window.localStorage.setItem("audiop-seek", pos);
@@ -232,30 +288,30 @@ var AudioPlayer = function() {
 };
 
 AudioPlayer.prototype.init = function() {
-	if (window.device.platform === 'iOS') {
-		window.iOSPlatform = true;
-	}
+    if (window.device.platform === "iOS") {
+        window.iOSPlatform = true;
+    }
     this.footerTimeEl = document.getElementById("footer-time");
-    this.seekBar = $("#seekbar") // noUiSlideBar requires jquery
+    this.seekBar = $("#seekbar"); // noUiSlideBar requires jquery
     this.seekBar.noUiSlider({
-    	start : 0,
-		range: {
-			'min': 0,
-			'max': 0
-		}
+        start: 0,
+        range: {
+            "min": 0,
+            "max": 0
+        }
     });
-    //this.seekBar.attr('disabled', 'disabled')
-	
-	this.disableAutoSeek = false;
-	this.seeking = false;
-    this.seekBar.on('slide', function(){
-    	window.app.audiop.seeking = true;
-		window.app.audiop.updatePosition(window.app.audiop.seekBar.val(), true)
-    })
-    this.seekBar.on('change', function(){
-    	window.app.audiop.seeking = false;
-		window.app.audiop.seekTo(window.app.audiop.seekBar.val())    	
-    })
+
+    this.disableAutoSeek = false;
+    this.seeking = false;
+
+    this.seekBar.on("slide", function() {
+        window.app.audiop.seeking = true;
+        window.app.audiop.updatePosition(window.app.audiop.seekBar.val(), true);
+    });
+    this.seekBar.on("change", function() {
+        window.app.audiop.seeking = false;
+        window.app.audiop.seekTo(window.app.audiop.seekBar.val());
+    });
 };
 
 AudioPlayer.prototype.load = function() {
@@ -279,11 +335,13 @@ AudioPlayer.prototype.updatePosition = function(pos, force) {
     }
     var time = formatTime(new Date(pos * 1000));
 
-    if (!window.app.audiop.seeking || force)
-    	this.footerTimeEl.innerHTML = time + " / " + this.currentDurationString;
+    if (!window.app.audiop.seeking || force) {
+        this.footerTimeEl.innerHTML = time + " / " + this.currentDurationString;
+    }
 
-    if (!this.disableAutoSeek)
-    	this.seekBar.val(pos)
+    if (!this.disableAutoSeek) {
+        this.seekBar.val(pos);
+    }
 };
 
 AudioPlayer.prototype.samePodcast = function(otherPodcast) {
@@ -293,15 +351,23 @@ AudioPlayer.prototype.samePodcast = function(otherPodcast) {
 };
 
 AudioPlayer.prototype.goLive = function() {
+    if (!this.isPaused()) {
+        if (this.currentPodcast) {
+            this.pause();
+            window.handlers.togglePlayPauseButton(this.currentPodcast);
+        }
+    }
+
     $.getJSON("http://www.radioaf.se/nowplaying/")
         .done(function(msg, txt, xhr) {
-        	if (msg.data.author.show_name === "Sändningsuppehåll") {
-        		$("#footer-img").attr("src", msg.data.author.show_image);
-        		$("#footer-title").text(msg.data.author.show_name);
-        		$("#footer-time").text('-- / --');
-        		$("#footer-ep").text("");
-				return;
-        	}
+            window.app.audiop.currentPodcast = undefined;
+            if (msg.data.author.show_name === "Sändningsuppehåll") {
+                $("#footer-img").attr("src", msg.data.author.show_image);
+                $("#footer-title").text(msg.data.author.show_name);
+                $("#footer-time").text("-- / --");
+                $("#footer-ep").text("");
+                return;
+            }
 
             window.app.audiop.playLive(msg.data);
             window.app.audiop.play();

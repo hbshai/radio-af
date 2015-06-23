@@ -48,13 +48,14 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
     function parseRSS(data, xml, program, callb) {
-        var podcasts = [], counter = 0,
+        var podcasts = [],
+            counter = 0,
             entry, imgUrl, i, l, datax, url;
 
         var parser = new DOMParser(),
             xmlDoc = parser.parseFromString(xml, "text/xml"),
             xmlItems = xmlDoc.getElementsByTagName("item");
-       
+
         for (i = 0, l = data.entries.length; i < l; i++) {
             entry = data.entries[i];
             datax = xmlItems[i].getElementsByTagName("enclosure");
@@ -65,7 +66,7 @@
 
             var url = datax[0].getAttributeNode("url");
             if (url == undefined || url.value == undefined || url.value.indexOf(".mp3") === -1) {
-                console.log('Didn\'t find any url in: ' + (url ? url.value : url))
+                console.log("Didn't find any url in: " + (url ? url.value : url));
                 continue;
             }
             url = url.value;
@@ -114,16 +115,17 @@
                 if (counter === 0 && callb) {
                     callb(podcasts);
                 }
-            }).error(function(){
-                var index = podcasts.indexOf(podd)
-                podcasts.splice(index, 1)
+            }).error(function() {
+                console.log(program.key + "error");
+                var index = podcasts.indexOf(podd);
+                podcasts.splice(index, 1);
 
                 // When all podcasts have been failed/done, proceed.
                 counter--;
                 if (counter === 0 && callb) {
                     callb(podcasts);
                 }
-            })
+            });
         });
 
         // Edge case: No podcasts

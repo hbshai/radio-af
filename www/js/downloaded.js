@@ -35,7 +35,7 @@
 
     function gotFile(fileEntry) {
         var localUrl = fileEntry.toURL();
-        console.log(fileEntry)
+        console.log(fileEntry);
 
         var fileTransfer = new FileTransfer();
         var uri = encodeURI(currentDownload.podcast.podcastUrl);
@@ -45,31 +45,31 @@
             uri,
             localUrl,
             function(entry) {
-                console.log('Transfer success::begin')
+                console.log("Transfer success::begin");
                 downloaded[currentDownload.hash] = localUrl;
-                
+
                 window.localStorage.setItem("_downloaded", JSON.stringify(downloaded));
                 window.handlers.fileTransferSuccess(currentDownload.podcast, currentDownload.hash);
 
-                currentDownload = undefined
+                currentDownload = undefined;
                 if (downloadQueue.length > 0) {
                     setTimeout(downloadNext, 250);
                 }
-                console.log('Transfer success::end')
+                console.log("Transfer success::end");
 
             },
             function(error) {
-                console.log('Transfer abort::begin')
+                console.log("Transfer abort::begin");
 
                 window.handlers.fileTransferError(currentDownload, error);
-                console.log('Transfer abort::callback done')
+                console.log("Transfer abort::callback done");
 
-                currentDownload = undefined
+                currentDownload = undefined;
                 if (downloadQueue.length > 0) {
-                    console.log('Transfer abort::setting timeout')
+                    console.log("Transfer abort::setting timeout");
                     setTimeout(downloadNext, 250);
                 }
-                console.log('Transfer abort::done')
+                console.log("Transfer abort::done");
             }
         );
 
@@ -85,23 +85,22 @@
 
         fileTransfer.onprogress = function(progressEvent) {
             if (progressEvent.lengthComputable && (Date.now() - lastUpdate >= 1000)) {
-                var progress = Math.floor(100 * (progressEvent.loaded / progressEvent.total)) + "%"
-                console.log('UI update: ' + progress)
+                var progress = Math.floor(100 * (progressEvent.loaded / progressEvent.total)) + "%";
                 $(queryMini).text(progress);
                 $(querySpot).text(progress);
-                lastUpdate = Date.now()
+                lastUpdate = Date.now();
             }
         };
     }
 
     function downloadNext() {
-        console.log('downloadnext::begin')
+        console.log("downloadnext::begin");
         if (downloadQueue.length === 0 || currentDownload) {
-            console.log('downloadnext::bail')
+            console.log("downloadnext::bail");
             return;
         }
 
-        console.log('Alright, begin downloading: ' + downloadQueue[0].hash)
+        console.log("Alright, begin downloading: " + downloadQueue[0].hash);
         currentDownload = downloadQueue.shift();
 
         // currentDownload.url is something like //blabla/blabla/bla/fileidentifier.mp3
@@ -112,42 +111,42 @@
             create: true,
             exclusive: false
         }, gotFile);
-        console.log('downloadnext::end')
+        console.log("downloadnext::end");
     }
 
     function queueDownload(hash, podcast) {
-        console.log('QUEUE DOWNLOAD: ' + hash)
+        console.log("QUEUE DOWNLOAD: " + hash);
         downloadQueue.push({
             hash: hash,
             podcast: podcast
         });
-        
+
         if (downloadQueue.length === 1 && !currentDownload) {
-            console.log('Download next!: ' + hash)
+            console.log("Download next!: " + hash);
             downloadNext();
         }
     }
 
     function removeFile(fileEntry) {
         var podd = this.podcast,
-            hash = this.hash
+            hash = this.hash;
 
-        fileEntry.remove(function(){
-            window.handlers.fileRemoveSuccess(podd, hash)
+        fileEntry.remove(function() {
+            window.handlers.fileRemoveSuccess(podd, hash);
         }, window.handlers.fileRemoveFail);
     }
 
     function removeHash(trackHash, podcast) {
         if (!downloaded[trackHash]) {
-            console.log("I dunno about this one really: " + trackHash)
+            console.log("I dunno about this one really: " + trackHash);
             return;
         }
 
         window.resolveLocalFileSystemURL(downloaded[trackHash], removeFile.bind({
-            hash : trackHash,
-            podcast : podcast
-        }), function(error){
-            console.log(error)
+            hash: trackHash,
+            podcast: podcast
+        }), function(error) {
+            console.log(error);
         });
 
         delete downloaded[trackHash];
@@ -157,7 +156,7 @@
     // the download manager
     window.dlman = {
         init: function(fs) {
-            gotFS(fs)
+            gotFS(fs);
         },
         // track hash can be anything, but should probably be program+stuff
         has: function(trackHash) {
@@ -170,12 +169,12 @@
         download: function(podcast, trackHash) {
             queueDownload(trackHash, podcast);
         },
-        downloading : function(trackHash){
-            return currentDownload && currentDownload.hash === trackHash
+        downloading: function(trackHash) {
+            return currentDownload && currentDownload.hash === trackHash;
         },
-        queued : function (trackHash){
-            for (var i = 0; i < downloadQueue.length; i++){
-                if (downloadQueue[i].hash === trackHash){
+        queued: function(trackHash) {
+            for (var i = 0; i < downloadQueue.length; i++) {
+                if (downloadQueue[i].hash === trackHash) {
                     return true;
                 }
             }
@@ -184,21 +183,21 @@
         remove: function(trackHash, podcast) {
             removeHash(trackHash, podcast);
         },
-        abort : function(trackHash){
+        abort: function(trackHash) {
             if (currentDownload && trackHash === currentDownload.hash) {
                 if (currentDownload.transfer) {
-                    currentDownload.transfer.abort()
+                    currentDownload.transfer.abort();
                 } else {
-                    console.log('OH SHIT!')
-                    currentDownload = undefined
-                    setTimeout(downloadNext, 250)
+                    console.log("OH SHIT!");
+                    currentDownload = undefined;
+                    setTimeout(downloadNext, 250);
                 }
 
                 return true;
             }
 
-            for (var i = 0; i < downloadQueue.length; i++){
-                if (downloadQueue[i].hash === trackHash){
+            for (var i = 0; i < downloadQueue.length; i++) {
+                if (downloadQueue[i].hash === trackHash) {
                     downloadQueue.splice(i, 1);
                     return true;
                 }

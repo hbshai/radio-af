@@ -29,7 +29,7 @@
         // resize titleBar's font size until it fits the screen
         while (titleWidth >= maxWidth) {
             fontSize--;
-            $titleBar.css('font-size', fontSize.toString() + 'px');
+            $titleBar.css("font-size", fontSize.toString() + "px");
             titleWidth = titleEl.offsetWidth;
         }
 
@@ -38,9 +38,9 @@
     function pageChangeHandler(pageEl) {
         // Search for a child element that has the child
         var titleBar = pageEl.querySelector(".title-bar");
-       
+
         if (titleBar) {
-            fitTitle(titleBar)
+            fitTitle(titleBar);
             mount(titleBar);
         } else {
             // Somehow the page we moved to hasn't a title bar - so hackily disable ourselves

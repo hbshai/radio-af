@@ -17,6 +17,25 @@
     background-color: @dark-blue;
 
     left: -100%;
+    top: 0px;
+}
+.loading-spinner{
+    position: fixed;
+
+    text-align: center;
+    font-size: 200%;
+
+    left: 0;
+    top: 15%;
+
+    width: 100%;
+    height: 50%;
+
+    z-index: 10;
+}
+.loading-spinner > img {
+    width: 50%;
+    height: 50%;
 }
 .lefty {
     -webkit-transition: left 0.2s ease-out;
@@ -25,7 +44,7 @@
 
 
 .menu-active {
-    left: 0%;
+    left: 0% !important;
 }
 
 .menu-item-flode:before{ background: url('../img/menu-flode.png') no-repeat;}
@@ -38,12 +57,10 @@
 .menu-item-live:before{ background: url('../img/menu-direkt.png') no-repeat; }
 
 .menu-item:before {
-    margin-top: -5px;
     background-size: contain;
     content: "";
     
-    display: block;
-    float: left;
+    display: inline-block;
 
     width:  32px;
     height: 32px;
@@ -63,13 +80,11 @@
 }
 
 .menu-footer:before{
-    margin-top: -5px;
     background: url('../img/menu-info.png') no-repeat; 
     background-size: contain;
     content: "";
     
-    display: block;
-    float: left;
+    display: inline-block;
 
     width: 32px;
     height: 32px;
@@ -149,6 +164,7 @@ body,ul,li,h1,h2,p {
     max-width: 100%;
     height: auto;
     width: auto;
+    margin: 0 auto;
     text-align: center;
     display: none;
 }
@@ -264,8 +280,10 @@ body,ul,li,h1,h2,p {
 .spotlight-queued {
     font-size: 0.8em;
     text-align: center;
-    line-height: 2em;
+    line-height: 3em;
+    text-indent: 4px;
     background-image: url("../img/dl-cross.png") !important;
+    background-size: 32px 32px;
 }
 
 #spotlight-play {
@@ -429,10 +447,7 @@ body,ul,li,h1,h2,p {
 .program-category {
     margin-top: -4px;
 }
-.program-category {
-    // hack; see .program-disclaimer for comment
-    z-index: 2;
-}
+.program-category {}
 
 .program-letter {
     padding-top: 15px;
@@ -459,11 +474,6 @@ body,ul,li,h1,h2,p {
 .program-disclaimer {
     color: @raf-black + #888;
     font-size: 0.8em;
-    // hack: allows us to hide the disclaimer when a program title goes
-    // multi-line, thus forcing .program-category to overlap with the
-    // disclaimer.
-    // this hack allows the category to hide the disclaimer when that happens.
-    z-index: 1;
 }
 
 .program-expanded {
@@ -520,14 +530,12 @@ body,ul,li,h1,h2,p {
     flex-direction: column;
     font-size: 0.85em;
 
-    // margin-left: 150px;
     margin-left: 5px;
 
-    // height: @podd-height - 6px;
     margin-top: 3px;
     background-image: url("../img/chevron-down.png");
     background-repeat: no-repeat;
-    background-position: 29% bottom;
+    background-position: 50% bottom;
 }
 
 .podd-text > div {
@@ -553,22 +561,17 @@ body,ul,li,h1,h2,p {
 
 @play-margin: 40px;
 .podd-control {
-    /* flex box stuff */
-    -webkit-box-flex: 0;
-    -webkit-flex: 1 0 auto; /*important*/
-
-    // max-height: @podd-height - @play-margin / 2;
-    // min-height: @podd-height - @play-margin / 2;
-    // max-width: @podd-height - @play-margin / 2;
-    // min-width: @podd-height - @play-margin / 2 ;
-
     background-color: @raf-red;
     background-image: url("../img/play-small.png");
     background-repeat: no-repeat;
 
-    background-size: 32px 32px;
+    background-size: 20px 20px;
+
     margin: auto 0;
+    margin-right: 10px;
+
     height: 48px !important;
+    width: 45px !important;
 }
 
 .play {
@@ -584,30 +587,25 @@ body,ul,li,h1,h2,p {
 }
 
 .podd-dl {
-    /* flex box stuff */
-    -webkit-box-flex: 0;
-    -webkit-flex: 1 0 auto; /*important*/
-
-    // margin-top: @play-margin / 2;
-    // margin-bottom: @play-margin / 2;
-    // max-height: @podd-height - @play-margin;
-    // min-height: @podd-height - @play-margin;
-    // max-width: @podd-height;
-    // min-width: @podd-height;
     background-image: url("../img/dl-box-blue.png");
     background-repeat: no-repeat;
     background-position: center;
+
+    margin-bottom: 6px;
+    margin-right: 10px;
 }
 
 .podd-control, .podd-dl {
     width: 50px; // width from codepen.io proto
     background-repeat: no-repeat;
     background-position: center;
+    -webkit-flex: 0 0 auto !important;
+    -webkit-box-flex: 0;
 
 }
 .chevron-inverted {
     background-repeat: no-repeat;
-    background-position: 29% bottom;
+    background-position: 50% bottom;
     background-image: url("../img/chevron-up.png") !important;
 }
 
@@ -628,6 +626,7 @@ body,ul,li,h1,h2,p {
     margin: 15px;
     margin-top: 10px;
 	font-family: OpenSans;
+    font-size: 0.7em;
 }
 
 
@@ -637,9 +636,9 @@ body,ul,li,h1,h2,p {
     background-position: center;
     width: 40px;
     height: 40px;
-    top: 10px;
+    top: 20px;
     opacity: 0.55;
-    right: 10px;
+    right: 15px;
     position: absolute;
 }
 
@@ -653,10 +652,12 @@ body,ul,li,h1,h2,p {
     font-size: 0.8em;
     text-align: center;
     background-image: url("../img/dl-cross-blue.png") !important;
+    background-size: 32px 32px;
+    line-height: 3em;
+    text-indent: 4px;
 }
 
 .podd-remove {
-    .podd-dl();
     background-image: url("../img/dl-check-blue.png") !important;
 }
 
@@ -738,9 +739,9 @@ p {
 
 #menu-btn {
     position: fixed;
-    z-index: 3;
-    margin-top: 25px;
-    margin-left: 20px;
+    z-index: 4;
+    top: 25px;
+    left: 20px;
     text-align: left;
     height: @spotlight-height;
     width: @spotlight-height;
@@ -859,7 +860,7 @@ p {
     bottom:0;
 	width: 100%;
 
-	background: #aaa;
+    background: #F2F2F2;
 	overflow: hidden;
 }
 
@@ -906,6 +907,11 @@ p {
     .menu-footer {
         font-size: 19pt;
     }
+    .menu-footer:before, .menu-item:before{
+        display: block;
+        float: left;
+        margin-top: -5px;
+    }
     /* SPOTLIGHT STUFF */
     #spotlight-title {
         font-size: 1.3em;
@@ -917,6 +923,9 @@ p {
     .spotlight-container {
         margin-top: -@spotlight-height;
         height:  @spotlight-height;
+    }
+    .spotlight-queued{
+        background-size: 31.5px 38.5px;
     }
 
     .spotlight-dl {
@@ -963,8 +972,7 @@ p {
     }
 
     .podd-ep-text {
-        margin: 15px;
-        margin-top: 10px;
+        font-size: 1em;
     }
 
     .podd-text {
@@ -978,14 +986,6 @@ p {
     }
 
     .podd-control {
-        // margin-left: 10px;
-        // margin-right: 10px;
-
-        // max-height: @podd-height - 35px;
-        // min-height: @podd-height - 35px;
-        // max-width: @podd-height - 30px;
-        // min-width: @podd-height - 30px;
-
         height: 40px !important;
     }
 
@@ -998,11 +998,10 @@ p {
         .play();
     }
     .podd-dl {
-        // max-height: 38.5px;
-        // min-height: 38.5px;
-        // max-width: 31.5px;
-        // min-width: 31.5px;
-
+        margin-right: 0px;
+        background-size: 31.5px 38.5px;
+    }
+    .podd-queued{
         background-size: 31.5px 38.5px;
     }
 
@@ -1014,15 +1013,13 @@ p {
     .fav-heart {
         width: 40px;
         height: 40px;
-        top: 10px;
-        right: 10px;
+        top: 15px;
+        right: 15px;
     }
 
     .fav-heart-red {
         .fav-heart();
     }
-
-
 
     /* FAV STUFF */
     @fav-width: 140px;
@@ -1123,8 +1120,8 @@ p {
     #menu-btn {
         height: @spotlight-height;
         width: @spotlight-height;
-        margin-top: 20px;
-        margin-left: 20px;
+        top: 20px;
+        left: 20px;
 
         background-size: 28px 19.6px;
     }

@@ -4,6 +4,7 @@ Cordova-powered podcast subscriber and player. Works on iOS and Android.
 
 requirements
 ------------
+ - node js & npm
  - cordova: `npm install -g cordova`
  - phonegap: `npm install -g phonegap`
 
@@ -25,6 +26,7 @@ getting started
 ---------------
  - install phonegap & cordova
  - git clone into `radio-af`
+ - `npm install`
  - run `setup.bat` or `setup.sh` to generate radio-af-app folder and symlink www dir
  - either use Phonegap Developer App, or build manually for a platform
 
